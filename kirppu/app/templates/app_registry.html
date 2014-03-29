@@ -1,0 +1,50 @@
+{% load compressed %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kirppu - Registry</title>
+    {% compressed_css "general" %}
+    {% compressed_css "registry" %}
+    {% compressed_js "general" %}
+    {% compressed_js "registry" %}
+</head>
+<body>
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="javascript:void(1)">Kirppu</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" id="navigation">
+                <li class="active"><a href="javascript:void(1)">Registry</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="javascript:void(1)">About</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="body" class="container">
+    <form role="form">
+        <div class="form-group">
+            <label class="sr-only" for="code_input">Code</label>
+            <input id="code_input" class="form-control" placeholder="Barcode" type="text" autofocus="true"/>
+        </div>
+    </form>
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+        <tr><th class="receipt_index">#</th><th class="receipt_code">code</th><th class="receipt_item">item</th><th class="receipt_price">price</th></tr>
+        </thead>
+        <tbody id="receipt">
+        <tr><td>1</td><td>ABCDEFGH</td><td>Stone of runes</td><td>1.00€</td></tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

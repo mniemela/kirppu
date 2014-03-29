@@ -1,0 +1,21 @@
+{% load compressed %}
+<!doctype html>
+<html>
+<head>
+    <title>Cleric codes</title>
+    {% compressed_css 'general' %}
+    {% compressed_css 'seller' %}
+    {% compressed_js 'general' %}
+</head>
+<body>
+{% for i in items %}
+    <div class="cleric_container {% cycle 'item_even' 'item_odd' %}">
+    <div class="item_info">
+        <span class="item_list item_info_name">{{ i.name }}</span>
+        <span class="item_list item_info_action">{{ i.action }}</span>
+    </div>
+    <img src="{% url 'kirppu:command_image' i.code bar_type %}" alt="Barcode: {{ i.code }}" />
+    </div>
+{% endfor %}
+</body>
+</html>
