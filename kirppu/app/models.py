@@ -350,6 +350,8 @@ class Item(models.Model):
                             help_text=_(u"Barcode content of the product"))
 
     name = models.CharField(max_length=256)
+
+    # FIXME: prevent negative prices
     price = models.DecimalField(max_digits=8, decimal_places=2)
     vendor = models.ForeignKey(Vendor)
     state = models.CharField(choices=STATE, max_length=8, default=ADVERTISED)

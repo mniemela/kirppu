@@ -8,4 +8,6 @@ urlpatterns = patterns('kirppu.app.views',
     url(r'^commands/(?P<eid>\d+)$', 'get_commands', name='commands'),
     url(r'^command/(?P<iid>\w+?)\.(?P<ext>\w+)$', 'get_command_image', name='command_image'),
     url(r'^checkout/(?P<eid>\d+)$', 'checkout_view'),
+    url(r'^vendor/$', 'vendor_view', name='vendor_view'),
+    url(r'^vendor/login/$', 'vendor_login', name='vendor_login'),
 )

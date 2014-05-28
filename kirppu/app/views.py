@@ -1,11 +1,33 @@
 from collections import namedtuple
-from django.utils.translation import ugettext
-from barcode.writer import SVGWriter, ImageWriter
-from django.http.response import HttpResponse, HttpResponseBadRequest,\
-    HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+
 import barcode
-from kirppu.app.models import Item, Event, CommandCode, Vendor
+from barcode.writer import SVGWriter, ImageWriter
+
+import django.contrib.auth as auth
+from django.core.context_processors import csrf
+import django.core.urlresolvers as url
+import django.forms as forms
+from django.http.response import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+)
+from django.shortcuts import (
+    get_object_or_404,
+    render,
+)
+from django.utils.http import is_safe_url
+from django.utils.translation import ugettext
+from django.views.decorators.debug import sensitive_post_parameters
+
+from kirppu.app.forms import VendorAuthenticationForm
+from kirppu.app.models import (
+    Item,
+    Event,
+    CommandCode,
+    Vendor,
+)
 
 
 def index(request):
@@ -28,7 +50,7 @@ def get_items(request, sid, eid):
 
     if bar_type not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
-    
+
     try:
         vendor = Vendor.objects.get(id=sid)
     except:
@@ -37,12 +59,12 @@ def get_items(request, sid, eid):
         event = Event.objects.get(id=eid)
     except:
         return HttpResponseNotFound(u'Event not found.')
-    
+
     items = Item.objects.filter(vendor__id=sid, event__id=eid).exclude(code=u"")
 
     if not items:
         return HttpResponseNotFound(u'No items found for "%s" in "%s".' % (vendor.user.username, event.name))
-    
+
     return render(request, "app_items.html", {'items': items, 'bar_type': bar_type})
 
 
@@ -60,14 +82,13 @@ def get_item_image(request, iid, ext):
     :rtype: HttpResponse
     """
     ext = ext.lower()
-    if len(ext) == 0:
-        ext = "svg"
     if ext not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
 
     if ext == 'svg':
         writer, mimetype = SVGWriter(), 'image/svg+xml'
     else:
+        # FIXME: TypeError if PIL is not installed
         writer, mimetype = ImageWriter(), 'image/png'
 
     item = get_object_or_404(Item, code=iid)
@@ -89,6 +110,7 @@ def get_commands(request, eid):
     if bar_type not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
 
+    # FIXME: OverflowError with very large eids
     eid = int(eid)
     event = get_object_or_404(Event, pk=eid)
     items = []
@@ -131,6 +153,7 @@ def get_command_image(request, iid, ext):
     if ext == 'svg':
         writer, mimetype = SVGWriter(), 'image/svg+xml'
     else:
+        # FIXME: TypeError if PIL is not installed
         writer, mimetype = ImageWriter(), 'image/png'
 
     bar = barcode.Code128(iid, writer=writer)
@@ -198,3 +221,40 @@ def checkout_finish_receipt(request, eid):
     :rtype: HttpResponse
     """
     pass
+
+
+def vendor_view(request):
+    """
+    Render main view for vendors.
+    """
+    # TODO
+    return HttpResponse('')
+
+
+@sensitive_post_parameters()
+def vendor_login(request):
+    """
+    On GET, render the login page. On POST, attempt login.
+    """
+    # Inspired by django.contrib.auth.views.
+    destination = request.REQUEST.get('next')
+    if not is_safe_url(destination, request.get_host()):
+        destination = url.reverse('kirppu:vendor_view')
+
+    def render_login_page(next_=None, form=None):
+        form = (form if form is not None
+                     else VendorAuthenticationForm(request))
+        context = {'form': form, 'next': next_}
+        context.update(csrf(request))
+        return render(request, "app_vendor_login.html", context)
+
+    if request.method == 'GET':
+        return render_login_page(destination)
+
+    elif request.method == 'POST':
+        form = VendorAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            auth.login(request, form.get_user())
+            return HttpResponseRedirect(destination)
+        else:
+            return render_login_page(destination, form)
