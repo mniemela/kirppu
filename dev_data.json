@@ -1,0 +1,102 @@
+[
+    {
+        "pk": 1,
+        "model": "app.event",
+        "fields": {
+            "auto_index_vendor": 0,
+            "name": "Test Event",
+            "end_date": "2013-09-26",
+            "start_date": "2013-09-26"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "app.eventclerk",
+        "fields": {
+            "code": "B99CFBBD1",
+            "event": 1,
+            "user": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "app.vendor",
+        "fields": {
+            "index": 1,
+            "event": 1,
+            "user": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "app.item",
+        "fields": {
+            "code": "CYAHIFIA",
+            "vendor": 1,
+            "name": "Superman comics #1",
+            "price": "1",
+            "state": "AD",
+            "event": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "app.item",
+        "fields": {
+            "code": "EUAHIFIA",
+            "vendor": 1,
+            "name": "Superman comics #2",
+            "price": "0.2",
+            "state": "AD",
+            "event": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "app.item",
+        "fields": {
+            "code": "GQAHIFIA",
+            "vendor": 1,
+            "name": "Superman comics #3",
+            "price": "1.4",
+            "state": "AD",
+            "event": 1
+        }
+    },
+    {
+        "pk": 4,
+        "model": "app.item",
+        "fields": {
+            "code": "IMAHIFIA",
+            "vendor": 1,
+            "name": "Superman comics #4",
+            "price": "1.99",
+            "state": "AD",
+            "event": 1
+        }
+    },
+    {
+        "pk": 5,
+        "model": "app.item",
+        "fields": {
+            "code": "",
+            "vendor": 1,
+            "name": "Batman strikes back",
+            "price": "20",
+            "state": "AD",
+            "event": 1
+        }
+    },
+    {
+        "pk": 6,
+        "model": "app.item",
+        "fields": {
+            "code": "MEAHIFIA",
+            "vendor": 1,
+            "name": "Batman and secrets of the stone",
+            "price": "19.99",
+            "state": "AD",
+            "event": 1
+        }
+    }
+]
