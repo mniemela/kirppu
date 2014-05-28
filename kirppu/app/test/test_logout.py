@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.test.client import Client
+import os.path
 
 
 class TestLogout(TestCase):
-
-    fixtures = ['kirppu/app/fixtures/vendor-test-data.json']
+    fixtures = map(os.path.normpath,
+            ['kirppu/app/fixtures/vendor-test-data.json'])
 
     def test_vendor_loginout(self):
         """Should be able to logout after login."""

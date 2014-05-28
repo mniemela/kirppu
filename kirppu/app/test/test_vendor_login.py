@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.test.client import Client
+import os.path
 
 
 class TestVendorLogin(TestCase):
-
-    fixtures = ['kirppu/app/fixtures/vendor-test-data.json']
+    fixtures = map(os.path.normpath,
+            ['kirppu/app/fixtures/vendor-test-data.json'])
 
     def try_login(self, username, password, rest=None):
         params = {
