@@ -1,10 +1,11 @@
 from collections import namedtuple
 from django.utils.translation import ugettext
 from barcode.writer import SVGWriter, ImageWriter
-from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.http.response import HttpResponse, HttpResponseBadRequest,\
+    HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 import barcode
-from kirppu.app.models import Item, Event, CommandCode
+from kirppu.app.models import Item, Event, CommandCode, Vendor
 
 
 def index(request):
@@ -27,11 +28,20 @@ def get_items(request, sid, eid):
 
     if bar_type not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
-
+    
+    try:
+        vendor = Vendor.objects.get(id=sid)
+    except:
+        return HttpResponseNotFound(u'Vendor not found.')
+    try:
+        event = Event.objects.get(id=eid)
+    except:
+        return HttpResponseNotFound(u'Event not found.')
+    
     items = Item.objects.filter(vendor__id=sid, event__id=eid).exclude(code=u"")
 
     if not items:
-        return HttpResponseBadRequest(u"No items for this vendor found.")
+        return HttpResponseNotFound(u'No items found for "%s" in "%s".' % (vendor.user.username, event.name))
     
     return render(request, "app_items.html", {'items': items, 'bar_type': bar_type})
 
