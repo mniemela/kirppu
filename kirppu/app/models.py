@@ -131,7 +131,7 @@ class Event(models.Model):
     #date_id = models.IntegerField(db_index=True)
     clerics = models.ManyToManyField(User, through="EventCleric")
 
-    auto_index_seller = models.IntegerField(default=0)
+    auto_index_vendor = models.IntegerField(default=0)
 
     def get_date_identifier(self):
         """
@@ -144,9 +144,9 @@ class Event(models.Model):
                (self.start_date.year % 32)
 
     def get_next_index(self):
-        n = self.auto_index_seller + 1
-        self.auto_index_seller = n
-        self.save(update_fields=["auto_index_seller"])
+        n = self.auto_index_vendor + 1
+        self.auto_index_vendor = n
+        self.save(update_fields=["auto_index_vendor"])
         return n
 
     def __unicode__(self):
@@ -280,15 +280,15 @@ class EventCleric(models.Model):
             return None
 
 
-def _seller_index_validator(value):
+def _vendor_index_validator(value):
     if value > (2 ** 14 - 1):
-        raise ValidationError(_(u"Seller index overflow, {0}").format(value))
+        raise ValidationError(_(u"Vendor index overflow, {0}").format(value))
 
 
-class Seller(models.Model):
+class Vendor(models.Model):
     event = models.ForeignKey(Event)
     user = models.ForeignKey(User)
-    index = models.IntegerField(validators=[_seller_index_validator])
+    index = models.IntegerField(validators=[_vendor_index_validator])
 
     #noinspection PyClassHasNoInit
     class Meta:
@@ -306,20 +306,20 @@ class Seller(models.Model):
     @classmethod
     def new(cls, event, user):
         """
-        Construct new Seller with automatically calculated seller index.
+        Construct new Vendor with automatically calculated vendor index.
 
         :param event: Event instance
         :type event: Event
         :param user: User instance
         :type user: User
-        :return: Seller
+        :return: Vendor
         """
         while True:
             try:
                 n = event.get_next_index()
                 obj = cls(event=event, user=user, index=n)
                 obj.save()
-            except Seller.IntegrityError:
+            except Vendor.IntegrityError:
                 time.sleep(random.uniform(0, 0.5))
                 event = Event.objects.get(pk=event.pk)
             else:
@@ -341,8 +341,8 @@ class Item(models.Model):
         (STAGED, _(u"Staged for selling")),
         (SOLD, _(u"Sold")),
         (MISSING, _(u"Missing")),
-        (RETURNED, _(u"Returned to seller")),
-        (COMPENSATED, _(u"Compensated to seller")),
+        (RETURNED, _(u"Returned to vendor")),
+        (COMPENSATED, _(u"Compensated to vendor")),
     )
 
     event = models.ForeignKey(Event)
@@ -351,7 +351,7 @@ class Item(models.Model):
 
     name = models.CharField(max_length=256)
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    seller = models.ForeignKey(Seller)
+    vendor = models.ForeignKey(Vendor)
     state = models.CharField(choices=STATE, max_length=8, default=ADVERTISED)
 
     def __unicode__(self):
@@ -414,7 +414,7 @@ class Item(models.Model):
 
         # Filter values to correct bit amounts
         did = self.event.get_date_identifier() & long((1 << 10) - 1)
-        sid = self.seller.index & long((1 << 12) - 1)
+        sid = self.vendor.index & long((1 << 12) - 1)
         pid = self.pk & long((1 << 14) - 1)  # FIXME: This will overflow at 16k, consider event-based index
 
         # Merge the values to specified format
@@ -432,7 +432,7 @@ class Item(models.Model):
 
         :param data: bar code data scanned from product.
         :type data: str
-        :return: A tuple containing DateID, SellerID, ProductID, Checksum check
+        :return: A tuple containing DateID, VendorID, ProductID, Checksum check
             result.
         :rtype: (int, int, int, bool)
         """
@@ -463,7 +463,7 @@ class Item(models.Model):
         if not chk:
             return None
 
-        return Item.objects.get(code=data, seller__index=sid)
+        return Item.objects.get(code=data, vendor__index=sid)
 
 
 class ReceiptItem(models.Model):

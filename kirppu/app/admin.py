@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext
-from kirppu.app.models import Event, Item, Seller, EventCleric
+from kirppu.app.models import Event, Item, Vendor, EventCleric
 
 __author__ = 'jyrkila'
 
@@ -34,30 +34,30 @@ _regen_ean.short_description = ugettext(u"Re-generate bar codes for items")
 
 class ItemAdmin(admin.ModelAdmin):
     actions = [_gen_ean, _del_ean, _regen_ean]
-    list_display = ('name', 'code', 'price', 'state', 'seller')
-    ordering = ('seller', 'name')
+    list_display = ('name', 'code', 'price', 'state', 'vendor')
+    ordering = ('vendor', 'name')
     search_fields = ['name', 'code']
 admin.site.register(Item, ItemAdmin)
 
 
-class SellerForm(forms.ModelForm):
+class VendorForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance.index = self.instance.event.get_next_index()
-        return super(SellerForm, self).save(commit)
+        return super(VendorForm, self).save(commit)
 
     #noinspection PyClassHasNoInit
     class Meta:
-        model = Seller
+        model = Vendor
         exclude = ['index']
 
 
-class SellerAdmin(admin.ModelAdmin):
-    form = SellerForm
+class VendorAdmin(admin.ModelAdmin):
+    form = VendorForm
     list_display = ('__unicode__', 'event', 'index', 'pk')
     ordering = ('event', 'user__first_name', 'user__last_name')
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
 
-admin.site.register(Seller, SellerAdmin)
+admin.site.register(Vendor, VendorAdmin)
 
 
 def _regen_cleric_code(modeladmin, request, queryset):

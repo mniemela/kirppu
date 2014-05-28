@@ -13,15 +13,15 @@ def index(request):
 
 def get_items(request, sid):
     """
-    Get a page containing all items for seller.
+    Get a page containing all items for vendor.
 
     :param request: HttpRequest object.
     :type request: django.http.request.HttpRequest
-    :param sid: Seller ID
+    :param sid: Vendor ID
     :type sid: str
     :return: HttpResponse or HttpResponseBadRequest
     """
-    # TODO: This view should filter by event and seller__index | seller__id
+    # TODO: This view should filter by event and vendor__index | vendor__id
     bar_type = request.GET.get("format", "svg").lower()
 
     if bar_type not in ('svg', 'png'):
@@ -29,7 +29,7 @@ def get_items(request, sid):
 
     sid = int(sid)
     items = Item.objects.filter(seller__id=sid).exclude(code=u"")
-    
+
     if not items:
         return HttpResponseBadRequest(u"No items for this vendor found.")
     

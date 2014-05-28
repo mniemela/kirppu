@@ -141,11 +141,11 @@ PIPELINE_CSS = {
         ),
         "output_filename": "styles.css",
     },
-    'seller': {
+    'vendor': {
         "source_filenames": (
             "css/app.css",
         ),
-        "output_filename": "seller.css",
+        "output_filename": "vendor.css",
     },
     'registry': {
         "source_filenames": (
