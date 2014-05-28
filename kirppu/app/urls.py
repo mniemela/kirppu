@@ -7,5 +7,5 @@ urlpatterns = patterns('kirppu.app.views',
     url(r'^code/(?P<iid>\w+?)\.(?P<ext>\w+)', 'get_item_image', name='image'),
     url(r'^commands/(?P<eid>\d+)', 'get_commands', name='commands'),
     url(r'^command/(?P<iid>\w+?)\.(?P<ext>\w+)', 'get_command_image', name='command_image'),
-    url(r'^registry/(?P<eid>\d+)', 'registry_view'),
+    url(r'^checkout/(?P<eid>\d+)', 'checkout_view'),
 )

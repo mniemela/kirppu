@@ -136,9 +136,9 @@ def get_command_image(request, iid, ext):
     return response
 
 
-def registry_view(request, eid):
+def checkout_view(request, eid):
     """
-    Registry view.
+    Checkout view.
 
     :param request: HttpRequest object
     :type request: django.http.request.HttpRequest
@@ -147,10 +147,10 @@ def registry_view(request, eid):
     :return: Response containing the view.
     :rtype: HttpResponse
     """
-    return render(request, "app_registry.html")
+    return render(request, "app_checkout.html")
 
 
-def registry_add_item(request, eid):
+def checkout_add_item(request, eid):
     """
     Add item to receipt. Expects item code in POST.code and receipt id in
     POST.receipt.
@@ -164,7 +164,7 @@ def registry_add_item(request, eid):
     pass
 
 
-def registry_del_item(request, eid):
+def checkout_del_item(request, eid):
     """
     Remove item from receipt. Expects item code in POST.code and receipt id
     in POST.receipt.
@@ -178,7 +178,7 @@ def registry_del_item(request, eid):
     pass
 
 
-def registry_finish_receipt(request, eid):
+def checkout_finish_receipt(request, eid):
     """
     Finish receipt. Expects receipt id in POST.receipt.
 

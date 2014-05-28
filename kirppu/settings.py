@@ -147,11 +147,11 @@ PIPELINE_CSS = {
         ),
         "output_filename": "vendor.css",
     },
-    'registry': {
+    'checkout': {
         "source_filenames": (
-            "css/registry.css",
+            "css/checkout.css",
         ),
-        "output_filename": "registry.css",
+        "output_filename": "checkout.css",
     }
 }
 PIPELINE_JS = {
@@ -162,11 +162,11 @@ PIPELINE_JS = {
         ),
         "output_filename": "general.js",
     },
-    'registry': {
+    'checkout': {
         "source_filenames": (
-            "js/registry.coffee",
+            "js/checkout.coffee",
         ),
-        "output_filename": "registry.js",
+        "output_filename": "checkout.js",
     },
 }
 
