@@ -2,7 +2,7 @@ from collections import namedtuple
 from django.utils.translation import ugettext
 from barcode.writer import SVGWriter, ImageWriter
 from django.http.response import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import render, get_object_or_404
 import barcode
 from kirppu.app.models import Item, Event, CommandCode
 
@@ -28,8 +28,12 @@ def get_items(request, sid):
         return HttpResponseBadRequest(u"Image extension not supported")
 
     sid = int(sid)
-    items = get_list_or_404(Item.objects, seller__id=sid).exclude(code=u"")
+    items = Item.objects.filter(seller__id=sid).exclude(code=u"")
     
+    if not items:
+        return HttpResponseBadRequest(u"No items for this vendor found.")
+    
+
     return render(request, "app_items.html", {'items': items, 'bar_type': bar_type})
 
 
