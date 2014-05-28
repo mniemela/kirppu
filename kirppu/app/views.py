@@ -85,19 +85,19 @@ def get_commands(request, eid):
     items = []
     code_item = namedtuple("CodeItem", "name code action")
 
-    for c in event.clerics.all():
-        code = event.get_cleric_code(c)
+    for c in event.clerks.all():
+        code = event.get_clerk_code(c)
         name = c.get_short_name()
         if len(name) == 0:
             name = c.get_username()
 
-        cc = CommandCode.encode_code(CommandCode.START_CLERIC, code)
+        cc = CommandCode.encode_code(CommandCode.START_CLERK, code)
         items.append(code_item(name=name, code=cc, action=ugettext(u"Start")))
 
-        cc = CommandCode.encode_code(CommandCode.END_CLERIC, code)
+        cc = CommandCode.encode_code(CommandCode.END_CLERK, code)
         items.append(code_item(name=name, code=cc, action=ugettext(u"End")))
 
-    return render(request, "app_clerics.html", {'items': items, 'bar_type': bar_type})
+    return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
 
 
 def get_command_image(request, iid, ext):

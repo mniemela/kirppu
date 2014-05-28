@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext
-from kirppu.app.models import Event, Item, Vendor, EventCleric
+from kirppu.app.models import Event, Item, Vendor, EventClerk
 
 __author__ = 'jyrkila'
 
@@ -60,24 +60,24 @@ class VendorAdmin(admin.ModelAdmin):
 admin.site.register(Vendor, VendorAdmin)
 
 
-def _regen_cleric_code(modeladmin, request, queryset):
+def _regen_clerk_code(modeladmin, request, queryset):
     for row in queryset:
         row.code = ""
         row.save()
-_regen_cleric_code.short_description = ugettext(u"Re-generate cleric codes")
+_regen_clerk_code.short_description = ugettext(u"Re-generate clerk codes")
 
 
-class ClericForm(forms.ModelForm):
+class ClerkForm(forms.ModelForm):
     code = forms.CharField(required=False)
 
     #noinspection PyClassHasNoInit
     class Meta:
-        model = EventCleric
+        model = EventClerk
 
 
-class ClericAdmin(admin.ModelAdmin):
-    form = ClericForm
-    actions = [_regen_cleric_code]
+class ClerkAdmin(admin.ModelAdmin):
+    form = ClerkForm
+    actions = [_regen_clerk_code]
     list_display = ('event', 'user', 'code')
 
-admin.site.register(EventCleric, ClericAdmin)
+admin.site.register(EventClerk, ClerkAdmin)

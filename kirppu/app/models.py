@@ -73,8 +73,8 @@ def decode(data, length=5):
 
 
 class CommandCode(object):
-    START_CLERIC = 1
-    END_CLERIC = 3
+    START_CLERK = 1
+    END_CLERK = 3
 
     @classmethod
     def encode_code(cls, command, payload):
@@ -129,7 +129,7 @@ class Event(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     #date_id = models.IntegerField(db_index=True)
-    clerics = models.ManyToManyField(User, through="EventCleric")
+    clerks = models.ManyToManyField(User, through="EventClerk")
 
     auto_index_vendor = models.IntegerField(default=0)
 
@@ -152,22 +152,22 @@ class Event(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_cleric_code(self, cleric):
+    def get_clerk_code(self, clerk):
         """
-        Get cleric code (to be encoded in command).
+        Get clerk code (to be encoded in command).
         The code is DID:10 PW:36.
 
-        :param cleric: Cleric of the event
-        :type cleric: User
-        :return: Command code for the cleric or None if cleric is not assigned
+        :param clerk: Clerk of the event
+        :type clerk: User
+        :return: Command code for the clerk or None if clerk is not assigned
             in event.
         :rtype: long | None
         """
-        assert isinstance(cleric, get_user_model())
+        assert isinstance(clerk, get_user_model())
 
         try:
-            c_object = EventCleric.objects.get(event=self, user=cleric)
-        except EventCleric.DoesNotExist:
+            c_object = EventClerk.objects.get(event=self, user=clerk)
+        except EventClerk.DoesNotExist:
             return None
 
         did = self.get_date_identifier() & long((1 << 10) - 1)
@@ -175,32 +175,32 @@ class Event(models.Model):
 
         return (did << 36) | cid
 
-    def parse_cleric_code(self, payload):
+    def parse_clerk_code(self, payload):
         """
-        Get cleric (from command code).
+        Get clerk (from command code).
 
         :param payload: Payload number from command code.
         :type payload: long
-        :return: Event Cleric User or None if cleric is not assigned in
+        :return: Event Clerk User or None if clerk is not assigned in
             event.
-        :rtype: EventCleric | None
+        :rtype: EventClerk | None
         """
         cid = payload & ((1 << 36) - 1)
         did = (payload >> 36) & ((1 << 10) - 1)
         if did != self.get_date_identifier():
             return None
 
-        return EventCleric.parse_code(self, cid)
+        return EventClerk.parse_code(self, cid)
 
 
-class EventCleric(models.Model):
+class EventClerk(models.Model):
     BITS = 36
     event = models.ForeignKey(Event)
     user = models.ForeignKey(User)
     code = models.CharField(max_length=16)
 
     def __init__(self, *args, **kwargs):
-        super(EventCleric, self).__init__(*args, **kwargs)
+        super(EventClerk, self).__init__(*args, **kwargs)
         self._code = None
 
     #noinspection PyClassHasNoInit
@@ -212,8 +212,8 @@ class EventCleric(models.Model):
         for _ in range(16):
             try:
                 self._ensure_code()
-                super(EventCleric, self).save(*args, **kwargs)
-            except EventCleric.IntegrityError, e:
+                super(EventClerk, self).save(*args, **kwargs)
+            except EventClerk.IntegrityError, e:
                 self.code = None
                 exc = e
             else:
@@ -238,7 +238,7 @@ class EventCleric(models.Model):
 
     def _ensure_code(self):
         """
-        Ensure that encoding code is set for the cleric.
+        Ensure that encoding code is set for the clerk.
         """
         if self.code is not None and len(self.code) > 0:
             return
@@ -265,13 +265,13 @@ class EventCleric(models.Model):
     @classmethod
     def parse_code(cls, event, code):
         """
-        Parse given code and return EventCleric its corresponding instance if existing.
+        Parse given code and return EventClerk its corresponding instance if existing.
 
         :param event: Selected event object.
         :type event: Event
         :param code: Payload from command code.
         :type code: long
-        :rtype: EventCleric | None
+        :rtype: EventClerk | None
         """
         out = cls._gen_hex(code)
         try:
@@ -493,5 +493,5 @@ class Receipt(models.Model):
     items = models.ManyToManyField(Item, through=ReceiptItem)
     status = models.CharField(choices=STATUS, max_length=16)
     total = models.DecimalField(max_digits=8, decimal_places=2)
-    cleric = models.ForeignKey(User)
+    clerk = models.ForeignKey(User)
     sell_time = models.DateTimeField(null=True)

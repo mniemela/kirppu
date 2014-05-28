@@ -2,14 +2,14 @@
 <!doctype html>
 <html>
 <head>
-    <title>Cleric codes</title>
+    <title>Clerk codes</title>
     {% compressed_css 'general' %}
     {% compressed_css 'vendor' %}
     {% compressed_js 'general' %}
 </head>
 <body>
 {% for i in items %}
-    <div class="cleric_container {% cycle 'item_even' 'item_odd' %}">
+    <div class="clerk_container {% cycle 'item_even' 'item_odd' %}">
     <div class="item_info">
         <span class="item_list item_info_name">{{ i.name }}</span>
         <span class="item_list item_info_action">{{ i.action }}</span>
