@@ -10,4 +10,5 @@ urlpatterns = patterns('kirppu.app.views',
     url(r'^checkout/(?P<eid>\d+)$', 'checkout_view'),
     url(r'^vendor/$', 'vendor_view', name='vendor_view'),
     url(r'^vendor/login/$', 'vendor_login', name='vendor_login'),
+    url(r'^logout/$', 'user_logout', name='user_logout'),
 )

@@ -4,6 +4,7 @@ import barcode
 from barcode.writer import SVGWriter, ImageWriter
 
 import django.contrib.auth as auth
+import django.contrib.auth.views as auth_views
 from django.core.context_processors import csrf
 import django.core.urlresolvers as url
 import django.forms as forms
@@ -236,7 +237,7 @@ def vendor_login(request):
     """
     On GET, render the login page. On POST, attempt login.
     """
-    # Inspired by django.contrib.auth.views.
+    # Inspired by django.contrib.auth.views.login().
     destination = request.REQUEST.get('next')
     if not is_safe_url(destination, request.get_host()):
         destination = url.reverse('kirppu:vendor_view')
@@ -258,3 +259,13 @@ def vendor_login(request):
             return HttpResponseRedirect(destination)
         else:
             return render_login_page(destination, form)
+
+def user_logout(request):
+    """
+    Logout a vendor or a clerk.
+    """
+    return auth_views.logout(
+        request,
+        template_name='app_logged_out.html',
+        redirect_field_name='next',
+    )
