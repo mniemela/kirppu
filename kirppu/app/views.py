@@ -28,7 +28,7 @@ def get_items(request, sid):
         return HttpResponseBadRequest(u"Image extension not supported")
 
     sid = int(sid)
-    items = Item.objects.filter(seller__id=sid).exclude(code=u"")
+    items = Item.objects.filter(vendor__id=sid).exclude(code=u"")
 
     if not items:
         return HttpResponseBadRequest(u"No items for this vendor found.")
