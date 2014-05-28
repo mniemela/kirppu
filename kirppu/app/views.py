@@ -11,7 +11,7 @@ def index(request):
     return HttpResponse("")
 
 
-def get_items(request, sid):
+def get_items(request, sid, eid):
     """
     Get a page containing all items for vendor.
 
@@ -19,21 +19,20 @@ def get_items(request, sid):
     :type request: django.http.request.HttpRequest
     :param sid: Vendor ID
     :type sid: str
+    :param eid: Event ID
+    :type eid: str
     :return: HttpResponse or HttpResponseBadRequest
     """
-    # TODO: This view should filter by event and vendor__index | vendor__id
     bar_type = request.GET.get("format", "svg").lower()
 
     if bar_type not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
 
-    sid = int(sid)
-    items = Item.objects.filter(vendor__id=sid).exclude(code=u"")
+    items = Item.objects.filter(vendor__id=sid, event__id=eid).exclude(code=u"")
 
     if not items:
         return HttpResponseBadRequest(u"No items for this vendor found.")
     
-
     return render(request, "app_items.html", {'items': items, 'bar_type': bar_type})
 
 
