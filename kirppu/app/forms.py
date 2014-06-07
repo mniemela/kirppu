@@ -10,7 +10,7 @@ class VendorAuthenticationForm(AuthenticationForm):
 
         # Check that the user is registered as a vendor.
         user = self.get_user()
-        if user and user.vendor_set.count() == 0:
+        if user and not user.is_vendor():
             raise forms.ValidationError(
                 self.error_messages['invalid_login'],
                 code='invalid_login',

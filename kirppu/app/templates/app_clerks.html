@@ -14,7 +14,8 @@
         <span class="item_list item_info_name">{{ i.name }}</span>
         <span class="item_list item_info_action">{{ i.action }}</span>
     </div>
-    <img src="{% url 'kirppu:command_image' i.code bar_type %}" alt="Barcode: {{ i.code }}" />
+    <img src="{% url 'kirppu:command_barcode' i.code bar_type %}"
+         alt="Barcode: {{ i.code }}" />
     </div>
 {% endfor %}
 </body>

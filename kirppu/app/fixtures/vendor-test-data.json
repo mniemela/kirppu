@@ -2,7 +2,6 @@
     {
         "fields": {
             "code": "",
-            "event": 1,
             "name": "animu-BluRay",
             "price": "50.45",
             "state": "AD",
@@ -53,21 +52,9 @@
     },
     {
         "fields": {
-            "event": 1,
-            "index": 1,
             "user": 1
         },
         "model": "app.vendor",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "auto_index_vendor": 1,
-            "end_date": "2014-05-29",
-            "name": "yksityis-Tracon",
-            "start_date": "2014-05-28"
-        },
-        "model": "app.event",
         "pk": 1
     }
 ]

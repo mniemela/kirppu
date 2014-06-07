@@ -14,10 +14,10 @@
         <span class="item_list item_info_name">{{ i.name }}</span>
         <span class="item_list item_info_price">{{ i.price }}&euro;</span>
     </div>
-    <img src="{% url 'kirppu:image' i.code bar_type %}" alt="Barcode: {{ i.code }}" />
+    <img src="{% url 'kirppu:barcode' i.code bar_type %}"
+         alt="Barcode: {{ i.code }}" />
     <div class="item_extra_info">
-        <span class="item_list item_extra_date">{{ i.event.get_date_identifier }}, {{ i.vendor_id }}</span>
-        <span class="item_list item_extra_event">{{ i.event }}</span>
+        <span class="item_list">{{ i.vendor_id }}</span>
         <span class="item_list item_extra_code">{{ i.code }}</span>
     </div>
     </div>
