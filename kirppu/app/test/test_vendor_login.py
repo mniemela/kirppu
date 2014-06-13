@@ -7,19 +7,9 @@ class TestVendorLogin(TestCase):
     fixtures = map(os.path.normpath,
             ['kirppu/app/fixtures/vendor-test-data.json'])
 
-    def try_login(self, username, password, rest=None):
-        params = {
-            'username': username,
-            'password': password,
-        }
-        if rest is not None:
-            params.update(rest)
-
-        return self.client.post(
-            '/kirppu/vendor/login/',
-            params,
-        )
-
+    def try_login(self, username, password, **params):
+        params.update({'username': username, 'password': password})
+        return self.client.post('/kirppu/vendor/login/', params)
 
     def test_successful_login(self):
         """Should be able to login with correct credentials."""
@@ -31,8 +21,8 @@ class TestVendorLogin(TestCase):
 
         response = self.try_login(
             'pelle', '1234',
-            {'csrfmiddlewaretoken': self.client.cookies['csrftoken'].value,
-             'next': '/'},
+            csrfmiddlewaretoken=self.client.cookies['csrftoken'].value,
+            next='/',
         )
         self.assertRedirects(response, '/')
         self.assertIn('_auth_user_id', self.client.session)

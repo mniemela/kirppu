@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
 from kirppu.app.models import Vendor
+from kirppu.kirppuauth.models import User
+from kirppu.kirppuauth.admin import KirppuUserCreationForm
 
 class VendorAuthenticationForm(AuthenticationForm):
 
@@ -18,3 +20,12 @@ class VendorAuthenticationForm(AuthenticationForm):
             )
 
         return ret
+
+
+class VendorCreationForm(KirppuUserCreationForm):
+
+    def save(self):
+        user = super(VendorCreationForm, self).save(commit=False)
+        user.save()
+        Vendor.objects.create(user=user)
+        return user

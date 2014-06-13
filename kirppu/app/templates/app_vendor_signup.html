@@ -1,0 +1,22 @@
+{% load compressed %}
+<!doctype html>
+<html>
+<head>
+    <title>Kirppu - Sign Up as a Vendor</title>
+    {% compressed_css 'general' %}
+    {% compressed_css 'vendor' %}
+    {% compressed_js 'general' %}
+</head>
+<body>
+    <h1>Create an Account</h1>
+
+    <form action="{% url 'kirppu:vendor_signup' %}"
+          method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sign Up"/>
+    </form>
+
+    <a href={% url 'kirppu:vendor_login' %}>Log in</a>
+</body>
+</html>
