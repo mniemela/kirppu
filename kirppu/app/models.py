@@ -4,7 +4,15 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from ..util import b32_encode, b32_decode, pack, unpack, InvalidChecksum
+from ..util import (
+    number_to_hex,
+    hex_to_number,
+    b32_encode,
+    b32_decode,
+    pack,
+    unpack,
+    InvalidChecksum,
+)
 
 User = settings.AUTH_USER_MODEL
 
@@ -30,18 +38,25 @@ class CommandCode(object):
         :type command: int
 
         :param payload: Payload data
-        :type payload: long
+        :type payload: int
 
         :return: Encoded command code
         :rtype: str
 
         :raise OverflowError: If the command or payload is too large.
+
+        >>> CommandCode.encode_code(
+        ...     CommandCode.END_CLERK,
+        ...     123456789,
+        ... )
+        'AAAEARPT'
+
         """
         return b32_encode(
             pack([
-                ( 4L, command),
-                (46L, payload),
-                (18L, 0L),
+                ( 4, command),
+                (46, payload),
+                (18, 0),
             ], check_len=4),
             length=9
         )
@@ -54,21 +69,29 @@ class CommandCode(object):
         :param data: Command string
         :type data: str
         :return: Command and payload
-        :rtype: (int, long)
+        :rtype: (int, int)
 
         :raise ValueError: If the data is not valid.
         :raise InvalidChecksum: If the checksum does not match.
+
+        >>> CommandCode.parse_code('AAAEARPT')
+        (3, 123456789)
+        >>> CommandCode.parse_code('6M7UARPT')
+        Traceback (most recent call last):
+            ...
+        ValueError: not a CommandCode
+
         """
         command, payload, zeros = unpack(
             b32_decode(data, length=9),
-            [4L, 46L, 18L],
+            [4, 46, 18],
             check_len=4,
         )
 
-        if zeros != 0L:
+        if zeros != 0:
             raise ValueError('not a CommandCode')
 
-        return int(cmd), payload
+        return int(command), payload
 
 
 class Clerk(models.Model):
@@ -78,7 +101,7 @@ class Clerk(models.Model):
         return u'<Clerk: {0}>'.format(unicode(self.user))
 
     def get_code(self):
-        return number_to_hex(self.id)
+        return number_to_hex(self.id, 36)
 
     @classmethod
     def by_hex_code(cls, hex_code):
@@ -172,8 +195,8 @@ class Item(models.Model):
         """
         return b32_encode(
             pack([
-                (12L, self.vendor.id),
-                (24L, self.pk),
+                (12, self.vendor.id),
+                (24, self.pk),
             ], check_len=4)
         )
 
@@ -185,12 +208,12 @@ class Item(models.Model):
         :param data: Barcode data scanned from product
         :type data: str
         :return: Vendor id and item id
-        :rtype: (long, long)
+        :rtype: (int, int)
         :raise InvalidChecksum: If the checksum does not match the data.
         """
         return unpack(
             b32_decode(data),
-            [12L, 24L],
+            [12, 24],
             check_len=4,
         )
 
@@ -206,7 +229,7 @@ class Item(models.Model):
         :raise Item.DoesNotExist: If no Item matches the code.
         """
         try:
-            _, vendor_id, _ = Item.parse_barcode(data)
+            vendor_id, _ = Item.parse_barcode(data)
         except InvalidChecksum:
             return None
         return Item.objects.get(code=data, vendor__id=vendor_id)

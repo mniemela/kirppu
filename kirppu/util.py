@@ -1,4 +1,5 @@
 import base64
+import math
 
 """
 Miscellaneous utility functions.
@@ -10,13 +11,17 @@ def swap(number, i1, i2):
     Swap given bits from number.
 
     :param number: A number
-    :type number: int or long
+    :type number: int
     :param i1: Bit index
     :type i1: int
     :param i2: Bit index
     :type i2: int
     :return: A number with given bits swapped.
-    :rtype: int or long
+    :rtype: int
+
+    >>> swap(0b101011, 1, 4) == 0b111001
+    True
+
     """
     b1 = (1 << i1)
     b2 = (1 << i2)
@@ -37,34 +42,47 @@ def swap(number, i1, i2):
 def number_to_hex(number, width):
     """
     Return the hex string representation of the given number.
-    Convert the given number to a hex string.
 
     :param number: Number to convert
-    :type number: long
+    :type number: int
 
     :param width: Width of the result in bits
-    :type width: long
+    :type width: int
 
     :return: The number as a hex string
     :rtype: str
 
     :raise OverflowError: If the number does not fit into the given width.
+
+    >>> number_to_hex(0xC0FFEE, 24)
+    'C0FFEE'
+    >>> number_to_hex(0xC0FFEE, 30)
+    '00C0FFEE'
+    >>> number_to_hex(0xC0FFEE, 23)
+    Traceback (most recent call last):
+        ...
+    OverflowError: 12648430 does not fit into 23 bits
+
     """
-    if number >> width != 0L:
+    if number >> width != 0:
         raise OverflowError(
             '{0} does not fit into {1} bits'.format(number, width)
         )
-    return '{0:0{1}X}'.format(number, math.ceil(width / 4L))
+    return '{0:0{1}X}'.format(number, long(math.ceil(width / 4.0)))
 
 
 def hex_to_number(hex_string):
     """
-    Return a long representation of the encoding code.
+    Return a int representation of the encoding code.
 
     :param hex_string: Hex string to convert
     :type hex_string: str
     :return: The hex string as a number
-    :type: long
+    :type: int
+
+    >>> hex_to_number('00F00D') == 0xF00D
+    True
+
     """
     return long(hex_string, 16)
 
@@ -74,7 +92,7 @@ def b32_encode(ref, length=5):
     Encode a number as a b32 string.
 
     :param ref: Number to encode
-    :type ref: long
+    :type ref: int
     :param length: Number of bytes to encode
     :type length: int
     :return: Base32 encoded string
@@ -83,7 +101,7 @@ def b32_encode(ref, length=5):
     part = ""
     for i in range(length):
         symbol = (ref >> (8 * i)) & 0xFF
-        part += chr(int(symbol))
+        part += chr(long(symbol))
 
     # Encode the byte string in base32
     return base64.b32encode(part).rstrip("=")
@@ -98,20 +116,20 @@ def b32_decode(data, length=5):
     :param length: Number of bytes in the string.
     :type length: int
     :return: The decoded number
-    :rtype: long
+    :rtype: int
     """
-    data += "=" * int((5 - (1 + (length - 1) % 5)) * 1.5)
+    data += "=" * long((5 - (1 + (length - 1) % 5)) * 1.5)
     parts = base64.b32decode(data)
 
     assert len(parts) == length
 
-    number = 0L
+    number = 0
     for i in range(length):
         number |= ord(parts[i]) << (i * 8)
     return number
 
 
-def pack(fields, check_len=0L):
+def pack(fields, checksum_bits=0):
     """
     Pack numbers into a single number.
 
@@ -120,28 +138,36 @@ def pack(fields, check_len=0L):
     The second element of the pair specifies the actual data to pack.
 
     :param fields: The data fields and their widths
-    :type fields: [(long, long)]
+    :type fields: [(int, int)]
 
-    :param check_len: Length of the checksum to append
-    :type check_len: long
+    :param checksum_bits: Length, in bits, of the checksum to append
+    :type checksum_bits: int
 
     :return: Packed data
-    :rtype: long
+    :rtype: int
 
     :raise OverflowError: If some data does not fit into the specified width.
+
+    >>> pack([(4, 15), (3, 7), (5, 0)]) == 0xFE0
+    True
+    >>> pack([(2, 5)])
+    Traceback (most recent call last):
+        ...
+    OverflowError: 5 does not fit into 2 bits
+
     """
-    result = 0L
+    result = 0
 
     for width, number in fields:
-        if number >> width != 0L:
+        if number >> width != 0:
             raise OverflowError(
                 '{0} does not fit into {1} bits'.format(number, width)
             )
         result <<= width
         result |= number
 
-    csum = checksum(result, check_len)
-    result <<= check_len
+    csum = checksum(result, checksum_bits)
+    result <<= checksum_bits
     result |= csum
     return result
 
@@ -150,42 +176,55 @@ class InvalidChecksum(ValueError):
     pass
 
 
-def unpack(data, fields, check_len=0L):
+def unpack(data, fields, checksum_bits=0):
     """
     Unpack packed data.
 
     Each element of `fields` specifies the width a single data field.
 
     :param data: Packed data
-    :type data: long
+    :type data: int
 
     :param fields: The widths of the data fields
-    :type fields: [long]
+    :type fields: [int]
 
-    :param check_len: Length of the checksum
-    :type check_len: long
+    :param checksum_bits: Length of the checksum in bits
+    :type checksum_bits: int
 
     :return: List of unpacked data fields
-    :rtype: [long]
+    :rtype: [int]
 
     :raise InvalidChecksum: If the checksum does not match the data.
+
+    >>> widths = [12, 34, 56]
+    >>> data = [78, 90, 12]
+    >>> packed = pack(zip(widths, data), 34)
+    >>> unpack(packed, widths, 34) == data
+    True
+    >>> unpack(packed + 1, widths, 34)
+    Traceback (most recent call last):
+        ...
+    InvalidChecksum
+    >>> unpack(2, [3, 2, 1])
+    [0, 1, 0]
+
     """
-    csum = data & ((1L << check_len) - 1)
-    data >>= check_len
-    if csum != checksum(data, check_len):
+    csum = data & ((1 << checksum_bits) - 1)
+    data >>= checksum_bits
+    if csum != checksum(data, checksum_bits):
         raise InvalidChecksum()
 
     result = []
 
     for width in reversed(fields):
-        extracted = data & ((1L << width) - 1L)
+        extracted = data & ((1 << width) - 1)
         result.append(extracted)
         data >>= width
     result.reverse()
     return result
 
 
-def checksum(number, length=4L):
+def checksum(number, bits=4):
     """
     Calculate the checksum of a number.
 
@@ -193,17 +232,29 @@ def checksum(number, length=4L):
     bitstrings of N bits and performing a bitwise exclusive or on them.
 
     :param number: Number to generate the check
-    :type number: long
+    :type number: int
 
     :return: Checksum of the number
-    :rtype: long
+    :rtype: int
+
+    >>> checksum(0)
+    0
+    >>> checksum(0xFFF)
+    15
+    >>> checksum(0b01100111, 2)
+    1
+
     """
-    if length == 0:
+    if bits == 0:
         return 0
 
-    mask = (1L << length) - 1L
-    chk = 0L
-    while number > 0L:
+    mask = (1 << bits) - 1
+    chk = 0
+    while number > 0:
         chk ^= (number & mask)
-        number >>= length
+        number >>= bits
     return chk & mask
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

@@ -118,7 +118,7 @@ def get_item_barcode(request, item_id, ext):
     :rtype: HttpResponse
     """
     item = get_object_or_404(Item, code=item_id)
-    return get_barcode(item.code, ext)
+    return get_barcode(request, item.code, ext)
 
 
 def get_commands(request):
