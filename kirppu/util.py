@@ -68,7 +68,7 @@ def number_to_hex(number, width):
         raise OverflowError(
             '{0} does not fit into {1} bits'.format(number, width)
         )
-    return '{0:0{1}X}'.format(number, long(math.ceil(width / 4.0)))
+    return '{0:0{1}X}'.format(number, int(math.ceil(width / 4.0)))
 
 
 def hex_to_number(hex_string):
@@ -84,7 +84,7 @@ def hex_to_number(hex_string):
     True
 
     """
-    return long(hex_string, 16)
+    return int(hex_string, 16)
 
 
 def b32_encode(ref, length=5):
@@ -99,9 +99,9 @@ def b32_encode(ref, length=5):
     :rtype: str
     """
     part = ""
-    for i in range(length):
+    for i in xrange(length):
         symbol = (ref >> (8 * i)) & 0xFF
-        part += chr(long(symbol))
+        part += chr(int(symbol))
 
     # Encode the byte string in base32
     return base64.b32encode(part).rstrip("=")
@@ -117,14 +117,15 @@ def b32_decode(data, length=5):
     :type length: int
     :return: The decoded number
     :rtype: int
+    :raise TypeError: If the data is not valid
     """
-    data += "=" * long((5 - (1 + (length - 1) % 5)) * 1.5)
+    data += "=" * int((5 - (1 + (length - 1) % 5)) * 1.5)
     parts = base64.b32decode(data)
 
     assert len(parts) == length
 
     number = 0
-    for i in range(length):
+    for i in xrange(length):
         number |= ord(parts[i]) << (i * 8)
     return number
 

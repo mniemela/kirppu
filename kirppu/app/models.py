@@ -49,7 +49,7 @@ class CommandCode(object):
         ...     CommandCode.END_CLERK,
         ...     123456789,
         ... )
-        'AAAEARPT'
+        'AAAEARPT2YAQAMA'
 
         """
         return b32_encode(
@@ -57,7 +57,7 @@ class CommandCode(object):
                 ( 4, command),
                 (46, payload),
                 (18, 0),
-            ], check_len=4),
+            ], checksum_bits=4),
             length=9
         )
 
@@ -74,19 +74,30 @@ class CommandCode(object):
         :raise ValueError: If the data is not valid.
         :raise InvalidChecksum: If the checksum does not match.
 
-        >>> CommandCode.parse_code('AAAEARPT')
-        (3, 123456789)
-        >>> CommandCode.parse_code('6M7UARPT')
+        >>> CommandCode.parse_code('AAAEARPT2YAQAMA') == (3, 123456789)
+        True
+        >>> CommandCode.parse_code('7QBUARPT2YAQAMA')
         Traceback (most recent call last):
             ...
         ValueError: not a CommandCode
+        >>> CommandCode.parse_code('0')
+        Traceback (most recent call last):
+            ...
+        ValueError: not a CommandCode
+        >>> CommandCode.parse_code('AAAEARPT2YARAMA')
+        Traceback (most recent call last):
+            ...
+        InvalidChecksum
 
         """
-        command, payload, zeros = unpack(
-            b32_decode(data, length=9),
-            [4, 46, 18],
-            check_len=4,
-        )
+        try:
+            command, payload, zeros = unpack(
+                b32_decode(data, length=9),
+                [4, 46, 18],
+                checksum_bits=4,
+            )
+        except TypeError:
+            raise ValueError('not a CommandCode')
 
         if zeros != 0:
             raise ValueError('not a CommandCode')
@@ -197,7 +208,7 @@ class Item(models.Model):
             pack([
                 (12, self.vendor.id),
                 (24, self.pk),
-            ], check_len=4)
+            ], checksum_bits=4)
         )
 
     @staticmethod
@@ -214,7 +225,7 @@ class Item(models.Model):
         return unpack(
             b32_decode(data),
             [12, 24],
-            check_len=4,
+            checksum_bits=4,
         )
 
     @staticmethod
