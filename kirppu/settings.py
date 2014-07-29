@@ -168,6 +168,12 @@ PIPELINE_JS = {
         ),
         "output_filename": "checkout.js",
     },
+    'jeditable': {
+        "source_filenames": (
+            "js/jquery.jeditable.js",
+        ),
+        "output_filename": "jeditable.js"
+    },
 }
 
 PIPELINE_COMPILERS = (
