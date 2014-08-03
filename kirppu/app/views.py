@@ -252,6 +252,29 @@ def get_commands(request):
     return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
 
 
+def get_clerk_codes(request):
+    bar_type = request.GET.get("format", "svg").lower()
+
+    if bar_type not in ('svg', 'png'):
+        return HttpResponseBadRequest(u"Image extension not supported")
+
+    items = []
+    code_item = namedtuple("CodeItem", "name code")
+
+    for c in Clerk.objects.filter(access_key__isnull=False):
+        code = c.get_code()
+        if c.user is not None:
+            name = c.user.get_short_name()
+            if len(name) == 0:
+                name = c.user.get_username()
+        else:
+            name = ""
+
+        items.append(code_item(name=name, code=code))
+
+    return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
+
+
 def checkout_view(request):
     """
     Checkout view.

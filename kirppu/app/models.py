@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+import random
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -106,25 +106,117 @@ class CommandCode(object):
 
 
 class Clerk(models.Model):
-    user = models.ForeignKey(User)
+    PREFIX = "::"
+
+    user = models.ForeignKey(User, null=True)
+    access_key = models.CharField(
+        max_length=128,
+        unique=True,
+        null=True,
+        blank=True,
+        help_text=u"Access code assigned to the clerk.")
 
     def __unicode__(self):
-        return u'<Clerk: {0}>'.format(unicode(self.user))
+        if self.user is not None:
+            return unicode(self.user)
+        else:
+            return u'id={0}'.format(str(self.id))
 
     def get_code(self):
-        return number_to_hex(self.id, 36)
+        """
+        Get access card code for this Clerk.
+
+        Format of the code (without '::' prefix):
+            zeros:       4 bits
+            access_key: 56 bits
+            checksum:    4 bits
+            -------------------
+            total:      64 bits
+
+        :return: Clerk code.
+        :rtype: str
+        """
+        access_key = hex_to_number(self.access_key)
+        return self.PREFIX + b32_encode(
+            pack([
+                (4, 0),
+                (56, access_key),
+            ], checksum_bits=4),
+            length=8
+        )
 
     @classmethod
-    def by_hex_code(cls, hex_code):
+    def by_code(cls, code):
         """
         Return the Clerk instance with the given hex code.
+        The access card code should include prefix "::".
 
-        :param code: Hex code to look for
+        :param code: Raw code string from access card.
         :type code: str
-        :return: The corresponding Clerk
+        :return: The corresponding Clerk or None if access token is invalid.
         :rtype: Clerk | None
+        :raises: ValueError if not a valid Clerk access code.
         """
-        return cls.objects.get(id=hex_to_number(hex_code))
+        prefix_len = len(cls.PREFIX)
+        if len(code) <= prefix_len or code[:prefix_len] != cls.PREFIX:
+            raise ValueError("Not a Clerk code")
+        code = code[prefix_len:]
+        try:
+            zeros, access_key = unpack(
+                b32_decode(code, length=8),
+                [4, 56],
+                checksum_bits=4,
+            )
+        except TypeError:
+            raise ValueError("Not a Clerk code")
+
+        if zeros != 0:
+            raise ValueError("Not a Clerk code")
+
+        access_key_hex = number_to_hex(access_key, 56)
+        try:
+            clerk = cls.objects.get(access_key=access_key_hex)
+        except cls.DoesNotExist:
+            return None
+        if clerk.user is None:
+            return None
+        return clerk
+
+    def generate_access_key(self):
+        """
+        Generate new access token for this Clerk. This will automatically overwrite old value.
+
+        :return: The newly generated token.
+        """
+        key = None
+        while key is None or Clerk.objects.filter(access_key=key).exists():
+            key = random.randint(1, 2 ** 56 - 1)
+        self.access_key = number_to_hex(key, 56)
+        return key
+
+    @classmethod
+    def generate_empty_clerks(cls, count=1, commit=True):
+        """
+        Generate unbound Clerks, i.e. Clerks that have access-code but no user.
+        These Clerks can be "moved" to existing clerks so that the real Clerk will start
+        using the access key from unbound one.
+
+        This allows access codes to be pre-populated and printed to cards, which then can be
+        taken easily to use in case of need without needing to create the card then.
+
+        :param count: Count of unbound Clerks to generate, default 1.
+        :type count: int
+        :return: List of generated rows.
+        :rtype: list[Clerk]
+        """
+        ids = []
+        for _ in range(count):
+            item = cls()
+            item.generate_access_key()
+            if commit:
+                item.save()
+            ids.append(item)
+        return ids
 
 
 class Vendor(models.Model):

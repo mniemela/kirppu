@@ -11,8 +11,8 @@
 {% for i in items %}
     <div class="clerk_container {% cycle 'item_even' 'item_odd' %}">
     <div class="item_info">
-        <span class="item_list item_info_name">{{ i.name }}</span>
-        <span class="item_list item_info_action">{{ i.action }}</span>
+        <span class="item_list item_info_name">{{ i.name|default:"&nbsp;" }}</span>
+        <span class="item_list item_info_code barcode_value">{{ i.code }}</span>
     </div>
     <img src="{% url 'kirppu:command_barcode' i.code bar_type %}"
          alt="Barcode: {{ i.code }}" />

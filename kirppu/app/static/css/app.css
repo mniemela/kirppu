@@ -44,9 +44,6 @@
     white-space: nowrap;
     overflow: hidden;
 }
-.item_info_action {
-    font-size: x-small;
-}
-.item_extra_code {
+.barcode_value {
     font-family: serif;
 }
