@@ -1,8 +1,10 @@
 import random
 from django.db import models
+from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from kirppu.app.utils import model_dict_fn, format_datetime
 
 from ..util import (
     number_to_hex,
@@ -121,6 +123,11 @@ class Clerk(models.Model):
             return unicode(self.user)
         else:
             return u'id={0}'.format(str(self.id))
+
+    def as_dict(self):
+        return {
+            "user": unicode(self.user)
+        }
 
     def get_code(self):
         """
@@ -252,6 +259,9 @@ class Item(models.Model):
         (TYPE_LONG, _(u"Long price tag")),
     )
 
+    FRACTION_LEN = 2
+    FRACTION = 10 ** FRACTION_LEN
+
     code = models.CharField(
         max_length=16,
         blank=True,
@@ -276,6 +286,12 @@ class Item(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    as_dict = model_dict_fn("code", "name", "state", price="price_cents")
+
+    @property
+    def price_cents(self):
+        return long(self.price * self.FRACTION)
 
     @classmethod
     def new(cls, *args, **kwargs):
@@ -350,6 +366,25 @@ class Item(models.Model):
         return Item.objects.get(code=data, vendor__id=vendor_id)
 
 
+class Counter(models.Model):
+    identifier = models.CharField(
+        max_length=32,
+        blank=True,
+        null=False,
+        unique=True,
+        help_text=_(u"Identifier of the counter")
+    )
+    name = models.CharField(
+        max_length=64,
+        blank=True,
+        null=False,
+        help_text=_(u"Name of the counter")
+    )
+
+    def __unicode__(self):
+        return u"{1} ({0})".format(self.identifier, self.name)
+
+
 class ReceiptItem(models.Model):
     ADD = "ADD"
     REMOVE = "DEL"
@@ -363,6 +398,13 @@ class ReceiptItem(models.Model):
     receipt = models.ForeignKey("Receipt")
     action = models.CharField(choices=ACTION, max_length=16, default=ADD)
 
+    def as_dict(self):
+        ret = {
+            "action": self.action,
+        }
+        ret.update(self.item.as_dict())
+        return ret
+
 
 class Receipt(models.Model):
     PENDING = "PEND"
@@ -374,7 +416,34 @@ class Receipt(models.Model):
     )
 
     items = models.ManyToManyField(Item, through=ReceiptItem)
-    status = models.CharField(choices=STATUS, max_length=16)
-    total = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(choices=STATUS, max_length=16, default=PENDING)
+    total = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     clerk = models.ForeignKey(Clerk)
+    counter = models.ForeignKey(Counter)
+    start_time = models.DateTimeField(auto_now_add=True)
     sell_time = models.DateTimeField(null=True)
+
+    def items_list(self):
+        items = []
+        for item in self.items.all():
+            items.append(item.as_dict())
+
+        return items
+
+    @property
+    def total_cents(self):
+        return long(self.total * Item.FRACTION)
+
+    as_dict = model_dict_fn("status",
+        total="total_cents",
+        start_time=lambda self: format_datetime(self.start_time),
+        sell_time=lambda self: format_datetime(self.sell_time) if self.sell_time is not None else None,
+        clerk=lambda self: self.clerk.as_dict(),
+        counter=lambda self: self.counter.name)
+
+    def calculate_total(self):
+        result = ReceiptItem.objects.filter(action=ReceiptItem.ADD, receipt=self).aggregate(price_total=Sum("item__price"))
+        price_total = result["price_total"]
+        self.total = price_total
+        return self.total
+

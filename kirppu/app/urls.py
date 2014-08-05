@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
 __author__ = 'jyrkila'
 
@@ -22,4 +22,6 @@ urlpatterns = patterns('kirppu.app.views',
     url(r'^vendor/login/$', 'vendor_login', name='vendor_login'),
     url(r'^vendor/signup/$', 'vendor_signup', name='vendor_signup'),
     url(r'^logout/$', 'user_logout', name='user_logout'),
+
+    url(r'^api/', include('kirppu.app.checkout.urls')),
 )

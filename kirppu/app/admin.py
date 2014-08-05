@@ -4,7 +4,7 @@ from django.utils.translation import ugettext
 from django.contrib import messages
 from kirppu.app.forms import ClerkGenerationForm
 
-from kirppu.app.models import Clerk, Item, Vendor
+from kirppu.app.models import Clerk, Item, Vendor, Counter
 
 __author__ = 'jyrkila'
 
@@ -111,3 +111,5 @@ class ClerkAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Clerk, ClerkAdmin)
+
+admin.site.register(Counter)
