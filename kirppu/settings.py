@@ -171,8 +171,9 @@ PIPELINE_JS = {
     'checkout': {
         "source_filenames": (
             "js/checkout.coffee",
+            "js/csrf.coffee",
         ),
-        "output_filename": "checkout.js",
+        "output_filename": "cout.js",
     },
     'jeditable': {
         "source_filenames": (
