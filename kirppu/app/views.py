@@ -21,6 +21,8 @@ from django.shortcuts import (
 from django.utils.http import is_safe_url
 from django.utils.translation import ugettext
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 
 from kirppu.app.forms import (
     VendorAuthenticationForm,
@@ -36,6 +38,46 @@ from kirppu.app.models import (
 
 def index(request):
     return HttpResponse("")
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def item_update_price(request):
+    str_price = request.POST.get("value", "0")
+    str_price = str_price.replace(",", ".")
+    
+    try:
+        cents = float(str_price) * 100 # price in cents
+    except ValueError as __:
+        cents = 0
+    
+    # Round up to nearest 50 cents.---
+    if cents % 50 > 0:
+        cents += 50 - cents % 50
+    
+    import time
+    time.sleep(0.5)
+    
+    if cents == 0:
+        return HttpResponseBadRequest("Na a!")
+    
+    str_euros = str(cents / 100.0)
+    str_euros = str_euros.replace(".", ",")
+    
+    return HttpResponse(str_euros)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def item_update_name(request):
+    name = request.POST.get("value", "no name")
+    
+    name = name[:80]
+    
+    import time
+    time.sleep(0.5)
+    
+    return HttpResponse(name)
 
 
 def get_items(request, vendor_id):
