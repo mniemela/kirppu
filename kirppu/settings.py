@@ -147,6 +147,12 @@ PIPELINE_CSS = {
         ),
         "output_filename": "vendor.css",
     },
+    'price_tags': {
+        "source_filenames": (
+            "css/price_tags.css",
+        ),
+        "output_filename": "price_tags.css",
+    },
     'checkout': {
         "source_filenames": (
             "css/checkout.css",

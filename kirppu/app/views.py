@@ -91,9 +91,12 @@ def get_items(request, vendor_id):
     :return: HttpResponse or HttpResponseBadRequest
     """
     bar_type = request.GET.get("format", "svg").lower()
+    tag_type = request.GET.get("tag", "short").lower()
 
     if bar_type not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
+    if tag_type not in ('short', 'long'):
+        return HttpResponseBadRequest(u"Tag type not supported")
 
     try:
         vendor = Vendor.objects.get(id=vendor_id)
@@ -105,8 +108,13 @@ def get_items(request, vendor_id):
     if not items:
         return HttpResponseNotFound(
             u'No items found for "{0}".'.format(vendor.user.username))
-
-    return render(request, "app_items.html", {'items': items, 'bar_type': bar_type})
+    
+    render_params = {
+            'items': items,
+            'bar_type': bar_type,
+            'tag_type': tag_type,}
+    
+    return render(request, "app_items.html", render_params)
 
 
 def get_barcode(request, data, ext):

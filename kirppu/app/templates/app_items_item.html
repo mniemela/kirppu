@@ -1,0 +1,25 @@
+{% if tag_type == "short" %}
+    <div class="item_container item_short">
+{% elif tag_type == "long" %}
+    <div class="item_container">
+{% elif tag_type == "template" %}
+    <div class="item_container item_template">
+{% endif %}
+
+        <div class="item_head">
+            <span class="item_head_price">{{ price }}</span>
+        </div>
+        <div class="item_body">
+            <div class="item_name">{{ name }}</div>
+            <div class="item_price">{{ price }}</div>
+            <div class="barcode_container">
+               <img src="{% url 'kirppu:barcode' code bar_type %}" alt="Barcode: {{ code }}" />
+            </div>
+
+            <div class="item_vendor_id">{{ vendor_id }}</div>
+            <div class="item_extra_code">{{ code }}</div>
+        </div>
+
+        <button class="item_button_delete" type="button">&times;</button>
+        <button class="item_button_toggle" type="button">&lt;&gt;</button>
+    </div>

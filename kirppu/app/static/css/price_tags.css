@@ -1,0 +1,123 @@
+/**
+ * Hierarchy for item_container entities.
+ *
+ *  .item_container
+ *      .item_head
+ *          .item_price
+ *      .item_body
+ *          .item_price
+ *          .item_name
+ *          .barcode_container
+ *              img
+ *          .item_vendor_id
+ *          .item_extra_code
+ *      .item_button_delete
+ *      .item_button_toggle
+ */
+#items {
+	width: 19.1cm;
+    float: left;
+}
+.item_template {
+    display: none;
+}
+.item_container {
+    border: 1px solid black;
+    width: 19cm;
+    height: 3.5cm;
+    float: left;
+    padding: 0.1cm;
+    position: relative; /* Needed for absolute positioning of child elements. */
+    transition: width 0.2s;
+}
+.item_short {
+    width: 9.5cm;
+}
+
+.item_head {
+    float: left;
+    width: 2cm;
+}
+.item_short .item_head {
+	display: none;
+}
+.item_body {
+    float: left;
+    width: 9.3cm;
+    position: relative; /* Needed for absolute positioning of child elements. */
+}
+
+.item_price {
+    width: 3cm;
+    font-size: 150%;
+    border: 2px inset;
+}
+.item_price:after {
+    content:" \20AC"; /* euro */
+}
+.item_head_price:after {
+    content:" \20AC"; /* euro */
+}
+.item_head_price {
+    font-size: 100%;
+    width: 1.5cm; /* Width of price before scaling. */
+    text-align: center;
+    display: inline-block;
+
+    /* Rotate and scale the price tag. Order of operations matters.
+     * 1. Translate left by width of this element, so top-right
+     *    corner of price is on the top-left corner of price tag.
+     * 2. Rotate the price so it's sideways.
+     * 3. Scale the price by (tag height) / (price width) so it's
+     *    centered correctly.
+     */
+    transform-origin: left top;
+    transform:  scale(2) rotate(-90deg) translate(-100%, 0);
+}
+
+.item_name {
+    width: 8.7cm;
+    border: 2px inset;
+}
+
+.barcode_container, .item_extra_code, .item_vendor_id {
+    position: absolute;
+}
+.barcode_container {
+    top: 4em;
+	height: 2cm;
+	width: 5.6cm;
+}
+.item_vendor_id {
+    top: 4em;
+    left: 5.6cm;
+}
+.item_extra_code {
+    top: 5em;
+    left: 5.6cm;
+}
+
+.item_button_delete, .item_button_toggle {
+    position: absolute;
+    right: 0px;
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0px;
+    font-size:14px;
+    font-weight:bold;
+}
+.item_button_delete {
+    top: 0em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.item_button_toggle {
+    top: 1.5em;
+}
+a.item_button_delete {
+    position: absolute; width:20px;
+    background-color: #FFF; color: black;
+    border-radius: 20px;
+    padding-left: 3px; padding-top: 1px;
+    cursor:pointer; z-index: -1;
+    font-size:16px; font-weight:bold;
+}

@@ -1,26 +1,79 @@
 {% load compressed %}
+{% load staticfiles %}
 <!doctype html>
 <html>
 <head>
     <title>Item listing</title>
     {% compressed_css 'general' %}
-    {% compressed_css 'vendor' %}
+    {% compressed_css 'price_tags' %}
     {% compressed_js 'general' %}
+    {% compressed_js 'jeditable' %}
 </head>
 <body>
-{% for i in items %}
-    <div class="item_container {% cycle 'item_even' 'item_odd' %}">
-    <div class="item_info">
-        <span class="item_list item_info_name">{{ i.name }}</span>
-        <span class="item_list item_info_price">{{ i.price }}&euro;</span>
+    <button id="add_short_item" data-vendorid="1" data-title="title" data-url="dataurl" class="item-add btn btn-mini btn-info" type="button">Add item</button>
+    
+    <script>
+        function bind_tag_events(tags) {
+            tags.each(function(index, tag) {
+                $(".item_price", tag).editable("{% url 'kirppu:item_update_price' %}", {
+                    indicator : "<img src='{% static "img/roller.gif" %}'>",
+                    tooltip   : "Click to edit...",
+                    onblur    : "submit",
+                    style     : "width: 2cm"
+                });
+                $(".item_name", tag).editable("{% url 'kirppu:item_update_name' %}", {
+                    indicator : "<img src='{% static "img/roller.gif" %}'>",
+                    tooltip   : "Click to edit...",
+                    onblur    : "submit",
+                    style     : "inherit"
+                });
+                $('.item_button_delete', tag).click(function() {
+                    tag.remove();
+                });
+                $('.item_button_toggle', tag).click(function(){
+                    $(tag).toggleClass('item_short');
+                });
+            });
+        }
+
+        function create_tag(name, price, vendor_id, code) {
+            var tag = $(".item_template").clone();
+            tag.removeClass("item_template");
+
+            return tag;
+        }
+
+        $(document).ready(function() {
+
+            $('#add_short_item').click(function(){
+                var vendorid;
+                vendorid = $(this).attr("data-vendorid");
+                var tag = create_tag('foobar', '15.55', '1', 'ASDF');
+                tag.addClass("item_short");
+
+                {% comment %}
+                $.post('{% url 'kirppu:json_item' %}', {vendor_id: vendorid}, function(data){
+                    $('#items').prepend(tag);
+                    bind_tag_events($(tag));
+                });
+                {% endcomment %}
+
+                $('#items').prepend(tag);
+                bind_tag_events($(tag));
+            });
+
+            bind_tag_events($('.item_container'));
+        });
+    </script>
+
+    {# Output a single item_container as a template for javascript. #}
+    {% include 'app_items_item.html' with tag_type="template" name="" price="0" code="X" vendor_id="" %}
+    
+    <div id="items">
+        {# Output a template container for every item user has. #}
+        {% for i in items %}
+            {% include 'app_items_item.html' with name=i.name price=i.price code=i.code vendor_id=i.vendor_id %}
+        {% endfor %}
     </div>
-    <img src="{% url 'kirppu:barcode' i.code bar_type %}"
-         alt="Barcode: {{ i.code }}" />
-    <div class="item_extra_info">
-        <span class="item_list">{{ i.vendor_id }}</span>
-        <span class="item_list item_extra_code">{{ i.code }}</span>
-    </div>
-    </div>
-{% endfor %}
 </body>
 </html>
