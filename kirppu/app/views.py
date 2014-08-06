@@ -1,4 +1,5 @@
 from collections import namedtuple
+import json
 
 import barcode
 from barcode.writer import SVGWriter, ImageWriter
@@ -22,6 +23,7 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 
 from kirppu.app.forms import (
     VendorAuthenticationForm,
@@ -39,6 +41,7 @@ def index(request):
     return HttpResponse("")
 
 
+@login_required
 @require_http_methods(["POST"])
 def item_update_price(request):
     str_price = request.POST.get("value", "0")
@@ -65,6 +68,7 @@ def item_update_price(request):
     return HttpResponse(str_euros)
 
 
+@login_required
 @require_http_methods(["POST"])
 def item_update_name(request):
     name = request.POST.get("value", "no name")
@@ -77,6 +81,7 @@ def item_update_name(request):
     return HttpResponse(name)
 
 
+@login_required
 def get_items(request, vendor_id):
     """
     Get a page containing all items for vendor.
@@ -87,6 +92,10 @@ def get_items(request, vendor_id):
     :type vendor_id: str
     :return: HttpResponse or HttpResponseBadRequest
     """
+    can_access = request.user.id == vendor_id or request.user.is_staff
+    if not can_access:
+        return HttpResponseBadRequest(u"You do not have rights to access this page.")
+
     bar_type = request.GET.get("format", "svg").lower()
     tag_type = request.GET.get("tag", "short").lower()
 
