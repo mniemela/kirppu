@@ -45,22 +45,49 @@
             }
         });
 
+        function get_update_price_url(code) {
+            var url = "{% url 'kirppu:item_update_price' "code_placeholder" %}";
+            return url.replace("code_placeholder", code);
+        }
+
+        function get_update_name_url(code) {
+            var url = "{% url 'kirppu:item_update_name' "code_placeholder" %}";
+            return url.replace("code_placeholder", code);
+        }
+
+        function get_item_delete_url(code) {
+            var url = "{% url 'kirppu:item_delete' 'code_placeholder' %}";
+            return url.replace("code_placeholder", code);
+        }
+
         function bind_tag_events(tags) {
             tags.each(function(index, tag) {
-                $(".item_price", tag).editable("{% url 'kirppu:item_update_price' %}", {
+                var code = $(".item_extra_code", tag).text()
+                $(".item_price", tag).editable(get_update_price_url(code), {
                     indicator : "<img src='{% static "img/roller.gif" %}'>",
                     tooltip   : "Click to edit...",
                     onblur    : "submit",
                     style     : "width: 2cm"
                 });
-                $(".item_name", tag).editable("{% url 'kirppu:item_update_name' %}", {
+                $(".item_name", tag).editable(get_update_name_url(code), {
                     indicator : "<img src='{% static "img/roller.gif" %}'>",
                     tooltip   : "Click to edit...",
                     onblur    : "submit",
                     style     : "inherit"
                 });
                 $('.item_button_delete', tag).click(function() {
-                    tag.remove();
+                    $(tag).hide()
+                    $.ajax({
+                        url: get_item_delete_url(code),
+                        type: 'DELETE',
+                        complete: function(jqXHR, textStatus) {
+                            if (textStatus == "success") {
+                                tag.remove();
+                            } else {
+                                $(tag).show()
+                            }
+                        }
+                    });
                 });
                 $('.item_button_toggle', tag).click(function(){
                     $(tag).toggleClass('item_short');

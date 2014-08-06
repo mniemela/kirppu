@@ -66,9 +66,25 @@ def item_add(request):
     return HttpResponse(json.dumps(response), 'application/json')
 
 
+@require_http_methods(["DELETE"])
+def item_delete(request, code):
+    item = Item.get_item_by_barcode(code)
+    item.delete()
+
+    return HttpResponse()
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def item_view(request, code):
+    # GET and PUT methods might be put here in the future.
+    if request.method == 'DELETE':
+        return item_delete(request, code)
+
+
 @login_required
 @require_http_methods(["POST"])
-def item_update_price(request):
+def item_update_price(request, code):
     str_price = request.POST.get("value", "0")
     str_price = str_price.replace(",", ".")
     
@@ -95,7 +111,7 @@ def item_update_price(request):
 
 @login_required
 @require_http_methods(["POST"])
-def item_update_name(request):
+def item_update_name(request, code):
     name = request.POST.get("value", "no name")
     
     name = name[:80]
@@ -135,10 +151,6 @@ def get_items(request, vendor_id):
         return HttpResponseNotFound(u'Vendor not found.')
 
     items = Item.objects.filter(vendor__id=vendor_id).exclude(code='')
-
-    if not items:
-        return HttpResponseNotFound(
-            u'No items found for "{0}".'.format(vendor.user.username))
     
     render_params = {
             'items': items,
