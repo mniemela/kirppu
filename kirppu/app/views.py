@@ -43,6 +43,31 @@ def index(request):
 
 @login_required
 @require_http_methods(["POST"])
+def item_add(request):
+    vendor_id = request.user.id
+    #vendor_id = 1  # TODO: Use id of actual logged in user.
+    print "vendor_id", request.user
+    name = request.POST.get("name", "")
+    price = request.POST.get("price", "")
+
+    try:
+        vendor = Vendor.objects.get(id=vendor_id)
+    except:
+        return HttpResponseNotFound(u'Vendor not found.')
+
+    item = Item.new(name=name, price=price, vendor=vendor, state=Item.STAGED)
+
+    response = {
+            'vendor_id': vendor.id,
+            'code': item.code,
+            'name': item.name,
+            'price': item.price,
+            }
+    return HttpResponse(json.dumps(response), 'application/json')
+
+
+@login_required
+@require_http_methods(["POST"])
 def item_update_price(request):
     str_price = request.POST.get("value", "0")
     str_price = str_price.replace(",", ".")
