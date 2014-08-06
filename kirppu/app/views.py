@@ -96,17 +96,17 @@ def item_update_price(request, code):
     # Round up to nearest 50 cents.---
     if cents % 50 > 0:
         cents += 50 - cents % 50
-    
-    import time
-    time.sleep(0.5)
-    
+
     if cents == 0:
         return HttpResponseBadRequest("Na a!")
     
     str_euros = str(cents / 100.0)
-    str_euros = str_euros.replace(".", ",")
-    
-    return HttpResponse(str_euros)
+
+    item = Item.get_item_by_barcode(code)
+    item.price = str_euros
+    item.save()
+
+    return HttpResponse(str_euros.replace(".", ","))
 
 
 @login_required
@@ -115,10 +115,11 @@ def item_update_name(request, code):
     name = request.POST.get("value", "no name")
     
     name = name[:80]
-    
-    import time
-    time.sleep(0.5)
-    
+
+    item = Item.get_item_by_barcode(code)
+    item.name = name
+    item.save()
+
     return HttpResponse(name)
 
 
