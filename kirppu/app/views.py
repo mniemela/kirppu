@@ -22,7 +22,6 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
 
 from kirppu.app.forms import (
     VendorAuthenticationForm,
@@ -40,7 +39,6 @@ def index(request):
     return HttpResponse("")
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 def item_update_price(request):
     str_price = request.POST.get("value", "0")
@@ -67,7 +65,6 @@ def item_update_price(request):
     return HttpResponse(str_euros)
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 def item_update_name(request):
     name = request.POST.get("value", "no name")
