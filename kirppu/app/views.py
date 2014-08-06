@@ -134,7 +134,7 @@ def get_items(request, vendor_id):
     :type vendor_id: str
     :return: HttpResponse or HttpResponseBadRequest
     """
-    can_access = request.user.id == vendor_id or request.user.is_staff
+    can_access = int(request.user.id) == int(vendor_id) or request.user.is_staff
     if not can_access:
         return HttpResponseBadRequest(u"You do not have rights to access this page.")
 
