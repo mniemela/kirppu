@@ -88,6 +88,10 @@
 	height: 2cm;
 	width: 5.6cm;
 }
+.barcode_container > img {
+    width: 5.6cm;
+    height: 2cm;
+}
 .item_vendor_id {
     top: 4em;
     left: 5.6cm;
