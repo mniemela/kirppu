@@ -49,19 +49,21 @@ def item_add(request):
     print "vendor_id", request.user
     name = request.POST.get("name", "")
     price = request.POST.get("price", "")
+    type = request.POST.get("type", "short")
 
     try:
         vendor = Vendor.objects.get(id=vendor_id)
     except:
         return HttpResponseNotFound(u'Vendor not found.')
 
-    item = Item.new(name=name, price=price, vendor=vendor, state=Item.STAGED)
+    item = Item.new(name=name, price=price, vendor=vendor, type=type, state=Item.STAGED)
 
     response = {
             'vendor_id': vendor.id,
             'code': item.code,
             'name': item.name,
             'price': item.price,
+            'type': item.type,
             }
     return HttpResponse(json.dumps(response), 'application/json')
 

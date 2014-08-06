@@ -129,7 +129,7 @@ a.item_button_delete {
     .item_button_delete, .item_button_toggle {
         display: none;
     }
-    #add_short_item {
+    #item-add-form {
         display: none;
     }
     .item_container {
