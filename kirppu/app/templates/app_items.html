@@ -60,6 +60,11 @@
             return url.replace("code_placeholder", code);
         }
 
+        function get_item_toggle_url(code) {
+            var url = "{% url 'kirppu:item_update_type' 'code_placeholder' %}";
+            return url.replace("code_placeholder", code);
+        }
+
         function bind_tag_events(tags) {
             tags.each(function(index, tag) {
                 var code = $(".item_extra_code", tag).text()
@@ -90,7 +95,18 @@
                     });
                 });
                 $('.item_button_toggle', tag).click(function(){
+                    var tag_type = $(tag).hasClass('item_short') ? "long" : "short";
                     $(tag).toggleClass('item_short');
+                    $.ajax({
+                        url: get_item_toggle_url(code),
+                        type: 'POST',
+                        data: {'tag_type': tag_type},
+                        complete: function(jqXHR, textStatus) {
+                            if (textStatus != "success") {
+                                $(tag).toggleClass('item_short');
+                            }
+                        }
+                    });
                 });
             });
         }
@@ -135,7 +151,7 @@
     <div id="items">
         {# Output a template container for every item user has. #}
         {% for i in items %}
-            {% include 'app_items_item.html' with name=i.name price=i.price code=i.code vendor_id=i.vendor_id %}
+            {% include 'app_items_item.html' with name=i.name price=i.price code=i.code vendor_id=i.vendor_id tag_type=i.type %}
         {% endfor %}
     </div>
 </body>

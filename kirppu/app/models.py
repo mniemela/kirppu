@@ -153,6 +153,13 @@ class Item(models.Model):
         (COMPENSATED, _(u"Compensated to vendor")),
     )
 
+    TYPE_SHORT = "short"
+    TYPE_LONG = "long"
+    TYPE = (
+        (TYPE_SHORT, _(u"Short price tag")),
+        (TYPE_LONG, _(u"Long price tag")),
+    )
+
     code = models.CharField(
         max_length=16,
         blank=True,
@@ -168,6 +175,11 @@ class Item(models.Model):
         choices=STATE,
         max_length=8,
         default=ADVERTISED
+    )
+    type = models.CharField(
+        choices=TYPE,
+        max_length=8,
+        default=TYPE_SHORT
     )
 
     def __unicode__(self):

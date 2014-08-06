@@ -124,6 +124,17 @@ def item_update_name(request, code):
 
 
 @login_required
+@require_http_methods(["POST"])
+def item_update_type(request, code):
+    type = request.POST.get("tag_type", None)
+
+    item = Item.get_item_by_barcode(code)
+    item.type = type
+    item.save()
+    return HttpResponse()
+
+
+@login_required
 def get_items(request, vendor_id):
     """
     Get a page containing all items for vendor.
