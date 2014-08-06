@@ -121,3 +121,19 @@ a.item_button_delete {
     cursor:pointer; z-index: -1;
     font-size:16px; font-weight:bold;
 }
+
+@media print {
+    .item_price, .item_name {
+        border: none;
+    }
+    .item_button_delete, .item_button_toggle {
+        display: none;
+    }
+    #add_short_item {
+        display: none;
+    }
+    .item_container {
+        page-break-inside: avoid;
+    }
+}
+
