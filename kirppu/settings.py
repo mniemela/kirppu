@@ -172,6 +172,8 @@ PIPELINE_JS = {
     'checkout': {
         "source_filenames": (
             "js/checkout.coffee",
+            "js/modes.coffee",
+            "js/jquery.cookie-1.4.1-0.js",
         ),
         "output_filename": "cout.js",
     },

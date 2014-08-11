@@ -9,11 +9,13 @@ class Config
     apiReceiptFinish: null
   uiId:
     stateText: null
+    subtitleText: null
     codeInput: null
     codeForm: null
     receiptResult: null
   uiRef:
     stateText: null
+    subtitleText: null
     codeInput: null
     codeForm: null
     receiptResult: null
@@ -24,9 +26,13 @@ class Config
     commandPrefix: ":="
     removeItemPrefix: "-"
     payPrefix: "+"
+    counterCode: null
+    clerkName: null
   app:
-    inputHandler: null
+    switcher: null
 
+  # Check existence of uiId values and bind their references to uiRef.
+  # @return True if errors. False if all ok.
   check: ->
     errors = false
     for key, value of @uiId
@@ -36,130 +42,127 @@ class Config
         errors = true
         continue
       @uiRef[key] = element
-    errors = @_bind() unless errors
     return errors
 
-  _bind: ->
-    if @app.inputHandler?
-      @app.inputHandler.bind()
-    return false
+# Escape given string so that it can be fed literally to regular expression matching.
+#
+# @param txt [String] String to escape.
+# @return [String] Escaped string.
+escapeRegEx = (txt) ->
+  # This exp matches all special characters of regular expression string.
+  replacer = /([\.\[\]\(\)\{\}\*\+\?\^\$\|\\])/g;
 
+  # This effectively escapes all previously defined characters so that they are matched
+  # literally in the expression.
+  return txt.replace(replacer, "\\$1")
+window.escapeRegEx = escapeRegEx
 
 window.CheckoutConfig = new Config()
 
-class State
-  constructor: ->
-    @counterInfo = null
-    @clerkInfo = null
-
-  canLoginClerk: ->
-    return @counterInfo?
-
-  canValidateCounter: ->
-    return not @counterInfo?
-
-  canStartReceipt: ->
-    return @counterInfo? and @clerkInfo
-
-  getHeadingText: ->
-    return "Checkout "
-
-
-class InputHandler
-  constructor: (config) ->
-    @cfg = if config then config else CheckoutConfig
-    @enabled =
-      clerk: true
-      counter: true
-      command: true
-      item: true
-
-  bind: ->
-    @cfg.uiRef.codeForm.submit((event) =>
-      ctl = @cfg.uiRef.codeInput
-      value = ctl.val()
-      ret = @onInput(value)
-      if ret is true
-        ctl.val("")
-      else
-        console.error("Input not understood: '#{value}', ret=#{ret}")
-      event.preventDefault()
-    )
-
-  onInput: (input) ->
-    settings = @cfg.settings
-
-    if hasPrefix(input, settings.clerkPrefix)
-      @onInputClerk(input)
-
-    else if hasPrefix(input, settings.counterPrefix)
-      @onInputCounter(input)
-
-    else if hasPrefix(input, settings.commandPrefix)
-      @onInputCommand(input)
-
-    else if not settings.itemPrefix? or hasPrefix(input, settings.itemPrefix)
-      @onInputItem(input)
-
-    else
-      return false
-    return true
-
-  onInputClerk: (input) ->
-
-  onInputCounter: (input) ->
-
-  onInputCommand: (input) ->
-
-  onInputItem: (input) ->
-    Api.findItem(input, (data) =>
-      row = $("<tr>")
-      row.append(
-        $("<td>").text("?"),
-        $("<td>").text(data.code),
-        $("<td>").text(data.name),
-        $("<td>").text(data.price.formatCents())
-      )
-
-      @cfg.uiRef.receiptResult.append(row)
-    )
-window.InputHandler = InputHandler
-
+# Test if given prefix is found in left hand side string.
+# Can be considered to be similar to "lhs".startswith(prefix) found in some languages.
+#
+# @param lhs [String] Left hand side, the string to test.
+# @param prefix [String] Prefix that may exist in lhs.
+# @return [Boolean] True if prefix begins lhs. False if not.
 hasPrefix = (lhs, prefix) ->
   return prefix? and lhs.substr(0, prefix.length) == prefix
 
+
+# Functions for calling backend API. Not intended to be instantiated.
 class Api
   @C = CheckoutConfig
 
-  @_dump = (data) ->
-    console.log(JSON.stringify(data))
-
+  # Select correct success callback type for argument.
+  #
+  # @param fn [dict, class, function, null] If dict/class instance, "onResultSuccess" will be called
+  #   with same arguments as the success function of jQuery. If function, it will be called instead.
+  #   If null, data from the response will be dumped to console.
+  # @return [function] Callable that can be passed to ajax request success callback.
   @_sel = (fn) ->
-    return if fn? then fn else @_dump
+    if fn? and "onResultSuccess" of fn
+      return (data, textStatus, jqXHR) ->
+        #noinspection JSCheckFunctionSignatures
+        fn.onResultSuccess(data, textStatus, jqXHR)
+    return if fn? then fn else (data) ->
+      console.log(data)
 
+  # Select correct error callback type for argument.
+  #
+  # @param fn [dict, class, null] If dict/class instance, "onResultError" will be called
+  #   with same arguments as the success function of jQuery. If null, response status, content, text status
+  #   and http error are dumped to console.
+  # @return [function] Callable that can be passed to ajax request error callback.
+  @_err = (fn) ->
+    return (jqXHR, textStatus, httpError) ->
+      if fn? and "onResultError" of fn
+        if not fn.onResultError(jqXHR, textStatus, httpError)
+          return
+
+      console.log([
+        jqXHR.status,
+        if jqXHR.responseJSON? then jqXHR.responseJSON else jqXHR.responseText,
+        textStatus,
+        httpError,
+      ])
+      return
+
+  # Validate counter code.
+  #
+  # @param code [String] Counter code (without prefix) to be validated.
+  # @param onComplete [dict, class, function, optional] Completion function.
   @validateCounter = (code, onComplete) ->
     $.post(@C.urls.apiValidateCounter, code: code, @_sel(onComplete))
+      .error(@_err(onComplete))
 
+  # Login clerk.
+  #
+  # @param code [String] Clerk code (with prefix) to validate.
+  # @param counter [String] Counter code (without prefix) of this counter (previously validated with validateCounter).
+  # @param onComplete [dict, class, function, optional] Completion function.
   @clerkLogin = (code, counter, onComplete) ->
     args =
       code: code
       counter: counter
     $.post(@C.urls.apiClerkLogin, args, @_sel(onComplete))
+      .error(@_err(onComplete))
 
+  # Logout clerk.
+  #
+  # @param onComplete [dict, class, function, optional] Completion function.
   @clerkLogout = (onComplete) ->
     $.post(@C.urls.apiClerkLogout, @_sel(onComplete))
+      .error(@_err(onComplete))
 
+  # Find item with item code.
+  #
+  # @param code [String] Item code to find.
+  # @param onComplete [dict, class, function, optional] Completion function.
   @findItem = (code, onComplete) ->
     $.get(@C.urls.apiItemInfo, code: code, @_sel(onComplete))
+      .error(@_err(onComplete))
 
+  # Start new receipt.
+  #
+  # @param onComplete [dict, class, function, optional] Completion function.
   @startReceipt = (onComplete) ->
     $.post(@C.urls.apiReceiptStart, @_sel(onComplete))
+      .error(@_err(onComplete))
 
+  # Reserve given item for current receipt.
+  #
+  # @param itemCode [String] Item code.
+  # @param onComplete [dict, class, function, optional] Completion function.
   @reserveItem = (itemCode, onComplete) ->
     $.post(@C.urls.apiItemReserve, code: itemCode, @_sel(onComplete))
+      .error(@_err(onComplete))
 
+  # Finish currently active receipt.
+  #
+  # @param onComplete [dict, class, function, optional] Completion function.
   @finishReceipt = (onComplete) ->
     $.post(@C.urls.apiReceiptFinish, @_sel(onComplete))
+      .error(@_err(onComplete))
 
 window.Api = Api
 
@@ -177,7 +180,7 @@ Number.FRACTION = 10 ** Number.FRACTION_LEN
 # @note This does not work correctly for floating point numbers.
 Number.prototype.formatCents = () ->
   # Separate wholes and fractions from the cents.
-  wholes = Math.abs(Math.round(this / Number.FRACTION))
+  wholes = Math.floor(Math.abs(this / Number.FRACTION))
   fraction = Math.abs(this % Number.FRACTION)
 
   # Add prefix-zeros to the fraction part, so 2 becomes ".02" and 20 becomes ".20".

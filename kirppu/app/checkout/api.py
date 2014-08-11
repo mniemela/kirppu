@@ -119,7 +119,8 @@ def validate_counter(request):
     except Counter.DoesNotExist:
         return RET_AUTH_FAILED
 
-    return {"counter": counter.identifier}
+    return {"counter": counter.identifier,
+            "name": counter.name}
 
 
 @ajax_request
