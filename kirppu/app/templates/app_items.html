@@ -50,7 +50,10 @@
                     indicator : "<img src='{% static "img/roller.gif" %}'>",
                     tooltip   : "Click to edit...",
                     onblur    : "submit",
-                    style     : "width: 2cm"
+                    style     : "width: 2cm",
+                    callback  : function(value, settings) {
+                        $(".item_head_price", tag).text(value);
+                    }
                 });
                 $(".item_name", tag).editable(get_update_name_url(code), {
                     indicator : "<img src='{% static "img/roller.gif" %}'>",
