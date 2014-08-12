@@ -3,9 +3,7 @@ from django.conf.urls import patterns, url, include
 __author__ = 'jyrkila'
 
 urlpatterns = patterns('kirppu.app.views',
-    url(r'^page/(?P<vendor_id>\d+)$', 'get_items', name='page'),
-    url(r'^code/(?P<item_id>\w+?)\.(?P<ext>\w+)$',
-        'get_item_barcode', name='item_barcode'),
+    url(r'^page/?$', 'get_items', name='page'),
     url(r'^clerks/?$', 'get_clerk_codes', name='clerks'),
     url(r'^commands/$', 'get_commands', name='commands'),
     url(r'^command/(?P<data>::\w+?)\.(?P<ext>\w+)$',

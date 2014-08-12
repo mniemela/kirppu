@@ -110,7 +110,7 @@ class CommandCode(object):
 class Clerk(models.Model):
     PREFIX = "::"
 
-    user = models.ForeignKey(User, null=True)
+    user = models.OneToOneField(User, null=True)    
     access_key = models.CharField(
         max_length=128,
         unique=True,
@@ -227,10 +227,17 @@ class Clerk(models.Model):
 
 
 class Vendor(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
 
     def __unicode__(self):
         return u'<Vendor: {0}>'.format(unicode(self.user))
+
+    @classmethod
+    def get_vendor(cls, user):
+        if not hasattr(user, 'vendor'):
+            vendor = cls(user=user)
+            vendor.save()
+        return user.vendor
 
 
 class Item(models.Model):

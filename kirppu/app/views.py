@@ -32,17 +32,11 @@ def index(request):
 @login_required
 @require_http_methods(["POST"])
 def item_add(request):
-    vendor_id = request.user.id
-    #vendor_id = 1  # TODO: Use id of actual logged in user.
+    vendor = Vendor.get_vendor(request.user)
     print "vendor_id", request.user
     name = request.POST.get("name", "")
     price = request.POST.get("price", "")
     type = request.POST.get("type", "short")
-
-    try:
-        vendor = Vendor.objects.get(id=vendor_id)
-    except:
-        return HttpResponseNotFound(u'Vendor not found.')
 
     item = Item.new(name=name, price=price, vendor=vendor, type=type, state=Item.STAGED)
 
@@ -125,20 +119,14 @@ def item_update_type(request, code):
 
 
 @login_required
-def get_items(request, vendor_id):
+def get_items(request):
     """
     Get a page containing all items for vendor.
 
     :param request: HttpRequest object.
     :type request: django.http.request.HttpRequest
-    :param vendor_id: Vendor ID
-    :type vendor_id: str
     :return: HttpResponse or HttpResponseBadRequest
     """
-    can_access = int(request.user.id) == int(vendor_id) or request.user.is_staff
-    if not can_access:
-        return HttpResponseBadRequest(u"You do not have rights to access this page.")
-
     bar_type = request.GET.get("format", "svg").lower()
     tag_type = request.GET.get("tag", "short").lower()
 
@@ -147,13 +135,9 @@ def get_items(request, vendor_id):
     if tag_type not in ('short', 'long'):
         return HttpResponseBadRequest(u"Tag type not supported")
 
-    try:
-        vendor = Vendor.objects.get(id=vendor_id)
-    except:
-        return HttpResponseNotFound(u'Vendor not found.')
+    vendor = Vendor.get_vendor(request.user)
+    items = Item.objects.filter(vendor=vendor).exclude(code='')
 
-    items = Item.objects.filter(vendor__id=vendor_id).exclude(code='')
-    
     render_params = {
             'items': items,
             'bar_type': bar_type,
@@ -197,23 +181,6 @@ def get_barcode(request, data, ext):
     })
 
     return response
-
-
-def get_item_barcode(request, item_id, ext):
-    """
-    Get a barcode image for given item.
-
-    :param request: HttpRequest object
-    :type request: django.http.request.HttpRequest
-    :param item_id: Item identifier
-    :type item_id: str
-    :param ext: Filename extension of the preferred format
-    :type ext: str
-    :return: Response containing raw image data
-    :rtype: HttpResponse
-    """
-    item = get_object_or_404(Item, code=item_id)
-    return get_barcode(request, item.code, ext)
 
 
 def get_commands(request):
@@ -310,10 +277,11 @@ def checkout_finish_receipt(request):
     pass
 
 
+@login_required
 def vendor_view(request):
     """
     Render main view for vendors.
 
     :rtype: HttpResponse
     """
-    return HttpResponse('in construction...')
+    return HttpResponse('hello {0}!'.format(request.user.username))
