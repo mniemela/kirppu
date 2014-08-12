@@ -101,9 +101,18 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
+    'kompassi_crowd.middleware.KompassiCrowdAuthenticationMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
+
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'kompassi_crowd.backends.KompassiCrowdAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 ROOT_URLCONF = 'kirppu.urls'
@@ -211,7 +220,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level': 'DEBUG' if DEBUG else 'WARNING',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -219,5 +232,37 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+        'celery': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'WARNING',
+            'propagate': True
+        },
+        'kompassi_crowd': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'WARNING',
+            'propagate': True
+        },
+    },
 }
+
+
+KOMPASSI_CROWD_URL = 'https://crowd.tracon.fi/crowd'
+KOMPASSI_CROWD_APPLICATION_NAME = 'kirppu'
+KOMPASSI_CROWD_APPLICATION_PASSWORD = 'fill me in'
+KOMPASSI_CROWD_SESSION_URL = '{KOMPASSI_CROWD_URL}/rest/usermanagement/1/session'.format(**locals())
+KOMPASSI_CROWD_COOKIE_NAME = 'crowd.token_key'
+KOMPASSI_CROWD_VALIDATION_FACTORS = {
+    'remote_address': lambda request: '127.0.0.1',
+    'X-Forwarded-For': lambda request: request.META['HTTP_X_FORWARDED_FOR'],
+}
+KOMPASSI_API_URL = 'https://kompassidev.tracon.fi/api/v1'
+KOMPASSI_API_APPLICATION_NAME = KOMPASSI_CROWD_APPLICATION_NAME
+KOMPASSI_API_APPLICATION_PASSWORD = KOMPASSI_CROWD_APPLICATION_PASSWORD
+
+LOGIN_URL = 'https://kompassidev.tracon.fi/crowd'
+LOGOUT_URL = 'https://kompassidev.tracon.fi/logout'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

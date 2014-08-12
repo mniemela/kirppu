@@ -1,2 +1,3 @@
 *.pyc
 /static/
+kirppu/local_settings.py

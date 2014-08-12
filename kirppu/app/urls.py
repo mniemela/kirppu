@@ -19,9 +19,6 @@ urlpatterns = patterns('kirppu.app.views',
     url(r'^vendor/item/(?P<code>\w+?)/price$', 'item_update_price', name='item_update_price'),
     url(r'^vendor/item/(?P<code>\w+?)/name$', 'item_update_name', name='item_update_name'),
     url(r'^vendor/item/(?P<code>\w+?)/type$', 'item_update_type', name='item_update_type'),
-    url(r'^vendor/login/$', 'vendor_login', name='vendor_login'),
-    url(r'^vendor/signup/$', 'vendor_signup', name='vendor_signup'),
-    url(r'^logout/$', 'user_logout', name='user_logout'),
 
     url(r'^api/', include('kirppu.app.checkout.urls')),
 )

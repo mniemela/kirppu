@@ -4,31 +4,19 @@ import json
 import barcode
 from barcode.writer import SVGWriter, ImageWriter
 
-import django.contrib.auth as auth
-import django.contrib.auth.views as auth_views
-from django.core.context_processors import csrf
-import django.core.urlresolvers as url
-import django.forms as forms
 from django.http.response import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseNotFound,
-    HttpResponseRedirect,
 )
 from django.shortcuts import (
     get_object_or_404,
     render,
 )
-from django.utils.http import is_safe_url
 from django.utils.translation import ugettext
-from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 
-from kirppu.app.forms import (
-    VendorAuthenticationForm,
-    VendorCreationForm,
-)
 from kirppu.app.models import (
     Item,
     Clerk,
@@ -329,78 +317,3 @@ def vendor_view(request):
     :rtype: HttpResponse
     """
     return HttpResponse('in construction...')
-
-
-@sensitive_post_parameters()
-def vendor_login(request):
-    """
-    On GET, render the login page. On POST, attempt login.
-
-    :rtype: HttpResponse
-    """
-    # Based on django.contrib.auth.views.login().
-    template_name = "app_vendor_login.html"
-
-    destination = request.REQUEST.get('next')
-    if not is_safe_url(destination, request.get_host()):
-        destination = url.reverse('kirppu:vendor_view')
-
-    if request.method == 'GET':
-        return render(request, template_name, {
-            'next': destination,
-            'form': VendorAuthenticationForm(request),
-        })
-
-    elif request.method == 'POST':
-        form = VendorAuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            auth.login(request, form.get_user())
-            return HttpResponseRedirect(destination)
-        else:
-            return render(request, template_name, {
-                'next': destination,
-                'form': form,
-            })
-
-
-@sensitive_post_parameters()
-def vendor_signup(request):
-    """
-    On GET, render the sign-up page. On POST, attempt sign-up.
-
-    :rtype: HttpResponse
-    """
-    template_name = "app_vendor_signup.html"
-
-    if request.method == 'GET':
-        return render(request, template_name, {
-            'form': VendorCreationForm(),
-        })
-
-    elif request.method == 'POST':
-        form = VendorCreationForm(data=request.POST)
-        if form.is_valid():
-            # Create and log in the user.
-            user = form.save()
-            user = auth.authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1'],
-            )
-            auth.login(request, user)
-
-            # Redirect to the vendor page.
-            destination = url.reverse('kirppu:vendor_view')
-            return HttpResponseRedirect(destination)
-
-        else:
-            return render(request, template_name, {'form': form})
-
-def user_logout(request):
-    """
-    Logout a vendor or a clerk.
-    """
-    return auth_views.logout(
-        request,
-        template_name='app_logged_out.html',
-        redirect_field_name='next',
-    )
