@@ -165,13 +165,13 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/jquery-1.10.2.js",
             "js/bootstrap.js",
+            "js/csrf.coffee",
         ),
         "output_filename": "general.js",
     },
     'checkout': {
         "source_filenames": (
             "js/checkout.coffee",
-            "js/csrf.coffee",
         ),
         "output_filename": "cout.js",
     },
