@@ -1,82 +1,109 @@
 [
     {
-        "pk": 1,
-        "model": "app.clerk",
         "fields": {
-            "user": 1
-        }
-    },
-    {
-        "pk": 1,
-        "model": "app.vendor",
-        "fields": {
-            "user": 1
-        }
-    },
-    {
-        "pk": 1,
-        "model": "app.item",
-        "fields": {
-            "code": "CYAHIFIA",
-            "vendor": 1,
+            "code": "CAAAAEAA",
             "name": "Superman comics #1",
             "price": "1",
-            "state": "AD"
-        }
+            "state": "AD",
+            "vendor": 2
+        },
+        "model": "app.item",
+        "pk": 1
     },
     {
-        "pk": 2,
-        "model": "app.item",
         "fields": {
-            "code": "EUAHIFIA",
-            "vendor": 1,
+            "code": "EMAAAEAA",
             "name": "Superman comics #2",
             "price": "0.2",
-            "state": "AD"
-        }
+            "state": "AD",
+            "vendor": 2
+        },
+        "model": "app.item",
+        "pk": 2
     },
     {
-        "pk": 3,
-        "model": "app.item",
         "fields": {
-            "code": "GQAHIFIA",
-            "vendor": 1,
+            "code": "GIAAAEAA",
             "name": "Superman comics #3",
             "price": "1.4",
-            "state": "AD"
-        }
+            "state": "AD",
+            "vendor": 1
+        },
+        "model": "app.item",
+        "pk": 3
     },
     {
-        "pk": 4,
-        "model": "app.item",
         "fields": {
-            "code": "IMAHIFIA",
-            "vendor": 1,
+            "code": "IUAAAEAA",
             "name": "Superman comics #4",
             "price": "1.99",
-            "state": "AD"
-        }
+            "state": "AD",
+            "vendor": 1
+        },
+        "model": "app.item",
+        "pk": 4
     },
     {
-        "pk": 5,
-        "model": "app.item",
         "fields": {
-            "code": "",
-            "vendor": 1,
+            "code": "KQAAAEAA",
             "name": "Batman strikes back",
             "price": "20",
-            "state": "AD"
-        }
+            "state": "AD",
+            "vendor": 1
+        },
+        "model": "app.item",
+        "pk": 5
     },
     {
-        "pk": 6,
-        "model": "app.item",
         "fields": {
-            "code": "MEAHIFIA",
-            "vendor": 1,
+            "code": "M4AAAEAA",
             "name": "Batman and secrets of the stone",
             "price": "19.99",
-            "state": "AD"
-        }
+            "state": "AD",
+            "vendor": 1
+        },
+        "model": "app.item",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "date_joined": "2014-08-12T19:31:51.301Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_checked": "2014-08-12T19:31:51.379Z",
+            "last_login": "2014-08-12T19:31:51.301Z",
+            "last_name": "",
+            "password": "pbkdf2_sha256$12000$ghT2MK3AQp8u$yNHVhvw5dVrV7jkReR/t0B/1kqqL7ZjLirzsNAacfjM=",
+            "phone": "",
+            "user_permissions": [],
+            "username": "test"
+        },
+        "model": "kirppuauth.user",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "user": 1
+        },
+        "model": "app.vendor",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "user": 2
+        },
+        "model": "app.vendor",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "user": 1
+        },
+        "model": "app.clerk",
+        "pk": 1
     }
 ]
