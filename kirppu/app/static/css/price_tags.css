@@ -15,7 +15,7 @@
  *      .item_button_toggle
  */
 #items {
-	width: 19.1cm;
+    width: 19.1cm;
     float: left;
 }
 .item_template {
@@ -39,7 +39,7 @@
     width: 2cm;
 }
 .item_short .item_head {
-	display: none;
+    display: none;
 }
 .item_body {
     float: left;
@@ -85,8 +85,8 @@
 }
 .barcode_container {
     top: 4em;
-	height: 2cm;
-	width: 5.6cm;
+    height: 2cm;
+    width: 5.6cm;
 }
 .barcode_container > img {
     width: 5.6cm;
