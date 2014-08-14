@@ -10,11 +10,13 @@ from django.http.response import (
     HttpResponseNotFound,
 )
 from django.shortcuts import (
-    get_object_or_404,
     render,
+    redirect,
 )
+from django.conf import settings
 from django.utils.translation import ugettext
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
 from kirppu.app.models import (
@@ -285,3 +287,11 @@ def vendor_view(request):
     :rtype: HttpResponse
     """
     return HttpResponse('hello {0}!'.format(request.user.username))
+
+
+def logout_view(request):
+    """
+    Log out user and redirect to Kompassi logout page.
+    """
+    logout(request)
+    return redirect(settings.LOGOUT_URL)
