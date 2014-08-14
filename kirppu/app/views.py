@@ -286,7 +286,10 @@ def vendor_view(request):
 
     :rtype: HttpResponse
     """
-    return HttpResponse('hello {0}!'.format(request.user.username))
+    return HttpResponse(
+        u'hello {first_name} {last_name}!'
+        u''.format(**request.user.__dict__)
+    )
 
 
 def logout_view(request):

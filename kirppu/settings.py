@@ -245,6 +245,19 @@ LOGGING = {
     },
 }
 
+# Mapping from Kompassi user fields to Kirppu user fields.
+KOMPASSI_USER_MAP = [
+#   (u'birth_date'  ,               ),
+#   (u'display_name',               ),
+    (u'email'       , 'email'       ),
+    (u'first_name'  , 'first_name'  ),
+#   (u'full_name'   ,               ),
+#   (u'groups'      ,               ),
+#   (u'nick'        ,               ),
+    (u'phone'       , 'phone'       ),
+    (u'surname'     , 'last_name'   ),
+    (u'username'    , 'username'    ),
+]
 
 KOMPASSI_CROWD_URL = 'https://crowd.tracon.fi/crowd'
 KOMPASSI_CROWD_APPLICATION_NAME = 'kirppu'

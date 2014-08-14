@@ -30,5 +30,5 @@ class KompassiCrowdAuthenticationBackend(object):
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
-        except User.DoesDotExist:
+        except User.DoesNotExist:
             return None
