@@ -178,6 +178,12 @@ PIPELINE_JS = {
         ),
         "output_filename": "general.js",
     },
+    'price_tags': {
+        "source_filenames": (
+            "js/price_tags.coffee",
+        ),
+        "output_filename": "price_tags.js",
+    },
     'checkout': {
         "source_filenames": (
             "js/checkout.coffee",

@@ -8,6 +8,7 @@
     {% compressed_css 'price_tags' %}
     {% compressed_js 'general' %}
     {% compressed_js 'jeditable' %}
+    {% compressed_js 'price_tags' %}
 </head>
 <body>
     <form id="item-add-form" method="POST">
@@ -20,6 +21,7 @@
         Long<input name="item-add-type" value="long" type="radio" /><br />
         <button id="add_short_item" type="button" class="item-add btn btn-mini btn-info">Add item</button>
         <button id="add_clear_all" type="button" class="item-clear-all btn btn-mini btn-info">Clear all</button>
+        <button id="toggle_delete" type="button" class="btn btn-default">Toggle delete</button>
     </form>
 
     <script>
@@ -130,6 +132,9 @@
                     bind_tag_events($(tag));
                 });
             });
+
+            $('#toggle_delete').click(toggleDelete);
+            toggleDelete(); // Initialize delete buttons to disabled.
 
             bind_tag_events($('.item_container'));
         });

@@ -125,6 +125,9 @@ a.item_button_delete {
     cursor:pointer; z-index: -1;
     font-size:16px; font-weight:bold;
 }
+.item_button_delete:disabled {
+    border: 1px dashed darkgrey;
+}
 
 @media print {
     .item_price, .item_name {
