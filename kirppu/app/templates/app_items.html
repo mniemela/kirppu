@@ -25,30 +25,16 @@
     </form>
 
     <script>
-        function get_update_price_url(code) {
-            var url = "{% url 'kirppu:item_update_price' "code_placeholder" %}";
-            return url.replace("code_placeholder", code);
-        }
-
-        function get_update_name_url(code) {
-            var url = "{% url 'kirppu:item_update_name' "code_placeholder" %}";
-            return url.replace("code_placeholder", code);
-        }
-
-        function get_item_delete_url(code) {
-            var url = "{% url 'kirppu:item_delete' 'code_placeholder' %}";
-            return url.replace("code_placeholder", code);
-        }
-
-        function get_item_toggle_url(code) {
-            var url = "{% url 'kirppu:item_update_type' 'code_placeholder' %}";
-            return url.replace("code_placeholder", code);
-        }
+        itemsConfig.url_args.code = '__placeholder__';
+        itemsConfig.urls.price_update = "{% url 'kirppu:item_update_price' '__placeholder__' %}";
+        itemsConfig.urls.name_update = "{% url 'kirppu:item_update_name' '__placeholder__' %}";
+        itemsConfig.urls.item_delete = "{% url 'kirppu:item_delete' '__placeholder__' %}";
+        itemsConfig.urls.size_update = "{% url 'kirppu:item_update_type' '__placeholder__' %}";
 
         function bind_tag_events(tags) {
             tags.each(function(index, tag) {
                 var code = $(".item_extra_code", tag).text()
-                $(".item_price", tag).editable(get_update_price_url(code), {
+                $(".item_price", tag).editable(itemsConfig.price_update_url(code), {
                     indicator : "<img src='{% static "img/roller.gif" %}'>",
                     tooltip   : "Click to edit...",
                     onblur    : "submit",
@@ -57,7 +43,7 @@
                         $(".item_head_price", tag).text(value);
                     }
                 });
-                $(".item_name", tag).editable(get_update_name_url(code), {
+                $(".item_name", tag).editable(itemsConfig.name_update_url(code), {
                     indicator : "<img src='{% static "img/roller.gif" %}'>",
                     tooltip   : "Click to edit...",
                     onblur    : "submit",
@@ -66,7 +52,7 @@
                 $('.item_button_delete', tag).click(function() {
                     $(tag).hide()
                     $.ajax({
-                        url: get_item_delete_url(code),
+                        url: itemsConfig.item_delete_url(code),
                         type: 'DELETE',
                         complete: function(jqXHR, textStatus) {
                             if (textStatus == "success") {
@@ -81,7 +67,7 @@
                     var tag_type = $(tag).hasClass('item_short') ? "long" : "short";
                     $(tag).toggleClass('item_short');
                     $.ajax({
-                        url: get_item_toggle_url(code),
+                        url: itemsConfig.size_update_url(code),
                         type: 'POST',
                         data: {'tag_type': tag_type},
                         complete: function(jqXHR, textStatus) {
