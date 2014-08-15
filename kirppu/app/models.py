@@ -411,6 +411,7 @@ class ReceiptItem(models.Model):
     item = models.ForeignKey(Item)
     receipt = models.ForeignKey("Receipt")
     action = models.CharField(choices=ACTION, max_length=16, default=ADD)
+    add_time = models.DateTimeField(auto_now_add=True)
 
     def as_dict(self):
         ret = {
@@ -461,3 +462,5 @@ class Receipt(models.Model):
         self.total = price_total
         return self.total
 
+    def __unicode__(self):
+        return unicode(self.start_time) + u" / " + unicode(self.clerk)

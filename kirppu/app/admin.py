@@ -1,10 +1,9 @@
-from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext
 from django.contrib import messages
-from kirppu.app.forms import ClerkGenerationForm
+from kirppu.app.forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm
 
-from kirppu.app.models import Clerk, Item, Vendor, Counter
+from kirppu.app.models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem
 
 __author__ = 'jyrkila'
 
@@ -113,3 +112,22 @@ class ClerkAdmin(admin.ModelAdmin):
 admin.site.register(Clerk, ClerkAdmin)
 
 admin.site.register(Counter)
+
+
+class ReceiptItemAdmin(admin.TabularInline):
+    model = ReceiptItem
+    ordering = ["add_time"]
+    form = ReceiptItemAdminForm
+
+
+class ReceiptAdmin(admin.ModelAdmin):
+    inlines = [
+        ReceiptItemAdmin,
+    ]
+    ordering = ["clerk", "start_time"]
+    list_display = ["__unicode__", "status", "total", "counter", "sell_time"]
+    form = ReceiptAdminForm
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+admin.site.register(Receipt, ReceiptAdmin)

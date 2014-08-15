@@ -1,6 +1,7 @@
 from django import forms
 
-from kirppu.app.models import Clerk
+from kirppu.app.models import Clerk, ReceiptItem
+from kirppu.app.utils import StaticText
 
 
 class ClerkGenerationForm(forms.ModelForm):
@@ -61,3 +62,32 @@ class ClerkGenerationForm(forms.ModelForm):
     class Meta:
         model = Clerk
         fields = ("count",)
+
+
+class ReceiptItemAdminForm(forms.ModelForm):
+    price = StaticText(
+        label=u"Price",
+        text=u"--",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ReceiptItemAdminForm, self).__init__(*args, **kwargs)
+        if "instance" in kwargs:
+            mdl = kwargs["instance"]
+            self.fields["price"].widget.set_text(mdl.item.price)
+
+    class Meta:
+        model = ReceiptItem
+
+
+class ReceiptAdminForm(forms.ModelForm):
+    start_time = StaticText(
+        label=u"Start time",
+        text=u"--"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ReceiptAdminForm, self).__init__(*args, **kwargs)
+        if "instance" in kwargs:
+            mdl = kwargs["instance"]
+            self.fields["start_time"].widget.set_text(mdl.start_time)

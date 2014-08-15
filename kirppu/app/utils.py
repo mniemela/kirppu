@@ -1,5 +1,6 @@
 from functools import wraps
 import json
+import django.forms
 from django.http.response import HttpResponseBadRequest, HttpResponse
 
 __author__ = 'jyrkila'
@@ -106,3 +107,37 @@ def format_datetime(dt):
     """
 
     return dt.strftime(RFC2822TIME)
+
+
+class StaticTextWidget(django.forms.widgets.Widget):
+    """
+    Static text-field widget. Text should be set with set_text().
+    Otherwise `initial`-text is used, or empty string as fallback.
+    The resulting text is rendered instead of any widget.
+    """
+    def __init__(self, **kwargs):
+        super(StaticTextWidget, self).__init__(**kwargs)
+        self._static_text = None
+
+    def set_text(self, text):
+        self._static_text = text
+
+    def has_text(self):
+        return self._static_text is not None
+
+    def render(self, name, value, attrs=None):
+        return self._static_text or value or u""
+
+
+class StaticText(django.forms.CharField):
+    """
+    Static text-field using StaticTextWidget. Only required parameter is `text`.
+    Other parameters as per `CharField`.
+    """
+    def __init__(self, text, **kwargs):
+        kwargs.setdefault("widget", StaticTextWidget)
+        kwargs["required"] = False
+        super(StaticText, self).__init__(**kwargs)
+
+        if isinstance(self.widget, StaticTextWidget) and not self.widget.has_text():
+            self.widget.set_text(text)
