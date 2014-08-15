@@ -45,7 +45,7 @@ admin.site.register(Vendor, VendorAdmin)
 # noinspection PyMethodMayBeStatic
 class ClerkAdmin(admin.ModelAdmin):
     actions = ["_gen_clerk_code", "_del_clerk_code", "_move_clerk_code"]
-    list_display = ('id', 'user', 'access_key')
+    list_display = ('id', 'user', 'access_code', 'access_key')
     ordering = ('user__first_name', 'user__last_name')
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
 

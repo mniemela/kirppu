@@ -116,6 +116,7 @@ class Clerk(models.Model):
         unique=True,
         null=True,
         blank=True,
+        verbose_name=u"Access key value",
         help_text=u"Access code assigned to the clerk.")
 
     def __unicode__(self):
@@ -151,6 +152,12 @@ class Clerk(models.Model):
             ], checksum_bits=4),
             length=8
         )
+
+    @property
+    def access_code(self):
+        if self.access_key is not None:
+            return self.get_code()
+        return ""
 
     @classmethod
     def by_code(cls, code):

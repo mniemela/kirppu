@@ -2,6 +2,7 @@ from django import forms
 
 from kirppu.app.models import Clerk
 
+
 class ClerkGenerationForm(forms.ModelForm):
     count = forms.IntegerField(
         min_value=0,
