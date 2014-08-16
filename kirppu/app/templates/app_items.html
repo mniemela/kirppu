@@ -30,55 +30,7 @@
         itemsConfig.urls.name_update = "{% url 'kirppu:item_update_name' '__placeholder__' %}";
         itemsConfig.urls.item_delete = "{% url 'kirppu:item_delete' '__placeholder__' %}";
         itemsConfig.urls.size_update = "{% url 'kirppu:item_update_type' '__placeholder__' %}";
-
-        function bind_tag_events(tags) {
-            tags.each(function(index, tag) {
-                var code = $(".item_extra_code", tag).text()
-                $(".item_price", tag).editable(itemsConfig.price_update_url(code), {
-                    indicator : "<img src='{% static "img/roller.gif" %}'>",
-                    tooltip   : "Click to edit...",
-                    onblur    : "submit",
-                    style     : "width: 2cm",
-                    callback  : function(value, settings) {
-                        $(".item_head_price", tag).text(value);
-                    }
-                });
-                $(".item_name", tag).editable(itemsConfig.name_update_url(code), {
-                    indicator : "<img src='{% static "img/roller.gif" %}'>",
-                    tooltip   : "Click to edit...",
-                    onblur    : "submit",
-                    style     : "inherit"
-                });
-                $('.item_button_delete', tag).click(function() {
-                    $(tag).hide()
-                    $.ajax({
-                        url: itemsConfig.item_delete_url(code),
-                        type: 'DELETE',
-                        complete: function(jqXHR, textStatus) {
-                            if (textStatus == "success") {
-                                tag.remove();
-                            } else {
-                                $(tag).show()
-                            }
-                        }
-                    });
-                });
-                $('.item_button_toggle', tag).click(function(){
-                    var tag_type = $(tag).hasClass('item_short') ? "long" : "short";
-                    $(tag).toggleClass('item_short');
-                    $.ajax({
-                        url: itemsConfig.size_update_url(code),
-                        type: 'POST',
-                        data: {'tag_type': tag_type},
-                        complete: function(jqXHR, textStatus) {
-                            if (textStatus != "success") {
-                                $(tag).toggleClass('item_short');
-                            }
-                        }
-                    });
-                });
-            });
-        }
+        itemsConfig.urls.roller = "{% static "img/roller.gif" %}";
 
         function create_tag(name, price, vendor_id, code, type) {
             var tag = $(".item_template").clone();
@@ -122,7 +74,7 @@
             $('#toggle_delete').click(toggleDelete);
             toggleDelete(); // Initialize delete buttons to disabled.
 
-            bind_tag_events($('.item_container'));
+            bindTagEvents($('.item_container'));
         });
     </script>
 

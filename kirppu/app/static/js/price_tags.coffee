@@ -80,7 +80,100 @@ toggleDelete = ->
   return
 
 
+# Bind events for item price editing.
+# @param tag [jQuery element] An '.item_container' element.
+# @param code [String] Barcode string of the item.
+bindPriceEditEvents = (tag, code) ->
+  $(".item_price", tag).editable(
+    C.price_update_url(code),
+    indicator: "<img src='" + C.urls.roller + "'>"
+    tooltip:   "Click to edit..."
+    onblur:    "submit"
+    style:     "width: 2cm"
+    # Update the extra price display for long tags.
+    callback:  (value, settings) -> $(".item_head_price", tag).text(value)
+  )
+  return
+
+
+# Bind events for item name editing.
+# @param tag [jQuery element] An '.item_container' element.
+# @param code [String] Barcode string of the item.
+bindNameEditEvents = (tag, code) ->
+  $(".item_name", tag).editable(
+    C.name_update_url(code),
+    indicator: "<img src='" + C.urls.roller + "'>"
+    tooltip:   "Click to edit..."
+    onblur:    "submit"
+    style:     "inherit"
+  )
+  return
+
+
+# Bind events for item delete button.
+# @param tag [jQuery element] An '.item_container' element.
+# @param code [String] Barcode string of the item.
+bindItemDeleteEvents = (tag, code) ->
+  onItemDelete = ->
+    $(tag).hide()
+    $.ajax(
+      url:  C.item_delete_url(code)
+      type: 'DELETE'
+      complete: (jqXHR, textStatus) ->
+        if textStatus == "success" then tag.remove() else $(tag).show()
+    )
+    return
+
+  $('.item_button_delete', tag).click(onItemDelete)
+  return
+
+
+# Bind events for item size toggle button.
+# @param tag [jQuery element] An '.item_container' element.
+# @param code [String] Barcode string of the item.
+bindItemToggleEvents = (tag, code) ->
+  onItemSizeToggle = ->
+    tag_type = if $(tag).hasClass('item_short') then "long" else "short"
+    $(tag).toggleClass('item_short')
+    $.ajax(
+      url:  C.size_update_url(code)
+      type: 'POST'
+      data:
+        tag_type: tag_type
+      complete: (jqXHR, textStatus) ->
+        if textStatus != "success" then $(tag).toggleClass('item_short')
+    )
+    return
+
+  $('.item_button_toggle', tag).click(onItemSizeToggle)
+  return
+
+
+# Bind all events for '.item_container' element.
+# @note Target for jQuery.each.
+# @param index [Number] Index from jQuery.each, not used.
+# @param tag [jQuery element] An '.item_container' element.
+bindOneTagsEvents = (index, tag) ->
+  code = $(".item_extra_code", tag).text()
+
+  bindPriceEditEvents(tag, code)
+  bindNameEditEvents(tag, code)
+  bindItemDeleteEvents(tag, code)
+  bindItemToggleEvents(tag, code)
+
+  return
+
+
+# Bind events for a set of '.item_container' elements.
+# @param tags [jQuery set] A set of '.item_container' elements.
+bindTagEvents = (tags) ->
+  tags.each(bindOneTagsEvents)
+
+  return
+
+
 # Expose the localization instance in case we want to modify it.
 window.localization = L
 window.itemsConfig = C
 window.toggleDelete = toggleDelete
+window.bindTagEvents = bindTagEvents
