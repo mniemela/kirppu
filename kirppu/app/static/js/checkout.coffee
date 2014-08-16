@@ -4,6 +4,7 @@ class Config
     apiClerkLogin: null
     apiClerkLogout: null
     apiItemInfo: null
+    apiItemCheckIn: null
     apiItemReserve: null
     apiItemRelease: null
     apiReceiptStart: null
@@ -147,6 +148,15 @@ class Api
   @findItem = (code, onComplete) ->
     $.get(@C.urls.apiItemInfo, code: code, @_sel(onComplete))
       .error(@_err(onComplete))
+
+  # Find item and mark it as brought
+  #
+  # @param code [String] Item code to find.
+  # @param onComplete [dict, class, function, optional] Completion function.
+  @checkInItem = (itemCode, onComplete) ->
+    $.post(@C.urls.apiItemCheckIn, code: itemCode, @_sel(onComplete))
+      .error(@_err(onComplete))
+
 
   # Start new receipt.
   #

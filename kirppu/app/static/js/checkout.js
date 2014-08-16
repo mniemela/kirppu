@@ -10,6 +10,7 @@
       apiClerkLogin: null,
       apiClerkLogout: null,
       apiItemInfo: null,
+      apiItemCheckIn: null,
       apiItemReserve: null,
       apiItemRelease: null,
       apiReceiptStart: null,
@@ -143,6 +144,12 @@
       }, this._sel(onComplete)).error(this._err(onComplete));
     };
 
+    Api.checkInItem = function(itemCode, onComplete) {
+      return $.post(this.C.urls.apiItemCheckIn, {
+        code: itemCode
+      }, this._sel(onComplete)).error(this._err(onComplete));
+    };
+
     Api.startReceipt = function(onComplete) {
       return $.post(this.C.urls.apiReceiptStart, this._sel(onComplete)).error(this._err(onComplete));
     };
@@ -223,3 +230,5 @@
   };
 
 }).call(this);
+
+//# sourceMappingURL=checkout.map

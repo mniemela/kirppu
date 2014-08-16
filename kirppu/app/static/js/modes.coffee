@@ -315,6 +315,29 @@ class ItemFindMode extends CheckoutMode
     return true
 
 
+class ItemCheckInMode extends CheckoutMode
+  @registerEntryPoint("vendor_check_in", ItemCheckInMode)
+  constructor: (config) ->
+    super(config)
+
+  title: -> "Vendor Check-In"
+  subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
+  initialMenuEnabled: true
+
+  onFormSubmit: (input) ->
+    Api.checkInItem(input, @)
+
+  onResultSuccess: (data) ->
+    row = createRow("", data.code, data.name, data.price)
+    @cfg.uiRef.receiptResult.prepend(row)
+
+  onResultError: (jqXHR) ->
+    if jqXHR.status == 404
+      alert("No such item")
+      return
+    return true
+
+
 # Helper function to create a row in receipt table.
 # All arguments are used for display-only.
 #

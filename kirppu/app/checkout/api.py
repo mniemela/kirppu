@@ -133,6 +133,26 @@ def get_item(request, *args):
 @require_POST
 @ajax_request
 @require_clerk
+#@require_counter
+def checkIn_item(request, *args):
+    item = _get_item_or_404(request.POST["code"])
+    if item.state == Item.ADVERTISED:
+        item.state = Item.BROUGHT
+        item.save()
+        return item.as_dict()
+
+    else:
+        # Errors.
+        # Not in expected state.
+        message = _i(u"Unexpected item state: {state}").format(state=item.state)
+        code = RET_CONFLICT
+        return code, message
+
+
+
+@require_POST
+@ajax_request
+@require_clerk
 @require_counter
 def start_receipt(request, counter, clerk):
     receipt = Receipt()
