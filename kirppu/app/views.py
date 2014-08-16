@@ -7,7 +7,6 @@ from barcode.writer import SVGWriter, ImageWriter
 from django.http.response import (
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseNotFound,
     HttpResponseForbidden)
 from django.shortcuts import (
     render,
@@ -46,12 +45,12 @@ def item_add(request):
     item = Item.new(name=name, price=price, vendor=vendor, type=tag_type, state=Item.ADVERTISED)
 
     response = {
-            'vendor_id': vendor.id,
-            'code': item.code,
-            'name': item.name,
-            'price': item.price,
-            'type': item.type,
-            }
+        'vendor_id': vendor.id,
+        'code': item.code,
+        'name': item.name,
+        'price': item.price,
+        'type': item.type,
+    }
     return HttpResponse(json.dumps(response), 'application/json')
 
 
@@ -80,8 +79,8 @@ def item_update_price(request, code):
     str_price = str_price.replace(",", ".")
     
     try:
-        cents = float(str_price) * 100 # price in cents
-    except ValueError as __:
+        cents = float(str_price) * 100  # price in cents
+    except ValueError:
         cents = 0
     
     # Round up to nearest 50 cents.---
@@ -165,8 +164,8 @@ def get_items(request):
     items = Item.objects.filter(vendor=vendor).exclude(code='')
 
     render_params = {
-            'items': items,
-            'bar_type': bar_type,
+        'items': items,
+        'bar_type': bar_type,
         'tag_type': tag_type,
     }
 
