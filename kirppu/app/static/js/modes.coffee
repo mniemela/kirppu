@@ -288,15 +288,24 @@ class CounterMode extends CheckoutMode
   tryPattern: (pattern, input, fn) ->
     value = pattern.exec(input)
     if value?
-      fn.call(@, input)
+      fn.call(@, value[1])
       return true
     return false
 
   onRemoveItem: (input) ->
     unless @_receipt? then return
 
-    row = createRow(-@_receipt.rowCount, input, "??", "-00.00")
-    @cfg.uiRef.receiptResult.append(row)
+    Api.releaseItem(input,
+      onResultSuccess: (data) =>
+        @_receipt.rowCount++
+        row = createRow(-@_receipt.rowCount, data.code, data.name, -data.price)
+        @cfg.uiRef.receiptResult.append(row)
+        @_receipt.total -= data.price
+
+      onResultError: () =>
+        alert("Item not found on receipt: " + input)
+        return true
+    )
 
   onPayReceipt: (input) ->
     unless @_receipt? then return

@@ -401,10 +401,12 @@ class Counter(models.Model):
 
 class ReceiptItem(models.Model):
     ADD = "ADD"
+    REMOVED_LATER = "RL"
     REMOVE = "DEL"
 
     ACTION = (
         (ADD, _(u"Added to receipt")),
+        (REMOVED_LATER, _(u"Removed later")),
         (REMOVE, _(u"Removed from receipt")),
     )
 

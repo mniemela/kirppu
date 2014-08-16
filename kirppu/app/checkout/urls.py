@@ -8,7 +8,7 @@ urlpatterns = patterns('kirppu.app.checkout.api',
     url(r'^clerk/logout$', 'logout_clerk', name='api_clerk_logout'),
     url(r'^item/info$', 'get_item', name='api_item_info'),
     url(r'^item/reserve$', 'reserve_item_for_receipt', name='api_item_reserve'),
-    # url(r'^item/release$', 'release_item_from_receipt'),
+    url(r'^item/release$', 'release_item_from_receipt', name='api_item_release'),
     url(r'^receipt/start$', 'start_receipt', name='api_receipt_start'),
     url(r'^receipt/finish$', 'finish_receipt', name='api_receipt_finish'),
 )

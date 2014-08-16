@@ -5,6 +5,7 @@ class Config
     apiClerkLogout: null
     apiItemInfo: null
     apiItemReserve: null
+    apiItemRelease: null
     apiReceiptStart: null
     apiReceiptFinish: null
   uiId:
@@ -155,6 +156,10 @@ class Api
   # @param onComplete [dict, class, function, optional] Completion function.
   @reserveItem = (itemCode, onComplete) ->
     $.post(@C.urls.apiItemReserve, code: itemCode, @_sel(onComplete))
+      .error(@_err(onComplete))
+
+  @releaseItem = (itemCode, onComplete) ->
+    $.post(@C.urls.apiItemRelease, code: itemCode, @_sel(onComplete))
       .error(@_err(onComplete))
 
   # Finish currently active receipt.

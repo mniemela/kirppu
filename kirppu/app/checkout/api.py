@@ -189,13 +189,36 @@ def reserve_item_for_receipt(request, clerk):
         return code, ret
 
 
-# @require_POST
-# @ajax_request
-# @require_clerk
-# def release_item_from_receipt(request, clerk):
-#     item = _get_item_or_404(request.POST["code"])
-#     receipt_id = request.session["receipt"]
-#     receipt = get_object_or_404(Receipt, pk=receipt_id)
+@require_POST
+@ajax_request
+@require_clerk
+def release_item_from_receipt(request, clerk):
+    item = _get_item_or_404(request.POST["code"])
+    receipt_id = request.session["receipt"]
+    receipt = get_object_or_404(Receipt, pk=receipt_id)
+
+    last_added_item = ReceiptItem.objects\
+        .filter(receipt=receipt, item=item, action=ReceiptItem.ADD)\
+        .order_by("-add_time")
+
+    if len(last_added_item) == 0:
+        return RET_CONFLICT, _i(u"Item is not added to receipt.")
+    assert len(last_added_item) == 1
+
+    last_added_item = last_added_item[0]
+    last_added_item.action = ReceiptItem.REMOVED_LATER
+    last_added_item.save()
+
+    removal_entry = ReceiptItem(item=item, receipt=receipt, action=ReceiptItem.REMOVE)
+    removal_entry.save()
+
+    receipt.calculate_total()
+    receipt.save()
+
+    item.state = Item.BROUGHT
+    item.save()
+
+    return removal_entry.as_dict()
 
 
 @require_POST

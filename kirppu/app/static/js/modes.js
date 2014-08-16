@@ -362,19 +362,33 @@
       var value;
       value = pattern.exec(input);
       if (value != null) {
-        fn.call(this, input);
+        fn.call(this, value[1]);
         return true;
       }
       return false;
     };
 
     CounterMode.prototype.onRemoveItem = function(input) {
-      var row;
       if (this._receipt == null) {
         return;
       }
-      row = createRow(-this._receipt.rowCount, input, "??", "-00.00");
-      return this.cfg.uiRef.receiptResult.append(row);
+      return Api.releaseItem(input, {
+        onResultSuccess: (function(_this) {
+          return function(data) {
+            var row;
+            _this._receipt.rowCount++;
+            row = createRow(-_this._receipt.rowCount, data.code, data.name, -data.price);
+            _this.cfg.uiRef.receiptResult.append(row);
+            return _this._receipt.total -= data.price;
+          };
+        })(this),
+        onResultError: (function(_this) {
+          return function() {
+            alert("Item not found on receipt: " + input);
+            return true;
+          };
+        })(this)
+      });
     };
 
     CounterMode.prototype.onPayReceipt = function(input) {

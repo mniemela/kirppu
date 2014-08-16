@@ -11,6 +11,7 @@
       apiClerkLogout: null,
       apiItemInfo: null,
       apiItemReserve: null,
+      apiItemRelease: null,
       apiReceiptStart: null,
       apiReceiptFinish: null
     };
@@ -143,6 +144,12 @@
 
     Api.reserveItem = function(itemCode, onComplete) {
       return $.post(this.C.urls.apiItemReserve, {
+        code: itemCode
+      }, this._sel(onComplete)).error(this._err(onComplete));
+    };
+
+    Api.releaseItem = function(itemCode, onComplete) {
+      return $.post(this.C.urls.apiItemRelease, {
         code: itemCode
       }, this._sel(onComplete)).error(this._err(onComplete));
     };
