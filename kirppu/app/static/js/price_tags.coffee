@@ -7,6 +7,9 @@ class LocalizationStrings
   deleteItem:
     enabledTitle: 'Delete this item.'
     disabledTitle: 'Enable delete by clicking the button at the top of the page.'
+  deleteAll:
+    confirmText: 'Are you sure you want to delete all items?'
+    failedText: 'Deleting all items failed.'
 
 L = new LocalizationStrings()  # Local shorthand for localization.
 
@@ -25,6 +28,7 @@ class PriceTagsConfig
     size_update: ''
     item_add: ''
     barcode_img: ''
+    items_delete_all: ''
 
   constructor: ->
 
@@ -83,6 +87,27 @@ addItem = ->
     type: $("input[name=item-add-type]:checked").val()
 
   $.post(C.urls.item_add, content, onSuccess)
+
+
+deleteAll = ->
+  if not confirm(L.deleteAll.confirmText)
+    return
+
+  tags = $('#items > .item_container')
+  tags.hide()
+
+  $.ajax(
+    url:  C.urls.items_delete_all
+    type: 'DELETE'
+    complete: (jqXHR, textStatus) ->
+      if textStatus == "success"
+        tags.remove()
+      else
+        $(tags).show()
+        alert(L.deleteAll.failedText)
+  )
+
+  return
 
 
 # Whether delete buttons are in disabled state or not.
@@ -214,5 +239,6 @@ bindTagEvents = (tags) ->
 window.localization = L
 window.itemsConfig = C
 window.addItem = addItem
+window.deleteAll = deleteAll
 window.toggleDelete = toggleDelete
 window.bindTagEvents = bindTagEvents

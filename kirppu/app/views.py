@@ -43,22 +43,24 @@ def item_add(request):
     price = request.POST.get("price", "")
     tag_type = request.POST.get("type", "short")
 
-    item = Item.new(name=name, price=price, vendor=vendor, type=tag_type, state=Item.STAGED)
+    item = Item.new(name=name, price=price, vendor=vendor, type=tag_type, state=Item.ADVERTISED)
 
     response = {
-        'vendor_id': vendor.id,
-        'code': item.code,
-        'name': item.name,
-        'price': item.price,
-        'type': item.type,
-    }
+            'vendor_id': vendor.id,
+            'code': item.code,
+            'name': item.name,
+            'price': item.price,
+            'type': item.type,
+            }
     return HttpResponse(json.dumps(response), 'application/json')
 
 
 @require_http_methods(["DELETE"])
 def item_delete(request, code):
     item = Item.get_item_by_barcode(code)
-    item.delete()
+
+    if item.state == Item.ADVERTISED:
+        item.delete()
 
     return HttpResponse()
 
@@ -124,6 +126,22 @@ def item_update_type(request, code):
 
 
 @login_required
+@require_http_methods(["DELETE"])
+def delete_all_items(request):
+    vendor = Vendor.get_vendor(request.user)
+
+    items = Item.objects.filter(vendor=vendor)
+
+    # Only allow deleting of items that have not been brought to the event yet.
+    items = items.filter(state=Item.ADVERTISED)
+
+    items.delete()
+
+    return HttpResponse()
+
+
+@login_required
+@require_http_methods(["GET", "DELETE"])
 def get_items(request):
     """
     Get a page containing all items for vendor.
@@ -132,6 +150,9 @@ def get_items(request):
     :type request: django.http.request.HttpRequest
     :return: HttpResponse or HttpResponseBadRequest
     """
+    if request.method == "DELETE":
+        return delete_all_items(request)
+
     bar_type = request.GET.get("format", "svg").lower()
     tag_type = request.GET.get("tag", "short").lower()
 
@@ -144,8 +165,8 @@ def get_items(request):
     items = Item.objects.filter(vendor=vendor).exclude(code='')
 
     render_params = {
-        'items': items,
-        'bar_type': bar_type,
+            'items': items,
+            'bar_type': bar_type,
         'tag_type': tag_type,
     }
 

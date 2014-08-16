@@ -20,7 +20,7 @@
         Short<input name="item-add-type" value="short" type="radio" checked="checked" />
         Long<input name="item-add-type" value="long" type="radio" /><br />
         <button id="add_short_item" type="button" class="item-add btn btn-mini btn-info">Add item</button>
-        <button id="add_clear_all" type="button" class="item-clear-all btn btn-mini btn-info">Clear all</button>
+        <button id="delete_all" type="button" class="btn btn-default">Delete all items</button>
         <button id="toggle_delete" type="button" class="btn btn-default">Toggle delete</button>
     </form>
 
@@ -32,12 +32,14 @@
         itemsConfig.urls.name_update = "{% url 'kirppu:item_update_name' '__placeholder__' %}";
         itemsConfig.urls.item_delete = "{% url 'kirppu:item_delete' '__placeholder__' %}";
         itemsConfig.urls.size_update = "{% url 'kirppu:item_update_type' '__placeholder__' %}";
+        itemsConfig.urls.items_delete_all = "{% url 'kirppu:page' %}";
         itemsConfig.urls.roller = "{% static "img/roller.gif" %}";
 
         $(document).ready(function() {
             setupAjax();
 
             $('#add_short_item').click(addItem);
+            $('#delete_all').click(deleteAll);
             $('#toggle_delete').click(toggleDelete);
             toggleDelete(); // Initialize delete buttons to disabled.
 
