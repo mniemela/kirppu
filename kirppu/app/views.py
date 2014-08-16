@@ -38,17 +38,17 @@ def item_add(request):
     print "vendor_id", request.user
     name = request.POST.get("name", "")
     price = request.POST.get("price", "")
-    type = request.POST.get("type", "short")
+    tag_type = request.POST.get("type", "short")
 
-    item = Item.new(name=name, price=price, vendor=vendor, type=type, state=Item.STAGED)
+    item = Item.new(name=name, price=price, vendor=vendor, type=tag_type, state=Item.STAGED)
 
     response = {
-            'vendor_id': vendor.id,
-            'code': item.code,
-            'name': item.name,
-            'price': item.price,
-            'type': item.type,
-            }
+        'vendor_id': vendor.id,
+        'code': item.code,
+        'name': item.name,
+        'price': item.price,
+        'type': item.type,
+    }
     return HttpResponse(json.dumps(response), 'application/json')
 
 
@@ -112,10 +112,10 @@ def item_update_name(request, code):
 @login_required
 @require_http_methods(["POST"])
 def item_update_type(request, code):
-    type = request.POST.get("tag_type", None)
+    tag_type = request.POST.get("tag_type", None)
 
     item = Item.get_item_by_barcode(code)
-    item.type = type
+    item.type = tag_type
     item.save()
     return HttpResponse()
 
@@ -141,10 +141,11 @@ def get_items(request):
     items = Item.objects.filter(vendor=vendor).exclude(code='')
 
     render_params = {
-            'items': items,
-            'bar_type': bar_type,
-            'tag_type': tag_type,}
-    
+        'items': items,
+        'bar_type': bar_type,
+        'tag_type': tag_type,
+    }
+
     return render(request, "app_items.html", render_params)
 
 
@@ -242,41 +243,6 @@ def checkout_view(request):
     :rtype: HttpResponse
     """
     return render(request, "app_checkout.html")
-
-
-def checkout_add_item(request):
-    """
-    Add item to receipt. Expects item code in POST.code and receipt id in
-    POST.receipt.
-
-    :param request: HttpRequest object
-    :type request: django.http.request.HttpRequest
-    :rtype: HttpResponse
-    """
-    pass
-
-
-def checkout_del_item(request):
-    """
-    Remove item from receipt. Expects item code in POST.code and receipt id
-    in POST.receipt.
-
-    :param request: HttpRequest object.
-    :type request: django.http.request.HttpRequest
-    :rtype: HttpResponse
-    """
-    pass
-
-
-def checkout_finish_receipt(request):
-    """
-    Finish receipt. Expects receipt id in POST.receipt.
-
-    :param request: HttpRequest object.
-    :type request: django.http.request.HttpRequest
-    :rtype: HttpResponse
-    """
-    pass
 
 
 @login_required

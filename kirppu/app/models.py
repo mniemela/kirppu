@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from kirppu.app.utils import model_dict_fn, format_datetime
 
 from ..util import (
@@ -56,7 +55,7 @@ class CommandCode(object):
         """
         return b32_encode(
             pack([
-                ( 4, command),
+                (4, command),
                 (46, payload),
                 (18, 0),
             ], checksum_bits=4),
