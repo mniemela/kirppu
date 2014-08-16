@@ -438,7 +438,7 @@ class Receipt(models.Model):
     clerk = models.ForeignKey(Clerk)
     counter = models.ForeignKey(Counter)
     start_time = models.DateTimeField(auto_now_add=True)
-    sell_time = models.DateTimeField(null=True)
+    sell_time = models.DateTimeField(null=True, blank=True)
 
     def items_list(self):
         items = []
@@ -459,9 +459,10 @@ class Receipt(models.Model):
         counter=lambda self: self.counter.name)
 
     def calculate_total(self):
-        result = ReceiptItem.objects.filter(action=ReceiptItem.ADD, receipt=self).aggregate(price_total=Sum("item__price"))
+        result = ReceiptItem.objects.filter(action=ReceiptItem.ADD, receipt=self)\
+            .aggregate(price_total=Sum("item__price"))
         price_total = result["price_total"]
-        self.total = price_total
+        self.total = price_total or 0
         return self.total
 
     def __unicode__(self):

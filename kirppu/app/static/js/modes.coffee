@@ -209,6 +209,7 @@ class ClerkLoginMode extends CheckoutMode
       return
     return true
 
+
 class ItemFindMode extends CheckoutMode
   constructor: (config) ->
     super(config)
@@ -230,13 +231,32 @@ class ItemFindMode extends CheckoutMode
     return true
 
 
-createRow = (index, code, name, price) ->
+# Helper function to create a row in receipt table.
+# All arguments are used for display-only.
+#
+# @param index [Integer] Index of the item.
+# @param code [String] Item code.
+# @param name [String] Item name.
+# @param price [Integer, optional] Price of the item in cents.
+# @param rounded [Boolean, optional] Should the price be displayed also as rounded?
+# @return [$] Table row (tr element) as jQuery object.
+createRow = (index, code, name, price=null, rounded=false) ->
   row = $("<tr>")
+  price_str = if price? then price.formatCents() + "€" else ""
+  if rounded
+    modulo = price % 5
+    if modulo >= 3
+      rounded_value = price + (5 - modulo)
+    else
+      rounded_value = price - modulo
+    rounded_str = rounded_value.formatCents() + "€"
+    price_str = "#{ rounded_str } (#{ price_str })"
+
   row.append(
     $("<td>").text(index),
     $("<td>").text(code),
     $("<td>").text(name),
-    $("<td>").text(if price? then price.formatCents() else "")
+    $("<td>").text(price_str)
   )
   return row
 
@@ -250,6 +270,19 @@ class CounterMode extends CheckoutMode
 
   title: -> "Checkout"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
+
+  addRow: (code, item, price, rounded=false) ->
+    if code?
+      @_receipt.rowCount++
+      index = @_receipt.rowCount
+      if price? and price < 0 then index = -index
+    else
+      code = ""
+      index = ""
+
+    row = createRow(index, code, item, price, rounded)
+    @cfg.uiRef.receiptResult.prepend(row)
+    return row
 
   onFormSubmit: (input) ->
     if input.trim() == "" then return true
@@ -265,6 +298,7 @@ class CounterMode extends CheckoutMode
       Api.startReceipt(
         onResultSuccess: (data) =>
           @_receipt.data = data
+          @cfg.uiRef.receiptResult.empty()
           @onFormSubmit(input)
         onResultError: (jqHXR) =>
           alert("Could not start receipt!")
@@ -274,9 +308,9 @@ class CounterMode extends CheckoutMode
 
     Api.reserveItem(input,
       onResultSuccess: (data) =>
-        @_receipt.rowCount++
-        row = createRow(@_receipt.rowCount, data.code, data.name, data.price)
-        @cfg.uiRef.receiptResult.append(row)
+        @addRow(data.code, data.name, data.price)
+        @_receipt.total += data.price
+
       onResultError: () =>
         alert("Could not find item: " + input)
         return true
@@ -297,9 +331,7 @@ class CounterMode extends CheckoutMode
 
     Api.releaseItem(input,
       onResultSuccess: (data) =>
-        @_receipt.rowCount++
-        row = createRow(-@_receipt.rowCount, data.code, data.name, -data.price)
-        @cfg.uiRef.receiptResult.append(row)
+        @addRow(data.code, data.name, -data.price)
         @_receipt.total -= data.price
 
       onResultError: () =>
@@ -309,12 +341,20 @@ class CounterMode extends CheckoutMode
 
   onPayReceipt: (input) ->
     unless @_receipt? then return
+    input = input - 0
+
+    if input < @_receipt.total
+      alert("Not enough given money!")
+      return
+
+    @addRow(null, "Subtotal", @_receipt.total, true)
+    @addRow(null, "Cash", input)
+    @addRow(null, "Return", input - @_receipt.total, true)
 
     Api.finishReceipt(
-      onResultSuccess: (data)  =>
+      onResultSuccess: (data) =>
         @_receipt.data = data
         console.log(@_receipt)
-        @cfg.uiRef.receiptResult.empty()
         @_receipt = null
       onResultError: () =>
         alert("Error ending receipt!")

@@ -282,10 +282,27 @@
 
   })(CheckoutMode);
 
-  createRow = function(index, code, name, price) {
-    var row;
+  createRow = function(index, code, name, price, rounded) {
+    var modulo, price_str, rounded_str, rounded_value, row;
+    if (price == null) {
+      price = null;
+    }
+    if (rounded == null) {
+      rounded = false;
+    }
     row = $("<tr>");
-    row.append($("<td>").text(index), $("<td>").text(code), $("<td>").text(name), $("<td>").text(price != null ? price.formatCents() : ""));
+    price_str = price != null ? price.formatCents() + "€" : "";
+    if (rounded) {
+      modulo = price % 5;
+      if (modulo >= 3) {
+        rounded_value = price + (5 - modulo);
+      } else {
+        rounded_value = price - modulo;
+      }
+      rounded_str = rounded_value.formatCents() + "€";
+      price_str = "" + rounded_str + " (" + price_str + ")";
+    }
+    row.append($("<td>").text(index), $("<td>").text(code), $("<td>").text(name), $("<td>").text(price_str));
     return row;
   };
 
@@ -305,6 +322,26 @@
 
     CounterMode.prototype.subtitle = function() {
       return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
+    };
+
+    CounterMode.prototype.addRow = function(code, item, price, rounded) {
+      var index, row;
+      if (rounded == null) {
+        rounded = false;
+      }
+      if (code != null) {
+        this._receipt.rowCount++;
+        index = this._receipt.rowCount;
+        if ((price != null) && price < 0) {
+          index = -index;
+        }
+      } else {
+        code = "";
+        index = "";
+      }
+      row = createRow(index, code, item, price, rounded);
+      this.cfg.uiRef.receiptResult.prepend(row);
+      return row;
     };
 
     CounterMode.prototype.onFormSubmit = function(input) {
@@ -327,6 +364,7 @@
           onResultSuccess: (function(_this) {
             return function(data) {
               _this._receipt.data = data;
+              _this.cfg.uiRef.receiptResult.empty();
               return _this.onFormSubmit(input);
             };
           })(this),
@@ -342,10 +380,8 @@
       Api.reserveItem(input, {
         onResultSuccess: (function(_this) {
           return function(data) {
-            var row;
-            _this._receipt.rowCount++;
-            row = createRow(_this._receipt.rowCount, data.code, data.name, data.price);
-            return _this.cfg.uiRef.receiptResult.append(row);
+            _this.addRow(data.code, data.name, data.price);
+            return _this._receipt.total += data.price;
           };
         })(this),
         onResultError: (function(_this) {
@@ -375,10 +411,7 @@
       return Api.releaseItem(input, {
         onResultSuccess: (function(_this) {
           return function(data) {
-            var row;
-            _this._receipt.rowCount++;
-            row = createRow(-_this._receipt.rowCount, data.code, data.name, -data.price);
-            _this.cfg.uiRef.receiptResult.append(row);
+            _this.addRow(data.code, data.name, -data.price);
             return _this._receipt.total -= data.price;
           };
         })(this),
@@ -395,12 +428,19 @@
       if (this._receipt == null) {
         return;
       }
+      input = input - 0;
+      if (input < this._receipt.total) {
+        alert("Not enough given money!");
+        return;
+      }
+      this.addRow(null, "Subtotal", this._receipt.total, true);
+      this.addRow(null, "Cash", input);
+      this.addRow(null, "Return", input - this._receipt.total, true);
       return Api.finishReceipt({
         onResultSuccess: (function(_this) {
           return function(data) {
             _this._receipt.data = data;
             console.log(_this._receipt);
-            _this.cfg.uiRef.receiptResult.empty();
             return _this._receipt = null;
           };
         })(this),

@@ -232,5 +232,7 @@ def finish_receipt(request, clerk):
     receipt.status = Receipt.FINISHED
     receipt.save()
 
+    Item.objects.filter(receipt=receipt, receiptitem__action=ReceiptItem.ADD).update(state=Item.SOLD)
+
     del request.session["receipt"]
     return receipt.as_dict()
