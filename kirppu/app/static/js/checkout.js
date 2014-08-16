@@ -21,7 +21,8 @@
       subtitleText: null,
       codeInput: null,
       codeForm: null,
-      receiptResult: null
+      receiptResult: null,
+      modeMenu: null
     };
 
     Config.prototype.uiRef = {
@@ -29,7 +30,8 @@
       subtitleText: null,
       codeInput: null,
       codeForm: null,
-      receiptResult: null
+      receiptResult: null,
+      modeMenu: null
     };
 
     Config.prototype.settings = {

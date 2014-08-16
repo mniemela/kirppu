@@ -20,6 +20,7 @@ class ModeSwitcher
   constructor: (config) ->
     @cfg = if config then config else CheckoutConfig
     @_currentMode = null
+    @_bindMenu()
 
   # Start default mode operation.
   startDefault: ->
@@ -30,6 +31,9 @@ class ModeSwitcher
   # @param mode [CheckoutMode, class] Class of new mode.
   switchTo: (mode) ->
     if @_currentMode?
+      if not @_currentMode.onPreUnBind()
+        throw new Error(@_currentMode.name + " refused to stop.")
+
       @_currentMode.unbind()
       @_currentMode = null
     newMode = new mode(@cfg)
@@ -44,13 +48,75 @@ class ModeSwitcher
   #
   # @return [String] Mode name.
   currentMode: -> if @_currentMode? then @_currentMode.constructor.name else null
+
+  # Bind mode switching menu items.
+  _bindMenu: ->
+    # For all menu-items that have data-entrypoint -attribute defined, if the name defined by that attribute is found
+    # in CheckoutConfig.settings.entryPoints, add click-handler that will switch mode to the mode defined by the
+    # value in entryPoints-dictionary.
+    menu = @cfg.uiRef.modeMenu
+    items = menu.find("[data-entrypoint]")
+    for itemDom in items
+      item = $(itemDom)
+      entryPointName = item.attr("data-entrypoint")
+      if entryPointName of CheckoutMode.entryPoints
+        entryPoint = CheckoutMode.entryPoints[entryPointName]
+
+        # As entryPoint -variable is somehow shared across all iterations of the for-loop, forcing own variable
+        # per iteration with extra function wrap that is called immediately with current values.
+        ((this_, ep) ->
+          item.click(() ->
+            console.log("Changing mode from menu to " + ep.name)
+            this_.switchTo(ep)
+          )
+        )(@, entryPoint)
+      else
+        console.warn("Entry point '#{ entryPointName }' could not be found from registered entry points. Source:")
+        console.log(itemDom)
+    return
+
+  # Enable or disable mode switching menu.
+  #
+  # @param enabled [Boolean] If true, menu will be enabled. If false, menu will be disabled.
+  setMenuEnabled: (enabled) ->
+    menu = @cfg.uiRef.modeMenu
+    setClass(menu, "disabled", not enabled)
+    setClass(menu.find("a:first"), "disabled", not enabled)
 window.ModeSwitcher = ModeSwitcher
+
+
+# Safely set or remove class to/from element.
+#
+# @param element [$] Element to adjust.
+# @param cls [String] CSS Class name to adjust.
+# @param enabled [Boolean] Whether the class should exist in the element.
+# @return [$] The element.
+setClass = (element, cls, enabled) ->
+  if element.hasClass(cls) != enabled
+    if enabled
+      element.addClass(cls)
+    else
+      element.removeClass(cls)
+  return element
 
 
 # Base class for operation modes.
 #
 # @abstract
 class CheckoutMode
+  # Map of entry point names to the actual classes.
+  @entryPoints = {}
+
+  # Register entry point with name.
+  #
+  # @param name [String] Name of the entry point.
+  # @param mode [CheckoutMode] Entry point, CheckoutMode subclass.s
+  @registerEntryPoint: (name, mode) ->
+    if name of @entryPoints
+      console.error("Name '#{ name }' was already registered for '#{ @entryPoints[name].name }' while registering '#{ mode.name }'.")
+      return
+    @entryPoints[name] = mode
+    return
 
   # @param config [Config, optional] Configuration instance override.
   constructor: (config) ->
@@ -85,6 +151,12 @@ class CheckoutMode
   # @return [String, null] Subtitle string, if needed.
   subtitle: -> null
 
+  # Value for initial state of mode switching menu.
+  # * If true, menu will be enabled upon entering this mode.
+  # * If false, menu will be disabled upon entering this mode.
+  # * If null, nothing will be done upon entering this mode.
+  initialMenuEnabled: null
+
   # Called just before bind is going to be called.
   #
   # @return [Boolean] If false, this mode will not be bound or activated. It will also not be unbound.
@@ -111,7 +183,15 @@ class CheckoutMode
     subtitle = @subtitle()
     if subtitle?
       @cfg.uiRef.stateText.append(" ", $("<small>").text(subtitle))
+
+    if @initialMenuEnabled?
+      @switcher.setMenuEnabled(@initialMenuEnabled)
     return
+
+  # Called just befor unbind is going to be called.
+  #
+  # @return [Boolean] If false, this mode will not be unbound or stopped.
+  onPreUnBind: -> true
 
   unbind: ->
 
@@ -138,6 +218,7 @@ class CounterValidationMode extends CheckoutMode
 
   title: -> "Locked"
   subtitle: -> "Need to validate counter."
+  initialMenuEnabled: false
 
   onPreBind: ->
     # If we have values for Counter in cookie storage, use them and don't start this mode at all.
@@ -188,6 +269,7 @@ class ClerkLoginMode extends CheckoutMode
 
   title: -> "Locked"
   subtitle: -> "Login..."
+  initialMenuEnabled: false
 
   onFormSubmit: (input) ->
     parsed = @_prefix.exec(input)
@@ -211,11 +293,13 @@ class ClerkLoginMode extends CheckoutMode
 
 
 class ItemFindMode extends CheckoutMode
+  @registerEntryPoint("reports", ItemFindMode)  # DEBUG: Remove or replace later.
   constructor: (config) ->
     super(config)
 
   title: -> "Find"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
+  initialMenuEnabled: true
 
   onFormSubmit: (input) ->
     Api.findItem(input, @)
@@ -262,6 +346,7 @@ createRow = (index, code, name, price=null, rounded=false) ->
 
 
 class CounterMode extends CheckoutMode
+  @registerEntryPoint("counter", CounterMode)
   constructor: (config) ->
     super(config)
     @_p_remove = contentAfterPrefixRe(@cfg.settings.removeItemPrefix)
@@ -270,6 +355,7 @@ class CounterMode extends CheckoutMode
 
   title: -> "Checkout"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
+  initialMenuEnabled: true
 
   addRow: (code, item, price, rounded=false) ->
     if code?
@@ -294,6 +380,9 @@ class CounterMode extends CheckoutMode
         rowCount: 0
         total: 0
         data: null
+
+      # Disable menu now as changes to other modes will result fatal errors.
+      @switcher.setMenuEnabled(false)
 
       Api.startReceipt(
         onResultSuccess: (data) =>
@@ -356,6 +445,9 @@ class CounterMode extends CheckoutMode
         @_receipt.data = data
         console.log(@_receipt)
         @_receipt = null
+
+        # Re-enable menu. It is safe again to use.
+        @switcher.setMenuEnabled(true)
       onResultError: () =>
         alert("Error ending receipt!")
         return true

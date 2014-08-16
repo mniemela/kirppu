@@ -23,8 +23,21 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav" id="navigation">
-                <li class="active">
-                    <a href="javascript:void(1)">Checkout</a>
+                <li class="dropdown" id="modeMenu"><a href="javascript:void(1)" class="dropdown-toggle" data-toggle="dropdown">Counter mode <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    <li>
+                        <a href="javascript:void(1)" data-entrypoint="counter"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(1)" data-entrypoint="vendor_check_in"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(1)" data-entrypoint="reports"><span class="glyphicon glyphicon-stats"></span> Reports</a>
+                    </li>
+                    <li class="disabled">
+                        <a href="javascript:void(1)" data-entrypoint="vendor_check_out"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
+                    </li>
+                    </ul>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -63,6 +76,7 @@
     CheckoutConfig.uiId.codeInput = "code_input";
     CheckoutConfig.uiId.codeForm = "code_form";
     CheckoutConfig.uiId.receiptResult = "receipt";
+    CheckoutConfig.uiId.modeMenu = "modeMenu";
 
     CheckoutConfig.urls.apiValidateCounter = "{% url 'kirppu:api_validate_counter' %}";
     CheckoutConfig.urls.apiClerkLogin = "{% url 'kirppu:api_clerk_login' %}";

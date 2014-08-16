@@ -14,12 +14,14 @@ class Config
     codeInput: null
     codeForm: null
     receiptResult: null
+    modeMenu: null
   uiRef:
     stateText: null
     subtitleText: null
     codeInput: null
     codeForm: null
     receiptResult: null
+    modeMenu: null
   settings:
     itemPrefix: null
     clerkPrefix: "::"
