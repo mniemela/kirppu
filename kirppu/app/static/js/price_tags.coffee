@@ -23,6 +23,8 @@ class PriceTagsConfig
     price_update: ''
     item_delete: ''
     size_update: ''
+    item_add: ''
+    barcode_img: ''
 
   constructor: ->
 
@@ -42,9 +44,45 @@ class PriceTagsConfig
     url = @urls.size_update
     return url.replace(@url_args.code, code)
 
+  barcode_img_url: (code) ->
+    url = @urls.barcode_img
+    return url.replace(@url_args.code, code)
+
 C = new PriceTagsConfig
 
 
+createTag = (name, price, vendor_id, code, type) ->
+  # Find the hidden template element, clone it and replace the contents.
+  tag = $(".item_template").clone();
+  tag.removeClass("item_template");
+
+  if (type == "short") then tag.addClass("item_short")
+
+  $('.item_name', tag).text(name)
+  $('.item_price', tag).text(price)
+  $('.item_head_price', tag).text(price)
+  $('.item_vendor_id', tag).text(vendor_id)
+  $(tag).attr('id', 'item_' + code)
+  $('.item_extra_code', tag).text(code)
+
+  $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code))
+
+  return tag
+
+
+# Add an item with name and price set to form contents.
+addItem = ->
+  onSuccess = (item) ->
+    tag = createTag(item.name, item.price, item.vendor_id, item.code, type=item.type)
+    $('#items').prepend(tag)
+    bindTagEvents($(tag))
+
+  content =
+    name: $("#item-add-name").val()
+    price: $("#item-add-price").val()
+    type: $("input[name=item-add-type]:checked").val()
+
+  $.post(C.urls.item_add, content, onSuccess)
 
 
 # Whether delete buttons are in disabled state or not.
@@ -175,5 +213,6 @@ bindTagEvents = (tags) ->
 # Expose the localization instance in case we want to modify it.
 window.localization = L
 window.itemsConfig = C
+window.addItem = addItem
 window.toggleDelete = toggleDelete
 window.bindTagEvents = bindTagEvents

@@ -26,51 +26,18 @@
 
     <script>
         itemsConfig.url_args.code = '__placeholder__';
+        itemsConfig.urls.item_add = "{% url 'kirppu:item_add' %}";
+        itemsConfig.urls.barcode_img = "{% url 'kirppu:barcode' '__placeholder__' bar_type %}";
         itemsConfig.urls.price_update = "{% url 'kirppu:item_update_price' '__placeholder__' %}";
         itemsConfig.urls.name_update = "{% url 'kirppu:item_update_name' '__placeholder__' %}";
         itemsConfig.urls.item_delete = "{% url 'kirppu:item_delete' '__placeholder__' %}";
         itemsConfig.urls.size_update = "{% url 'kirppu:item_update_type' '__placeholder__' %}";
         itemsConfig.urls.roller = "{% static "img/roller.gif" %}";
 
-        function create_tag(name, price, vendor_id, code, type) {
-            var tag = $(".item_template").clone();
-            tag.removeClass("item_template");
-
-            if (type == "short") {
-                tag.addClass("item_short");
-            }
-
-            $('.item_name', tag).text(name)
-            $('.item_price', tag).text(price)
-            $('.item_head_price', tag).text(price)
-            $('.item_vendor_id', tag).text(vendor_id)
-            $(tag).attr('id', 'item_' + code)
-            $('.item_extra_code', tag).text(code)
-
-            var barcode_url = "{% url 'kirppu:barcode' 'barcode_placeholder' bar_type %}";
-            barcode_url = barcode_url.replace("barcode_placeholder", code)
-            $('.barcode_container > img', tag).attr('src', barcode_url)
-
-            return tag;
-        }
-
         $(document).ready(function() {
             setupAjax();
 
-            $('#add_short_item').click(function(){
-                var params = {
-                    name: $("#item-add-name").val(),
-                    price: $("#item-add-price").val(),
-                    type: $("input[name=item-add-type]:checked").val()
-                }
-
-                $.post('{% url 'kirppu:item_add' %}', params, function(item){
-                    var tag = create_tag(item.name, item.price, item.vendor_id, item.code, type=item.type);
-                    $('#items').prepend(tag);
-                    bind_tag_events($(tag));
-                });
-            });
-
+            $('#add_short_item').click(addItem);
             $('#toggle_delete').click(toggleDelete);
             toggleDelete(); // Initialize delete buttons to disabled.
 
