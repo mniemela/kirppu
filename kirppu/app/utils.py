@@ -1,7 +1,8 @@
 from functools import wraps
 import json
 import django.forms
-from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.http.response import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
+from django.utils.translation import ugettext as _i
 
 __author__ = 'jyrkila'
 
@@ -141,3 +142,27 @@ class StaticText(django.forms.CharField):
 
         if isinstance(self.widget, StaticTextWidget) and not self.widget.has_text():
             self.widget.set_text(text)
+
+
+def require_setting(setting, value):
+    """
+    Decorator that requires a setting in settings to be a certain value before continuing to the view.
+
+    :param setting: Setting key to find from settings.
+    :type setting: str
+    :param value: Accepted value, or one-argument callable returning True if accepted and False otherwise.
+    :type value: T | callable
+    :return: View decorator that will test the specified setting.
+    """
+    def decorator(fn):
+        from django.conf import settings
+        callback = callable(value)
+
+        @wraps(fn)
+        def inner(request, *args, **kwargs):
+            current_value = getattr(settings, setting, None)
+            if not ((not callback and current_value == value) or (callback and value(current_value))):
+                return HttpResponseForbidden(_i(u"Forbidden"))
+            return fn(request, *args, **kwargs)
+        return inner
+    return decorator

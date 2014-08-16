@@ -281,6 +281,10 @@ KOMPASSI_API_APPLICATION_PASSWORD = KOMPASSI_CROWD_APPLICATION_PASSWORD
 LOGIN_URL = 'https://kompassidev.tracon.fi/crowd'
 LOGOUT_URL = 'https://kompassidev.tracon.fi/logout'
 
+KIRPPU_CHECKOUT_ACTIVE = False
+
+
+# Load local settings that are not stored in repository. This must be last at end of settings.
 try:
     from local_settings import *
 except ImportError:

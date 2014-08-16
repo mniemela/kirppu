@@ -8,7 +8,7 @@ from django.http.response import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseNotFound,
-)
+    HttpResponseForbidden)
 from django.shortcuts import (
     render,
     redirect,
@@ -19,6 +19,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _i
 
 from kirppu.app.models import (
     Item,
@@ -26,6 +27,7 @@ from kirppu.app.models import (
     CommandCode,
     Vendor,
 )
+from kirppu.app.utils import require_setting
 
 
 def index(request):
@@ -211,7 +213,10 @@ def get_commands(request):
     return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
 
 
+@login_required
 def get_clerk_codes(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden(_i(u"Forbidden"))
     bar_type = request.GET.get("format", "svg").lower()
 
     if bar_type not in ('svg', 'png'):
@@ -234,6 +239,9 @@ def get_clerk_codes(request):
     return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
 
 
+# Access control by settings.
+# CSRF is not generated if the Checkout-mode is not activated in settings.
+@require_setting("KIRPPU_CHECKOUT_ACTIVE", True)
 @ensure_csrf_cookie
 def checkout_view(request):
     """
