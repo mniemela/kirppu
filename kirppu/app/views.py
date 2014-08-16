@@ -15,6 +15,7 @@ from django.shortcuts import (
 )
 from django.conf import settings
 from django.utils.translation import ugettext
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -233,6 +234,7 @@ def get_clerk_codes(request):
     return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
 
 
+@ensure_csrf_cookie
 def checkout_view(request):
     """
     Checkout view.
