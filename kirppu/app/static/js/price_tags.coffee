@@ -76,14 +76,16 @@ createTag = (name, price, vendor_id, code, type) ->
 
 # Add an item with name and price set to form contents.
 addItem = ->
-  onSuccess = (item) ->
-    tag = createTag(item.name, item.price, item.vendor_id, item.code, type=item.type)
-    $('#items').prepend(tag)
-    bindTagEvents($(tag))
+  onSuccess = (items) ->
+    for item in items
+      tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
+      $('#items').prepend(tag)
+      bindTagEvents($(tag))
 
   content =
     name: $("#item-add-name").val()
     price: $("#item-add-price").val()
+    range: $("#item-add-suffixes").val()
     type: $("input[name=item-add-type]:checked").val()
 
   $.post(C.urls.item_add, content, onSuccess)

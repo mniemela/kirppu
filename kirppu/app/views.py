@@ -1,5 +1,6 @@
 from collections import namedtuple
 import json
+import re
 
 import barcode
 from barcode.writer import SVGWriter, ImageWriter
@@ -41,16 +42,53 @@ def item_add(request):
     name = request.POST.get("name", "")
     price = request.POST.get("price", "")
     tag_type = request.POST.get("type", "short")
+    suffix_str = request.POST.get("range", "")
 
-    item = Item.new(name=name, price=price, vendor=vendor, type=tag_type, state=Item.ADVERTISED)
+    def expand_suffixes(input_str):
+        """Turn 'a b 1 3-4' to ['a', 'b', '1', '3', '4']"""
+        words = input_str.split()
+        result = []
 
-    response = {
-        'vendor_id': vendor.id,
-        'code': item.code,
-        'name': item.name,
-        'price': item.price,
-        'type': item.type,
-    }
+        for word in words:
+            # Handle the range syntax as a special case.
+            match = re.match(r"(\d+)-(\d+)$", word)
+            if match:
+                # Turn '1-3' to ['1', '2', '3'] and so on
+                left, right = map(int, match.groups())
+                if (abs(left - right) + 1 >= 100):
+                    raise ValueError('Maximum of 100 items allowed by a single range statement.')
+                if left > right:
+                    left, right = right, left
+                result.extend(map(str, range(left, right + 1)))
+            else:
+                result.append(word)
+
+        return result
+
+    try:
+        suffixes = expand_suffixes(suffix_str)
+    except ValueError as e:
+        return HttpResponseBadRequest(e.message)
+
+    if not suffixes:
+        # If there are no suffixes the name is added as is just once.
+        # This is equivalent to adding empty string as suffix.
+        suffixes.append('')
+
+    # Create the items and construct a response containing all the items that have been added.
+    response = []
+    for suffix in suffixes:
+        suffixed_name = name + suffix
+        item = Item.new(name=suffixed_name, price=price, vendor=vendor, type=tag_type, state=Item.ADVERTISED)
+        item_dict = {
+            'vendor_id': vendor.id,
+            'code': item.code,
+            'name': item.name,
+            'price': item.price,
+            'type': item.type,
+        }
+        response.append(item_dict)
+
     return HttpResponse(json.dumps(response), 'application/json')
 
 

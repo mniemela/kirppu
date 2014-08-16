@@ -99,15 +99,21 @@
 
   addItem = function() {
     var content, onSuccess;
-    onSuccess = function(item) {
-      var tag, type;
-      tag = createTag(item.name, item.price, item.vendor_id, item.code, type = item.type);
-      $('#items').prepend(tag);
-      return bindTagEvents($(tag));
+    onSuccess = function(items) {
+      var item, tag, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = items.length; _i < _len; _i++) {
+        item = items[_i];
+        tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type);
+        $('#items').prepend(tag);
+        _results.push(bindTagEvents($(tag)));
+      }
+      return _results;
     };
     content = {
       name: $("#item-add-name").val(),
       price: $("#item-add-price").val(),
+      range: $("#item-add-suffixes").val(),
       type: $("input[name=item-add-type]:checked").val()
     };
     return $.post(C.urls.item_add, content, onSuccess);
