@@ -1,7 +1,7 @@
 [
     {
         "fields": {
-            "code": "CAAAAEAA",
+            "code": "CMAAAIAA",
             "name": "Superman comics #1",
             "price": "1",
             "state": "AD",
@@ -12,7 +12,7 @@
     },
     {
         "fields": {
-            "code": "EMAAAEAA",
+            "code": "EAAAAIAA",
             "name": "Superman comics #2",
             "price": "0.2",
             "state": "AD",
