@@ -7,7 +7,7 @@
     {% compressed_css 'vendor' %}
     {% compressed_js 'general' %}
 </head>
-<body>
+<body style="padding-left: 0.5cm;">
 {% for i in items %}
     <div class="clerk_container {% cycle 'item_even' 'item_odd' %}">
     <div class="item_info">
@@ -15,6 +15,7 @@
         <span class="item_list item_info_code barcode_value">{{ i.code }}</span>
     </div>
     <img src="{% url 'kirppu:command_barcode' i.code bar_type %}"
+         style="height: 1cm; margin: 0.1cm 0.0cm 0.3cm 0.0cm; padding-left: 0.3cm;"
          alt="Barcode: {{ i.code }}" />
     </div>
 {% endfor %}

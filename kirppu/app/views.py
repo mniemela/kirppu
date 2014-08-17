@@ -255,11 +255,8 @@ def get_barcode(request, data, ext):
     if ext not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
 
-    if ext == 'svg':
-        writer, mimetype = SVGWriter(), 'image/svg+xml'
-    else:
-        # FIXME: TypeError if PIL is not installed
-        writer, mimetype = PixelWriter(), 'image/png'
+    # FIXME: TypeError if PIL is not installed
+    writer, mimetype = PixelWriter(), 'image/png'
 
     bar = barcode.Code128(data, writer=writer)
 
