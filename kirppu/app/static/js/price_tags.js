@@ -180,7 +180,7 @@
     input = $(this);
     formGroup = input.parents(".form-group");
     value = input.val().replace(',', '.');
-    if (value > 400 || value <= 0) {
+    if (value > 400 || value <= 0 || Number.isNaN(Number.parseInt(value))) {
       formGroup.addClass('has-error');
     } else {
       formGroup.removeClass('has-error');

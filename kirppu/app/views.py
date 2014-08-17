@@ -1,5 +1,5 @@
 from collections import namedtuple
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 import decimal
 import json
 import re
@@ -40,7 +40,6 @@ def index(request):
 @require_http_methods(["POST"])
 def item_add(request):
     vendor = Vendor.get_vendor(request.user)
-    print "vendor_id", request.user
     name = request.POST.get("name", "")
     price = request.POST.get("price", "")
     tag_type = request.POST.get("type", "short")
@@ -50,7 +49,10 @@ def item_add(request):
         return HttpResponseBadRequest("Item must have a price.")
 
     price = price.replace(",", ".")
-    price = Decimal(price).quantize(Decimal('0.1'), rounding=decimal.ROUND_UP)
+    try:
+        price = Decimal(price).quantize(Decimal('0.1'), rounding=decimal.ROUND_UP)
+    except InvalidOperation:
+        return HttpResponseBadRequest("Price must be numeric.")
 
     # Round up to nearest 50 cents.
     remainder = price % Decimal('.5')

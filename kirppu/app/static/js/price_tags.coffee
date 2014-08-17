@@ -162,7 +162,7 @@ onPriceChange = ->
 
   # Replace ',' with '.' in order to accept numbers with ',' as the period.
   value = input.val().replace(',', '.')
-  if value > 400 or value <= 0
+  if value > 400 or value <= 0 or Number.isNaN(Number.parseInt(value))
     formGroup.addClass('has-error')
   else
     formGroup.removeClass('has-error')
