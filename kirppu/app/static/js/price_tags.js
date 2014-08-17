@@ -181,7 +181,7 @@
       tooltip: "Click to edit...",
       onblur: "submit",
       style: "width: 2cm",
-      callback: function(value, settings) {
+      callback: function(value) {
         return $(".item_head_price", tag).text(value);
       }
     });
@@ -238,6 +238,8 @@
             return "long";
           case "long":
             return "tiny";
+          default:
+            return "short";
         }
       })();
       return tag_type;

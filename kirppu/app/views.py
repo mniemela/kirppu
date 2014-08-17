@@ -3,7 +3,7 @@ import json
 import re
 
 import barcode
-from barcode.writer import SVGWriter, ImageWriter
+from barcode.writer import SVGWriter
 
 from django.http.response import (
     HttpResponse,
@@ -55,7 +55,7 @@ def item_add(request):
             if match:
                 # Turn '1-3' to ['1', '2', '3'] and so on
                 left, right = map(int, match.groups())
-                if (abs(left - right) + 1 >= 100):
+                if abs(left - right) + 1 >= 100:
                     raise ValueError('Maximum of 100 items allowed by a single range statement.')
                 if left > right:
                     left, right = right, left

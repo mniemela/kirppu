@@ -167,7 +167,7 @@ bindPriceEditEvents = (tag, code) ->
     onblur:    "submit"
     style:     "width: 2cm"
     # Update the extra price display for long tags.
-    callback:  (value, settings) -> $(".item_head_price", tag).text(value)
+    callback:  (value) -> $(".item_head_price", tag).text(value)
   )
   return
 
@@ -224,6 +224,7 @@ bindItemToggleEvents = (tag, code) ->
       when "tiny" then "short"
       when "short" then "long"
       when "long" then "tiny"
+      else "short"
     return tag_type
 
   onItemSizeToggle = ->
