@@ -434,6 +434,10 @@
       if (input.trim() === "") {
         return true;
       }
+      if (input === this.cfg.settings.logoutPrefix) {
+        this.onLogout();
+        return true;
+      }
       if (this.tryPattern(this._p_remove, input, this.onRemoveItem)) {
         return true;
       }
@@ -571,7 +575,27 @@
       });
     };
 
-    CounterMode.prototype.onMenuItemSelected = function(item) {};
+    CounterMode.prototype.onLogout = function() {
+      if (this._receipt != null) {
+        alert("Cannot logout while receipt is active!");
+        return;
+      }
+      return Api.clerkLogout({
+        onResultSuccess: (function(_this) {
+          return function() {
+            console.log("Logged out " + _this.cfg.settings.clerkName + ".");
+            _this.cfg.settings.clerkName = null;
+            return _this.switchTo(ClerkLoginMode);
+          };
+        })(this),
+        onResultError: (function(_this) {
+          return function() {
+            alert("Logout failed!");
+            return true;
+          };
+        })(this)
+      });
+    };
 
     return CounterMode;
 

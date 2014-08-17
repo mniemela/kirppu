@@ -381,6 +381,9 @@ class CounterMode extends CheckoutMode
 
   onFormSubmit: (input) ->
     if input.trim() == "" then return true
+    if input == @cfg.settings.logoutPrefix
+      @onLogout()
+      return true
     if @tryPattern(@_p_remove, input, @onRemoveItem) then return true
     if @tryPattern(@_p_pay, input, @onPayReceipt) then return true
     if input == @cfg.settings.abortPrefix
@@ -485,8 +488,20 @@ class CounterMode extends CheckoutMode
         return true
     )
 
-  onMenuItemSelected: (item) ->
+  onLogout: ->
+    if @_receipt?
+      alert("Cannot logout while receipt is active!")
+      return
 
+    Api.clerkLogout(
+      onResultSuccess: () =>
+        console.log("Logged out #{ @cfg.settings.clerkName }.")
+        @cfg.settings.clerkName = null
+        @switchTo(ClerkLoginMode)
+      onResultError: () =>
+        alert("Logout failed!")
+        return true
+    )
 
 window.CounterValidationMode = CounterValidationMode
 window.ClerkLoginMode = ClerkLoginMode

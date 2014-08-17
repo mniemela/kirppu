@@ -31,6 +31,7 @@ class Config
     removeItemPrefix: "-"
     payPrefix: "+"
     abortPrefix: "**--"
+    logoutPrefix: "----"
     counterCode: null
     clerkName: null
   app:

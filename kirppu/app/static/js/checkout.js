@@ -43,6 +43,7 @@
       removeItemPrefix: "-",
       payPrefix: "+",
       abortPrefix: "**--",
+      logoutPrefix: "----",
       counterCode: null,
       clerkName: null
     };
