@@ -427,10 +427,12 @@ class ReceiptItem(models.Model):
 class Receipt(models.Model):
     PENDING = "PEND"
     FINISHED = "FINI"
+    ABORTED = "ABRT"
 
     STATUS = (
         (PENDING, _(u"Not finished")),
         (FINISHED, _(u"Finished")),
+        (ABORTED, _(u"Aborted")),
     )
 
     items = models.ManyToManyField(Item, through=ReceiptItem)

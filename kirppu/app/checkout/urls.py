@@ -11,4 +11,5 @@ urlpatterns = patterns('kirppu.app.checkout.api',
     url(r'^item/release$', 'release_item_from_receipt', name='api_item_release'),
     url(r'^receipt/start$', 'start_receipt', name='api_receipt_start'),
     url(r'^receipt/finish$', 'finish_receipt', name='api_receipt_finish'),
+    url(r'^receipt/abort$', 'abort_receipt', name='api_receipt_abort'),
 )

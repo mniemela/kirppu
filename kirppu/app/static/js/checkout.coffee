@@ -8,6 +8,7 @@ class Config
     apiItemRelease: null
     apiReceiptStart: null
     apiReceiptFinish: null
+    apiReceiptAbort: null
   uiId:
     stateText: null
     subtitleText: null
@@ -29,6 +30,7 @@ class Config
     commandPrefix: ":="
     removeItemPrefix: "-"
     payPrefix: "+"
+    abortPrefix: "**--"
     counterCode: null
     clerkName: null
   app:
@@ -169,6 +171,14 @@ class Api
   # @param onComplete [dict, class, function, optional] Completion function.
   @finishReceipt = (onComplete) ->
     $.post(@C.urls.apiReceiptFinish, @_sel(onComplete))
+      .error(@_err(onComplete))
+
+  # Abort currently active receipt.
+  # All items are removed from the receipt.
+  #
+  # @param onComplete [dict, class, function, optional] Completion function.
+  @abortReceipt = (onComplete) ->
+    $.post(@C.urls.apiReceiptAbort, @_sel(onComplete))
       .error(@_err(onComplete))
 
 window.Api = Api

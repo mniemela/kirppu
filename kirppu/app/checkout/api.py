@@ -228,11 +228,48 @@ def finish_receipt(request, clerk):
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
+    assert receipt.status == Receipt.PENDING
+
     receipt.sell_time = now()
     receipt.status = Receipt.FINISHED
     receipt.save()
 
     Item.objects.filter(receipt=receipt, receiptitem__action=ReceiptItem.ADD).update(state=Item.SOLD)
+
+    del request.session["receipt"]
+    return receipt.as_dict()
+
+
+@require_POST
+@ajax_request
+@require_clerk
+def abort_receipt(request, clerk):
+    receipt_id = request.session["receipt"]
+    receipt = get_object_or_404(Receipt, pk=receipt_id)
+
+    assert receipt.status == Receipt.PENDING
+
+    # For all ADDed items, add REMOVE-entries and return the real Item's back to available.
+    added_items = ReceiptItem.objects.filter(receipt_id=receipt_id, action=ReceiptItem.ADD)
+    for receipt_item in added_items.only("item"):
+        item = receipt_item.item
+
+        ReceiptItem(item=item, receipt=receipt, action=ReceiptItem.REMOVE).save()
+
+        item.state = Item.BROUGHT
+        item.save()
+
+    # Update ADDed items to be REMOVED_LATER. This must be done after the real Items have
+    # been updated, and the REMOVE-entries added, as this will change the result set of
+    # the original added_items -query (to always return zero entries).
+    added_items.update(action=ReceiptItem.REMOVED_LATER)
+
+    # End the receipt. (Must be done after previous updates, so calculate_total calculates
+    # correct sum.)
+    receipt.sell_time = now()
+    receipt.status = Receipt.ABORTED
+    receipt.calculate_total()
+    receipt.save()
 
     del request.session["receipt"]
     return receipt.as_dict()

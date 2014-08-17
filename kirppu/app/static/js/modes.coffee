@@ -383,6 +383,9 @@ class CounterMode extends CheckoutMode
     if input.trim() == "" then return true
     if @tryPattern(@_p_remove, input, @onRemoveItem) then return true
     if @tryPattern(@_p_pay, input, @onPayReceipt) then return true
+    if input == @cfg.settings.abortPrefix
+      @onAbortReceipt()
+      return true
 
     if not @_receipt?
       @_receipt =
@@ -464,6 +467,25 @@ class CounterMode extends CheckoutMode
         return true
     )
 
+  onAbortReceipt: ->
+    unless @_receipt? then return
+
+    @addRow(null, "Aborted", null).addClass("danger")
+
+    Api.abortReceipt(
+      onResultSuccess: (data) =>
+        @_receipt.data = data
+        console.log(@_receipt)
+        @_receipt = null
+
+        @switcher.setMenuEnabled(true)
+
+      onResultError: () =>
+        alert("Error ending receipt!")
+        return true
+    )
+
+  onMenuItemSelected: (item) ->
 
 
 window.CounterValidationMode = CounterValidationMode

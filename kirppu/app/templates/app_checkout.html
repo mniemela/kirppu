@@ -86,6 +86,7 @@
     CheckoutConfig.urls.apiItemRelease = "{%  url 'kirppu:api_item_release' %}";
     CheckoutConfig.urls.apiReceiptStart = "{% url 'kirppu:api_receipt_start' %}";
     CheckoutConfig.urls.apiReceiptFinish = "{% url 'kirppu:api_receipt_finish' %}";
+    CheckoutConfig.urls.apiReceiptAbort = "{% url 'kirppu:api_receipt_abort' %}";
     $(document).ready(function() {
         setupAjax();
         CheckoutConfig.check();

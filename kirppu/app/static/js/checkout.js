@@ -13,7 +13,8 @@
       apiItemReserve: null,
       apiItemRelease: null,
       apiReceiptStart: null,
-      apiReceiptFinish: null
+      apiReceiptFinish: null,
+      apiReceiptAbort: null
     };
 
     Config.prototype.uiId = {
@@ -41,6 +42,7 @@
       commandPrefix: ":=",
       removeItemPrefix: "-",
       payPrefix: "+",
+      abortPrefix: "**--",
       counterCode: null,
       clerkName: null
     };
@@ -158,6 +160,10 @@
 
     Api.finishReceipt = function(onComplete) {
       return $.post(this.C.urls.apiReceiptFinish, this._sel(onComplete)).error(this._err(onComplete));
+    };
+
+    Api.abortReceipt = function(onComplete) {
+      return $.post(this.C.urls.apiReceiptAbort, this._sel(onComplete)).error(this._err(onComplete));
     };
 
     return Api;

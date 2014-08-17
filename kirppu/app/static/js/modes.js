@@ -440,6 +440,10 @@
       if (this.tryPattern(this._p_pay, input, this.onPayReceipt)) {
         return true;
       }
+      if (input === this.cfg.settings.abortPrefix) {
+        this.onAbortReceipt();
+        return true;
+      }
       if (this._receipt == null) {
         this._receipt = {
           rowCount: 0,
@@ -543,6 +547,31 @@
         })(this)
       });
     };
+
+    CounterMode.prototype.onAbortReceipt = function() {
+      if (this._receipt == null) {
+        return;
+      }
+      this.addRow(null, "Aborted", null).addClass("danger");
+      return Api.abortReceipt({
+        onResultSuccess: (function(_this) {
+          return function(data) {
+            _this._receipt.data = data;
+            console.log(_this._receipt);
+            _this._receipt = null;
+            return _this.switcher.setMenuEnabled(true);
+          };
+        })(this),
+        onResultError: (function(_this) {
+          return function() {
+            alert("Error ending receipt!");
+            return true;
+          };
+        })(this)
+      });
+    };
+
+    CounterMode.prototype.onMenuItemSelected = function(item) {};
 
     return CounterMode;
 
