@@ -1,5 +1,9 @@
 #item-add-form {
-    width: 19.1cm;
+    width: 19cm;
+}
+
+body {
+    padding: 1cm;
 }
 
 /**
@@ -19,7 +23,7 @@
  *      .item_button_toggle
  */
 #items {
-    width: 19.1cm;
+    width: 19cm;
     float: left;
 }
 .item_template {
@@ -27,18 +31,18 @@
 }
 .item_container {
     border: 1px solid black;
-    width: 19cm;
-    height: 3.5cm;
+    width: 99.9%;
+    height: 3.62cm;
     float: left;
     padding: 0.1cm;
     position: relative; /* Needed for absolute positioning of child elements. */
     transition: width 0.2s;
 }
 .item_short {
-    width: 9.5cm;
+    width: 49.95%;
 }
 .item_tiny {
-    width: 6.33cm;
+    width: 33.3%;
 }
 
 .item_head {
@@ -160,6 +164,23 @@ a.item_button_delete {
     }
     .item_container {
         page-break-inside: avoid;
+    }
+
+    @page
+    {
+        /* this affects the margin in the printer settings */
+        margin: 1cm 1cm;
+    }
+
+    body
+    {
+        /* this affects the margin on the content before sending to printer */
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #items {
+        width: 100%;
     }
 }
 
