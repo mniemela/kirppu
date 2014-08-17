@@ -362,8 +362,17 @@
     if (rounded == null) {
       rounded = false;
     }
-    row = $("<tr>");
-    price_str = price != null ? price.formatCents() + "€" : "";
+    if (price != null) {
+      if (Number.isInteger(price)) {
+        price_str = price.formatCents() + "€";
+      } else {
+        price_str = price;
+        rounded = false;
+      }
+    } else {
+      price_str = "";
+      rounded = false;
+    }
     if (rounded) {
       modulo = price % 5;
       if (modulo >= 3) {
@@ -374,6 +383,7 @@
       rounded_str = rounded_value.formatCents() + "€";
       price_str = "" + rounded_str + " (" + price_str + ")";
     }
+    row = $("<tr>");
     row.append($("<td>").text(index), $("<td>").text(code), $("<td>").text(name), $("<td>").text(price_str));
     return row;
   };

@@ -325,8 +325,16 @@ class ItemFindMode extends CheckoutMode
 # @param rounded [Boolean, optional] Should the price be displayed also as rounded?
 # @return [$] Table row (tr element) as jQuery object.
 createRow = (index, code, name, price=null, rounded=false) ->
-  row = $("<tr>")
-  price_str = if price? then price.formatCents() + "€" else ""
+  if price?
+    if Number.isInteger(price)
+      price_str = price.formatCents() + "€"
+    else
+      price_str = price
+      rounded = false
+  else
+    price_str = ""
+    rounded = false
+
   if rounded
     modulo = price % 5
     if modulo >= 3
@@ -336,6 +344,7 @@ createRow = (index, code, name, price=null, rounded=false) ->
     rounded_str = rounded_value.formatCents() + "€"
     price_str = "#{ rounded_str } (#{ price_str })"
 
+  row = $("<tr>")
   row.append(
     $("<td>").text(index),
     $("<td>").text(code),
