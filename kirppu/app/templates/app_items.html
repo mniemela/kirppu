@@ -83,10 +83,7 @@
         $(document).ready(function() {
             setupAjax();
 
-            $('#add_short_item').click(addItem);
-            $('#delete_all').click(deleteAll);
-            $('#toggle_delete').click(toggleDelete);
-            toggleDelete(); // Initialize delete buttons to disabled.
+            bindFormEvents();
 
             bindTagEvents($('.item_container'));
         });

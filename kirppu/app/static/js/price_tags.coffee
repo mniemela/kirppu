@@ -156,6 +156,13 @@ toggleDelete = ->
   return
 
 
+bindFormEvents = ->
+  $('#add_short_item').click(addItem);
+  $('#delete_all').click(deleteAll);
+  $('#toggle_delete').click(toggleDelete);
+  toggleDelete(); # Initialize delete buttons to disabled.
+
+
 # Bind events for item price editing.
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
@@ -284,3 +291,4 @@ window.addItem = addItem
 window.deleteAll = deleteAll
 window.toggleDelete = toggleDelete
 window.bindTagEvents = bindTagEvents
+window.bindFormEvents = bindFormEvents
