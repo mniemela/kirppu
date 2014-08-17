@@ -1,4 +1,6 @@
 from collections import namedtuple
+from decimal import Decimal
+import decimal
 import json
 import re
 
@@ -44,6 +46,22 @@ def item_add(request):
     tag_type = request.POST.get("type", "short")
     suffix_str = request.POST.get("range", "")
 
+    if not price:
+        return HttpResponseBadRequest("Item must have a price.")
+
+    price = price.replace(",", ".")
+    price = Decimal(price).quantize(Decimal('0.1'), rounding=decimal.ROUND_UP)
+
+    # Round up to nearest 50 cents.
+    remainder = price % Decimal('.5')
+    if remainder > Decimal('0'):
+        price += Decimal('.5') - remainder
+
+    if price <= Decimal('0'):
+        return HttpResponseBadRequest("Price too low.")
+    elif price > Decimal('400'):
+        return HttpResponseBadRequest("Price too high.")
+
     def expand_suffixes(input_str):
         """Turn 'a b 1 3-4' to ['a', 'b', '1', '3', '4']"""
         words = input_str.split()
@@ -79,12 +97,12 @@ def item_add(request):
     response = []
     for suffix in suffixes:
         suffixed_name = name + suffix
-        item = Item.new(name=suffixed_name, price=price, vendor=vendor, type=tag_type, state=Item.ADVERTISED)
+        item = Item.new(name=suffixed_name, price=str(price), vendor=vendor, type=tag_type, state=Item.ADVERTISED)
         item_dict = {
             'vendor_id': vendor.id,
             'code': item.code,
             'name': item.name,
-            'price': item.price,
+            'price': str(item.price).replace('.', ','),
             'type': item.type,
         }
         response.append(item_dict)
@@ -113,28 +131,26 @@ def item_view(request, code):
 @login_required
 @require_http_methods(["POST"])
 def item_update_price(request, code):
-    str_price = request.POST.get("value", "0")
-    str_price = str_price.replace(",", ".")
-    
-    try:
-        cents = float(str_price) * 100  # price in cents
-    except ValueError:
-        cents = 0
-    
-    # Round up to nearest 50 cents.---
-    if cents % 50 > 0:
-        cents += 50 - cents % 50
+    price = request.POST.get("value", "0")
+    price = price.replace(",", ".")
 
-    if cents == 0:
-        return HttpResponseBadRequest("Na a!")
-    
-    str_euros = str(cents / 100.0)
+    price = Decimal(price).quantize(Decimal('.1'), rounding=decimal.ROUND_UP)
+
+    # Round up to nearest 50 cents.
+    remainder = price % Decimal('.5')
+    if remainder > Decimal('0'):
+        price += Decimal('.5') - remainder
+
+    if price <= Decimal('0'):
+        return HttpResponseBadRequest("Price too low.")
+    elif price > Decimal('400'):
+        return HttpResponseBadRequest("Price too high.")
 
     item = Item.get_item_by_barcode(code)
-    item.price = str_euros
+    item.price = str(price)
     item.save()
 
-    return HttpResponse(str_euros.replace(".", ","))
+    return HttpResponse(str(price).replace(".", ","))
 
 
 @login_required
