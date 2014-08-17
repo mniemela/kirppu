@@ -87,6 +87,7 @@
 
 .item_name {
     width: 8.7cm;
+    height: 2em;
     border: 2px inset;
 }
 .item_tiny .item_name {
@@ -97,21 +98,26 @@
     position: absolute;
 }
 .barcode_container {
-    top: 4em;
-    height: 2cm;
-    width: 5.6cm;
+    top: 1.7cm;
+    padding: 0.1cm 0.25cm;
+    background-color: white;
 }
 .barcode_container > img {
-    width: 5.6cm;
-    height: 2cm;
+    width: 5.5cm;
+    height: 1cm;
+    image-rendering: -moz-crisp-edges;         /* Firefox */
+    image-rendering:   -o-crisp-edges;         /* Opera */
+    image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
 }
 .item_vendor_id {
-    top: 4em;
-    left: 5.6cm;
+    top: 2.8cm;
+    left: 4.5cm;
 }
 .item_extra_code {
-    top: 5em;
-    left: 5.6cm;
+    top: 2.8cm;
+    left: 1cm;
 }
 
 .item_button_delete, .item_button_toggle {

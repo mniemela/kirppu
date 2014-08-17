@@ -27,7 +27,7 @@ from kirppu.app.models import (
     CommandCode,
     Vendor,
 )
-from kirppu.app.utils import require_setting
+from kirppu.app.utils import require_setting, PixelWriter
 
 
 def index(request):
@@ -190,7 +190,10 @@ def get_items(request):
     if request.method == "DELETE":
         return delete_all_items(request)
 
-    bar_type = request.GET.get("format", "svg").lower()
+    # Use PNG if we can because SVGs from pyBarcode are huge.
+    default_format = 'png' if PixelWriter else 'svg'
+
+    bar_type = request.GET.get("format", default_format).lower()
     tag_type = request.GET.get("tag", "short").lower()
 
     if bar_type not in ('svg', 'png'):
@@ -238,15 +241,13 @@ def get_barcode(request, data, ext):
         writer, mimetype = SVGWriter(), 'image/svg+xml'
     else:
         # FIXME: TypeError if PIL is not installed
-        writer, mimetype = ImageWriter(), 'image/png'
+        writer, mimetype = PixelWriter(), 'image/png'
 
     bar = barcode.Code128(data, writer=writer)
 
     response = HttpResponse(mimetype=mimetype)
     bar.write(response, {
-        'text_distance': 4,
-        'module_height': 10,
-        'module_width': 0.4,
+        'module_width': 1,  # pixels per smallest line
     })
 
     return response

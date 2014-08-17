@@ -8,6 +8,50 @@ __author__ = 'jyrkila'
 
 RFC2822TIME = "%a, %d %b %Y %H:%M:%S %z"
 
+from barcode.writer import BaseWriter, mm2px
+
+try:
+    from PIL import Image, ImageDraw
+except ImportError:
+    print "Could not find PIL."
+    PixelWriter = None
+else:
+    class PixelWriter(BaseWriter):
+        def __init__(self):
+            BaseWriter.__init__(self, self._init, self._paint_module,
+                                self._paint_text, self._finish)
+            self.format = 'PNG'
+            self.dpi = 300
+            self._image = None
+            self._draw = None
+
+        def _init(self, code):
+            size = self.calculate_size(len(code[0]), len(code), self.dpi)
+            self._image = Image.new('RGB', size, self.background)
+            self._draw = ImageDraw.Draw(self._image)
+
+        def _paint_module(self, xpos, ypos, width, color):
+            size = [xpos, 0, xpos + width, 0]
+            self._draw.rectangle(size, outline=color, fill=color)
+
+        def _paint_text(self, xpos, ypos):
+            pass
+
+        def _finish(self):
+            return self._image
+
+        def save(self, filename, output):
+            filename = '{0}.{1}'.format(filename, self.format.lower())
+            output.save(filename, self.format.upper())
+            return filename
+
+        def calculate_size(self, modules_per_line, number_of_lines, dpi=300):
+            # These images are meant to be resized so there is no sense in
+            # including space for the quiet zone.
+            width = modules_per_line * self.module_width
+            height = 1
+            return int(width), int(height)
+
 
 class AjaxError(RuntimeError):
     def __init__(self, *args, **kwargs):
