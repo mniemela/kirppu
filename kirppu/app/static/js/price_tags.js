@@ -17,7 +17,9 @@
 
     LocalizationStrings.prototype.deleteAll = {
       confirmText: 'Are you sure you want to delete all items?',
-      failedText: 'Deleting all items failed.'
+      failedText: 'Deleting all items failed.',
+      enabledTitle: 'Delete all items.',
+      disabledTitle: 'Enable delete all by clicking the "Enable delete" button'
     };
 
     return LocalizationStrings;
@@ -143,7 +145,7 @@
   deleteIsDisabled = false;
 
   toggleDelete = function() {
-    var deleteButtons, toggleButton;
+    var deleteAllButton, deleteButtons, toggleButton;
     deleteIsDisabled = deleteIsDisabled ? false : true;
     toggleButton = $('#toggle_delete');
     if (deleteIsDisabled) {
@@ -154,6 +156,14 @@
       toggleButton.removeClass('btw-default');
       toggleButton.addClass('btn-primary');
       toggleButton.text(L.toggleDelete.enabledText);
+    }
+    deleteAllButton = $('#delete_all');
+    if (deleteIsDisabled) {
+      deleteAllButton.attr('disabled', 'disabled');
+      deleteAllButton.attr('title', L.deleteAll.disabledTitle);
+    } else {
+      deleteAllButton.removeAttr('disabled');
+      deleteAllButton.attr('title', L.deleteItem.enabledTitle);
     }
     deleteButtons = $('.item_button_delete');
     if (deleteIsDisabled) {

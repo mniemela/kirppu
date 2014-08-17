@@ -10,6 +10,8 @@ class LocalizationStrings
   deleteAll:
     confirmText: 'Are you sure you want to delete all items?'
     failedText: 'Deleting all items failed.'
+    enabledTitle: 'Delete all items.'
+    disabledTitle: 'Enable delete all by clicking the "Enable delete" button'
 
 L = new LocalizationStrings()  # Local shorthand for localization.
 
@@ -130,6 +132,15 @@ toggleDelete = ->
     toggleButton.removeClass('btw-default')
     toggleButton.addClass('btn-primary')
     toggleButton.text(L.toggleDelete.enabledText)
+
+  # Toggle the DeleteAll button between disabled/enabled.
+  deleteAllButton = $('#delete_all')
+  if deleteIsDisabled
+    deleteAllButton.attr('disabled', 'disabled')
+    deleteAllButton.attr('title', L.deleteAll.disabledTitle)
+  else
+    deleteAllButton.removeAttr('disabled')
+    deleteAllButton.attr('title', L.deleteItem.enabledTitle)
 
   # Toggle the item delete buttons between enabled/disabled.
   # These items also include the hidden template element, so there is
