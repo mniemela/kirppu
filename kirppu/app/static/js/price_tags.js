@@ -147,12 +147,12 @@
     deleteIsDisabled = deleteIsDisabled ? false : true;
     toggleButton = $('#toggle_delete');
     if (deleteIsDisabled) {
-      toggleButton.removeClass('btn-info');
+      toggleButton.removeClass('btn-primary');
       toggleButton.addClass('btw-default');
       toggleButton.text(L.toggleDelete.disabledText);
     } else {
       toggleButton.removeClass('btw-default');
-      toggleButton.addClass('btn-info');
+      toggleButton.addClass('btn-primary');
       toggleButton.text(L.toggleDelete.enabledText);
     }
     deleteButtons = $('.item_button_delete');

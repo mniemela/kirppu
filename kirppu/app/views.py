@@ -199,7 +199,12 @@ def get_items(request):
         return HttpResponseBadRequest(u"Tag type not supported")
 
     vendor = Vendor.get_vendor(request.user)
-    items = Item.objects.filter(vendor=vendor).exclude(code='')
+    items = Item.objects.filter(vendor=vendor)
+
+    # Order from newest to oldest, because that way new items are added
+    # to the top and the user immediately sees them without scrolling
+    # down.
+    items = items.order_by('-id')
 
     render_params = {
         'items': items,
