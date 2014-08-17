@@ -265,9 +265,11 @@ class Item(models.Model):
         (COMPENSATED, _(u"Compensated to vendor")),
     )
 
+    TYPE_TINY = "tiny"
     TYPE_SHORT = "short"
     TYPE_LONG = "long"
     TYPE = (
+        (TYPE_TINY, _(u"Tiny price tag")),
         (TYPE_SHORT, _(u"Short price tag")),
         (TYPE_LONG, _(u"Long price tag")),
     )

@@ -197,17 +197,45 @@ bindItemDeleteEvents = (tag, code) ->
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
 bindItemToggleEvents = (tag, code) ->
+  setTagType = (tag_type) ->
+    if tag_type == "tiny"
+      $(tag).addClass('item_tiny')
+    else
+      $(tag).removeClass('item_tiny')
+    if tag_type == "short"
+      $(tag).addClass('item_short')
+    else
+      $(tag).removeClass('item_short')
+    return
+
+  getNextType = (tag_type) ->
+    tag_type = switch tag_type
+      when "tiny" then "short"
+      when "short" then "long"
+      when "long" then "tiny"
+    return tag_type
+
   onItemSizeToggle = ->
-    tag_type = if $(tag).hasClass('item_short') then "long" else "short"
-    $(tag).toggleClass('item_short')
+    if $(tag).hasClass('item_short')
+      tag_type = "short"
+    else if $(tag).hasClass('item_tiny')
+      tag_type = "tiny"
+    else
+      tag_type = "long"
+
+    # Apply next type immediately and backtrack if the ajax call fails.
+    new_tag_type = getNextType(tag_type)
+    setTagType(new_tag_type)
+
     $.ajax(
       url:  C.size_update_url(code)
       type: 'POST'
       data:
-        tag_type: tag_type
+        tag_type: new_tag_type
       complete: (jqXHR, textStatus) ->
-        if textStatus != "success" then $(tag).toggleClass('item_short')
+        if textStatus != "success" then setTagType(tag_type)
     )
+
     return
 
   $('.item_button_toggle', tag).click(onItemSizeToggle)

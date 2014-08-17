@@ -206,20 +206,52 @@
   };
 
   bindItemToggleEvents = function(tag, code) {
-    var onItemSizeToggle;
+    var getNextType, onItemSizeToggle, setTagType;
+    setTagType = function(tag_type) {
+      if (tag_type === "tiny") {
+        $(tag).addClass('item_tiny');
+      } else {
+        $(tag).removeClass('item_tiny');
+      }
+      if (tag_type === "short") {
+        $(tag).addClass('item_short');
+      } else {
+        $(tag).removeClass('item_short');
+      }
+    };
+    getNextType = function(tag_type) {
+      tag_type = (function() {
+        switch (tag_type) {
+          case "tiny":
+            return "short";
+          case "short":
+            return "long";
+          case "long":
+            return "tiny";
+        }
+      })();
+      return tag_type;
+    };
     onItemSizeToggle = function() {
-      var tag_type;
-      tag_type = $(tag).hasClass('item_short') ? "long" : "short";
-      $(tag).toggleClass('item_short');
+      var new_tag_type, tag_type;
+      if ($(tag).hasClass('item_short')) {
+        tag_type = "short";
+      } else if ($(tag).hasClass('item_tiny')) {
+        tag_type = "tiny";
+      } else {
+        tag_type = "long";
+      }
+      new_tag_type = getNextType(tag_type);
+      setTagType(new_tag_type);
       $.ajax({
         url: C.size_update_url(code),
         type: 'POST',
         data: {
-          tag_type: tag_type
+          tag_type: new_tag_type
         },
         complete: function(jqXHR, textStatus) {
           if (textStatus !== "success") {
-            return $(tag).toggleClass('item_short');
+            return setTagType(tag_type);
           }
         }
       });

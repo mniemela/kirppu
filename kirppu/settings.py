@@ -102,7 +102,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 
-    'kompassi_crowd.middleware.KompassiCrowdAuthenticationMiddleware',
+    #'kompassi_crowd.middleware.KompassiCrowdAuthenticationMiddleware',
 
     'django.contrib.messages.middleware.MessageMiddleware',
 
@@ -111,7 +111,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'kompassi_crowd.backends.KompassiCrowdAuthenticationBackend',
+    #'kompassi_crowd.backends.KompassiCrowdAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
