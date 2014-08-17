@@ -156,11 +156,29 @@ toggleDelete = ->
   return
 
 
+onPriceChange = ->
+  input = $(this)
+  formGroup = input.parents(".form-group")
+
+  # Replace ',' with '.' in order to accept numbers with ',' as the period.
+  value = input.val().replace(',', '.')
+  if value > 400 or value <= 0
+    formGroup.addClass('has-error')
+  else
+    formGroup.removeClass('has-error')
+
+  return
+
+
 bindFormEvents = ->
   $('#add_short_item').click(addItem);
   $('#delete_all').click(deleteAll);
   $('#toggle_delete').click(toggleDelete);
   toggleDelete(); # Initialize delete buttons to disabled.
+
+  $('#item-add-price').change(onPriceChange);
+
+  return
 
 
 # Bind events for item price editing.
