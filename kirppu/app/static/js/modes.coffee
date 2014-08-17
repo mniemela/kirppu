@@ -445,9 +445,11 @@ class CounterMode extends CheckoutMode
       alert("Not enough given money!")
       return
 
-    @addRow(null, "Subtotal", @_receipt.total, true)
-    @addRow(null, "Cash", input)
-    @addRow(null, "Return", input - @_receipt.total, true)
+    row.addClass("success") for row in [
+      @addRow(null, "Subtotal", @_receipt.total, true),
+      @addRow(null, "Cash", input),
+      @addRow(null, "Return", input - @_receipt.total, true),
+    ]
 
     Api.finishReceipt(
       onResultSuccess: (data) =>

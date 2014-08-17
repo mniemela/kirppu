@@ -512,6 +512,7 @@
     };
 
     CounterMode.prototype.onPayReceipt = function(input) {
+      var row, _i, _len, _ref;
       if (this._receipt == null) {
         return;
       }
@@ -520,9 +521,11 @@
         alert("Not enough given money!");
         return;
       }
-      this.addRow(null, "Subtotal", this._receipt.total, true);
-      this.addRow(null, "Cash", input);
-      this.addRow(null, "Return", input - this._receipt.total, true);
+      _ref = [this.addRow(null, "Subtotal", this._receipt.total, true), this.addRow(null, "Cash", input), this.addRow(null, "Return", input - this._receipt.total, true)];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        row.addClass("success");
+      }
       return Api.finishReceipt({
         onResultSuccess: (function(_this) {
           return function(data) {
