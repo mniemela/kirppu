@@ -259,3 +259,19 @@ def checksum(number, bits=4):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
+
+
+def get_form(form, request, *args, **kwargs):
+    """
+    Get form instance that matches request type.
+
+    :param form: Form type to instantiate.
+    :param request: Request to read data, if POST request.
+    :param args: Additional positional arguments to the form constructor.
+    :param kwargs: Additional keyword arguments to the form constructor.
+    :return: form instance.
+    """
+    if request.method == "POST":
+        return form(request.POST, *args, **kwargs)
+    else:
+        return form(*args, **kwargs)

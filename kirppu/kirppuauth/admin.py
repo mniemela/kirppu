@@ -10,6 +10,7 @@ from kirppu.kirppuauth.models import User
 
 __author__ = 'codez'
 
+
 class KirppuUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
@@ -24,9 +25,11 @@ class KirppuUserCreationForm(UserCreationForm):
             self.error_messages['duplicate_username']
         )
 
+
 class KirppuUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = User
+
 
 class KirppuUserAdmin(UserAdmin):
     form = KirppuUserChangeForm

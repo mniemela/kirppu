@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'kirppu.app.views.index', name='home'),
     url(r'^kirppu/', include('kirppu.app.urls', app_name="kirppu", namespace="kirppu")),
+    url(r'^auth/', include('kirppu.kirppuauth.urls', app_name="kirppuauth", namespace="kirppuauth")),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
