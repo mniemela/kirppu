@@ -17,10 +17,14 @@ except ImportError:
     PixelWriter = None
 else:
     class PixelWriter(BaseWriter):
-        def __init__(self):
+        # According to wikipedia 7x smallest unit width, but 10x according
+        # to some other sources.
+        _quiet_zone = 10
+
+        def __init__(self, format='PNG'):
             BaseWriter.__init__(self, self._init, self._paint_module,
                                 self._paint_text, self._finish)
-            self.format = 'PNG'
+            self.format = format
             self.dpi = 300
             self._image = None
             self._draw = None
@@ -31,6 +35,8 @@ else:
             self._draw = ImageDraw.Draw(self._image)
 
         def _paint_module(self, xpos, ypos, width, color):
+            xpos += self._quiet_zone
+            xpos -= 2  # The position is off by this much for whatever reason.
             size = [xpos, 0, xpos + width, 0]
             self._draw.rectangle(size, outline=color, fill=color)
 
@@ -46,9 +52,9 @@ else:
             return filename
 
         def calculate_size(self, modules_per_line, number_of_lines, dpi=300):
-            # These images are meant to be resized so there is no sense in
-            # including space for the quiet zone.
             width = modules_per_line * self.module_width
+            width += 2 * self._quiet_zone  # quiet zone
+
             height = 1
             return int(width), int(height)
 
