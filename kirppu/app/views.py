@@ -214,7 +214,7 @@ def get_items(request):
     bar_type = request.GET.get("format", default_format).lower()
     tag_type = request.GET.get("tag", "short").lower()
 
-    if bar_type not in ('svg', 'png'):
+    if bar_type not in ('svg', 'png', 'gif'):
         return HttpResponseBadRequest(u"Image extension not supported")
     if tag_type not in ('short', 'long'):
         return HttpResponseBadRequest(u"Tag type not supported")
@@ -252,11 +252,11 @@ def get_barcode(request, data, ext):
     :return: Response containing the raw image data
     :rtype: HttpResponse
     """
-    if ext not in ('svg', 'png'):
+    if ext not in ('svg', 'png', 'gif'):
         return HttpResponseBadRequest(u"Image extension not supported")
 
     # FIXME: TypeError if PIL is not installed
-    writer, mimetype = PixelWriter(), 'image/png'
+    writer, mimetype = PixelWriter(format=ext), 'image/' + ext
 
     bar = barcode.Code128(data, writer=writer)
 
