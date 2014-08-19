@@ -26,7 +26,7 @@
                 <li class="dropdown" id="modeMenu"><a href="javascript:void(1)" class="dropdown-toggle" data-toggle="dropdown">Counter mode <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     <li>
-                        <a href="javascript:void(1)" data-entrypoint="counter"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
+                        <a href="javascript:void(1)" data-entrypoint="customer_checkout"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
                     </li>
                     <li>
                         <a href="javascript:void(1)" data-entrypoint="vendor_check_in"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
@@ -48,8 +48,7 @@
 </div>
 
 <div id="body" class="container">
-    <h1 id="title_text">Checkout</h1>
-    <h2 id="subtitle_text"></h2>
+    <h1><span id="title_text">Checkout</span> <small id="subtitle_text"/></h1>
     <form role="form" id="code_form">
         <div class="form-group">
             <label class="sr-only" for="code_input">Code</label>
@@ -83,8 +82,7 @@
     $(document).ready(function() {
         setupAjax();
         CheckoutConfig.check();
-        CheckoutConfig.app.switcher = new ModeSwitcher();
-        CheckoutConfig.app.switcher.startDefault();
+        new ModeSwitcher().startDefault();
     });
 //--></script>
 </body>

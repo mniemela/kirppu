@@ -49,10 +49,6 @@
       clerkName: null
     };
 
-    Config.prototype.app = {
-      switcher: null
-    };
-
     Config.prototype.check = function() {
       var element, errors, key, value, _ref;
       errors = false;
@@ -230,5 +226,3 @@
   };
 
 }).call(this);
-
-//# sourceMappingURL=checkout.map

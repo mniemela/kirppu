@@ -35,8 +35,6 @@ class Config
     logoutPrefix: "----"
     counterCode: null
     clerkName: null
-  app:
-    switcher: null
 
   # Check existence of uiId values and bind their references to uiRef.
   # @return True if errors. False if all ok.

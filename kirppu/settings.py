@@ -186,8 +186,17 @@ PIPELINE_JS = {
     },
     'checkout': {
         "source_filenames": (
-            "js/checkout.coffee",
-            "js/modes.coffee",
+            "js/checkout/checkout.coffee",
+            "js/checkout/modeswitcher.coffee",
+            "js/checkout/checkoutmode.coffee",
+            "js/checkout/itemcheckoutmode.coffee",
+
+            "js/checkout/countervalidationmode.coffee",
+            "js/checkout/clerkloginmode.coffee",
+            "js/checkout/itemcheckinmode.coffee",
+            "js/checkout/countermode.coffee",
+            "js/checkout/itemfindmode.coffee",
+
             "js/jquery.cookie-1.4.1-0.js",
         ),
         "output_filename": "cout.js",
