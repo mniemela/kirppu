@@ -49,30 +49,7 @@ class Config
       @uiRef[key] = element
     return errors
 
-# Escape given string so that it can be fed literally to regular expression matching.
-#
-# @param txt [String] String to escape.
-# @return [String] Escaped string.
-escapeRegEx = (txt) ->
-  # This exp matches all special characters of regular expression string.
-  replacer = /([\.\[\]\(\)\{\}\*\+\?\^\$\|\\])/g;
-
-  # This effectively escapes all previously defined characters so that they are matched
-  # literally in the expression.
-  return txt.replace(replacer, "\\$1")
-window.escapeRegEx = escapeRegEx
-
 window.CheckoutConfig = new Config()
-
-# Test if given prefix is found in left hand side string.
-# Can be considered to be similar to "lhs".startswith(prefix) found in some languages.
-#
-# @param lhs [String] Left hand side, the string to test.
-# @param prefix [String] Prefix that may exist in lhs.
-# @return [Boolean] True if prefix begins lhs. False if not.
-hasPrefix = (lhs, prefix) ->
-  return prefix? and lhs.substr(0, prefix.length) == prefix
-
 
 # Functions for calling backend API. Not intended to be instantiated.
 class Api

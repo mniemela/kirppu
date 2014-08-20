@@ -15,12 +15,11 @@
   this.CounterValidationMode = (function(_super) {
     __extends(CounterValidationMode, _super);
 
-    CounterValidationMode.COOKIE = "mCV";
-
-    function CounterValidationMode(config) {
-      CounterValidationMode.__super__.constructor.call(this, config);
-      this._prefix = this.cfg.settings.counterPrefix;
+    function CounterValidationMode() {
+      return CounterValidationMode.__super__.constructor.apply(this, arguments);
     }
+
+    CounterValidationMode.COOKIE = "mCV";
 
     CounterValidationMode.prototype.title = function() {
       return "Locked";
@@ -30,26 +29,26 @@
       return "Need to validate counter.";
     };
 
-    CounterValidationMode.prototype.initialMenuEnabled = false;
-
-    CounterValidationMode.prototype.onPreBind = function() {
+    CounterValidationMode.prototype.enter = function() {
       var code, data;
+      this.switcher.setMenuEnabled(false);
       code = $.cookie(this.constructor.COOKIE);
       if (code != null) {
         data = JSON.parse(b64_to_utf8(code));
-        this.onResultSuccess(data);
-        return false;
+        return this.onResultSuccess(data);
       }
-      return CounterValidationMode.__super__.onPreBind.call(this);
     };
 
-    CounterValidationMode.prototype.onFormSubmit = function(input) {
-      var code;
-      if (input.indexOf(this._prefix) !== 0) {
-        return false;
-      }
-      code = input.slice(this._prefix.length);
-      return Api.validateCounter(code, this);
+    CounterValidationMode.prototype.actions = function() {
+      return [
+        [
+          this.cfg.settings.counterPrefix, (function(_this) {
+            return function(code) {
+              return Api.validateCounter(code, _this);
+            };
+          })(this)
+        ]
+      ];
     };
 
     CounterValidationMode.prototype.onResultSuccess = function(data) {
@@ -63,7 +62,7 @@
         counter: code,
         name: name
       })));
-      return this.switchTo(ClerkLoginMode);
+      return this.switcher.switchTo(ClerkLoginMode);
     };
 
     CounterValidationMode.prototype.onResultError = function(jqXHR) {

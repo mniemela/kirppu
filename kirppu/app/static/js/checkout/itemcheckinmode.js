@@ -18,10 +18,16 @@
       return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
     };
 
-    ItemCheckInMode.prototype.initialMenuEnabled = true;
-
-    ItemCheckInMode.prototype.onFormSubmit = function(input) {
-      return Api.checkInItem(input, this);
+    ItemCheckInMode.prototype.actions = function() {
+      return [
+        [
+          '', (function(_this) {
+            return function(code) {
+              return Api.checkInItem(code, _this);
+            };
+          })(this)
+        ]
+      ];
     };
 
     ItemCheckInMode.prototype.onResultSuccess = function(data) {

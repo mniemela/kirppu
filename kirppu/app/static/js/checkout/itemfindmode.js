@@ -18,10 +18,16 @@
       return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
     };
 
-    ItemFindMode.prototype.initialMenuEnabled = true;
-
-    ItemFindMode.prototype.onFormSubmit = function(input) {
-      return Api.findItem(input, this);
+    ItemFindMode.prototype.actions = function() {
+      return [
+        [
+          '', (function(_this) {
+            return function(code) {
+              return Api.findItem(code, _this);
+            };
+          })(this)
+        ]
+      ];
     };
 
     ItemFindMode.prototype.onResultSuccess = function(data) {

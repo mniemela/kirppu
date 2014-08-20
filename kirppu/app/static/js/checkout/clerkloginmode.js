@@ -6,9 +6,8 @@
   this.ClerkLoginMode = (function(_super) {
     __extends(ClerkLoginMode, _super);
 
-    function ClerkLoginMode(config) {
-      ClerkLoginMode.__super__.constructor.call(this, config);
-      this._prefix = this.cfg.settings.clerkPrefix;
+    function ClerkLoginMode() {
+      return ClerkLoginMode.__super__.constructor.apply(this, arguments);
     }
 
     ClerkLoginMode.prototype.title = function() {
@@ -19,13 +18,20 @@
       return "Login...";
     };
 
-    ClerkLoginMode.prototype.initialMenuEnabled = false;
+    ClerkLoginMode.prototype.enter = function() {
+      return this.switcher.setMenuEnabled(false);
+    };
 
-    ClerkLoginMode.prototype.onFormSubmit = function(input) {
-      if (input.indexOf(this._prefix) !== 0) {
-        return false;
-      }
-      return Api.clerkLogin(input, this.cfg.settings.counterCode, this);
+    ClerkLoginMode.prototype.actions = function() {
+      return [
+        [
+          this.cfg.settings.clerkPrefix, (function(_this) {
+            return function(code, prefix) {
+              return Api.clerkLogin(prefix + code, _this.cfg.settings.counterCode, _this);
+            };
+          })(this)
+        ]
+      ];
     };
 
     ClerkLoginMode.prototype.onResultSuccess = function(data) {
@@ -33,7 +39,7 @@
       username = data["user"];
       this.cfg.settings.clerkName = username;
       console.log("Logged in as " + username + ".");
-      return this.switchTo(CounterMode);
+      return this.switcher.switchTo(CounterMode);
     };
 
     ClerkLoginMode.prototype.onResultError = function(jqXHR) {

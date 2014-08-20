@@ -2,10 +2,10 @@ class @ItemFindMode extends ItemCheckoutMode
 
   title: -> "Find"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
-  initialMenuEnabled: true
 
-  onFormSubmit: (input) ->
-    Api.findItem(input, @)
+  actions: -> [[
+    '', (code) => Api.findItem(code, @)
+  ]]
 
   onResultSuccess: (data) ->
     row = @createRow("?", data.code, data.name, data.price)

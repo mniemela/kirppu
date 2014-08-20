@@ -25,15 +25,15 @@ class @ModeSwitcher
   @registerEntryPoint: (name, mode) ->
     if name of @entryPoints
       console.error("Name '#{ name }' was already registered for '#{ @entryPoints[name].name }' while registering '#{ mode.name }'.")
-      return
-    @entryPoints[name] = mode
-    return
+    else
+      @entryPoints[name] = mode
 
   # @param config [Config, optional] Configuration instance override.
   constructor: (config) ->
     @cfg = if config then config else CheckoutConfig
     @_currentMode = null
     @_bindMenu(ModeSwitcher.entryPoints)
+    @_bindForm()
 
   # Start default mode operation.
   startDefault: ->
@@ -43,24 +43,44 @@ class @ModeSwitcher
   #
   # @param mode [CheckoutMode, class] Class of new mode.
   switchTo: (mode) ->
-    if @_currentMode?
-      if not @_currentMode.onPreUnBind()
-        throw new Error(@_currentMode.name + " refused to stop.")
+    if @_currentMode? then @_currentMode.exit()
+    @setMenuEnabled(true)
+    @_currentMode = new mode(@, @cfg)
 
-      @_currentMode.unbind()
-      @_currentMode = null
-    newMode = new mode(@, @cfg)
-    if not newMode.onPreBind()
-      return
-    newMode.bind()
-    newMode.clearReceipt()
-    @_currentMode = newMode
-    return
+    @cfg.uiRef.stateText.text(@_currentMode.title())
+    @cfg.uiRef.subtitleText.text(@_currentMode.subtitle() or "")
+    @_clearReceipt()
+    @_currentMode.enter()
 
-  # Get name of currently active mode.
-  #
-  # @return [String] Mode name.
-  currentMode: -> if @_currentMode? then @_currentMode.constructor.name else null
+  # Empty the receipt and create new headers.
+  _clearReceipt: (mode=@_currentMode) ->
+    $("#receipt_table").empty().append(
+      $("<thead>").append($("<tr>").append(mode.columns())),
+      @cfg.uiRef.receiptResult.empty()
+    )
+
+  # Bind functions to HTML elements.
+  _bindForm: ->
+    form = @cfg.uiRef.codeForm
+    form.off("submit")
+    form.submit(@_onFormSubmit)
+
+  _onFormSubmit: (event) =>
+    event.preventDefault()
+    input = @cfg.uiRef.codeInput.val()
+    actions = @_currentMode.actions()
+
+    # List of prefixes that match the input.
+    matching = (a for a in actions when input.indexOf(a[0]) == 0)
+    # Sort to longest first order.
+    matching = matching.sort((a, b) -> b[0].length - a[0].length)
+
+    if matching[0]?
+      [prefix, handler] = matching[0]
+      handler(input.slice(prefix.length), prefix)
+      @cfg.uiRef.codeInput.val("")
+    else
+      console.error("Input not accepted: '#{input}'.")
 
   # Bind mode switching menu items.
   _bindMenu: (entryPoints) ->

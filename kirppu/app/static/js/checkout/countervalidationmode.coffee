@@ -15,31 +15,23 @@ b64_to_utf8 = (str) ->
 class @CounterValidationMode extends CheckoutMode
   @COOKIE = "mCV"
 
-  constructor: (config) ->
-    super(config)
-    @_prefix = @cfg.settings.counterPrefix
-
   title: -> "Locked"
   subtitle: -> "Need to validate counter."
-  initialMenuEnabled: false
 
-  onPreBind: ->
-    # If we have values for Counter in cookie storage, use them and don't
-    # start this mode at all.
+  enter: ->
+    @switcher.setMenuEnabled(false)
+
+    # If we have values for Counter in cookie storage, use them and
+    # immediately switch to clerk login.
     code = $.cookie(@constructor.COOKIE)
     if code?
       data = JSON.parse(b64_to_utf8(code))
       @onResultSuccess(data)
-      return false
-    super()
 
-  onFormSubmit: (input) ->
-    if input.indexOf(@_prefix) != 0
-      return false
-    code = input.slice(@_prefix.length) # Code without prefix.
-
-    # Call backend. Results in onResult* functions.
-    Api.validateCounter(code, @)
+  actions: -> [[
+    @cfg.settings.counterPrefix,
+    (code) => Api.validateCounter(code, @)
+  ]]
 
   onResultSuccess: (data) ->
     code = data["counter"]
@@ -53,7 +45,7 @@ class @CounterValidationMode extends CheckoutMode
       counter: code
       name: name
     )))
-    @switchTo(ClerkLoginMode)
+    @switcher.switchTo(ClerkLoginMode)
 
   onResultError: (jqXHR) ->
     if jqXHR.status == 419

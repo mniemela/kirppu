@@ -1,22 +1,21 @@
 class @ClerkLoginMode extends CheckoutMode
-  constructor: (config) ->
-    super(config)
-    @_prefix = @cfg.settings.clerkPrefix
 
   title: -> "Locked"
   subtitle: -> "Login..."
-  initialMenuEnabled: false
 
-  onFormSubmit: (input) ->
-    if input.indexOf(@_prefix) != 0
-      return false
-    Api.clerkLogin(input, @cfg.settings.counterCode, @)
+  enter: -> @switcher.setMenuEnabled(false)
+
+  actions: -> [[
+    @cfg.settings.clerkPrefix,
+    (code, prefix) =>
+      Api.clerkLogin(prefix + code, @cfg.settings.counterCode, @)
+  ]]
 
   onResultSuccess: (data) ->
     username = data["user"]
     @cfg.settings.clerkName = username
     console.log("Logged in as #{username}.")
-    @switchTo(CounterMode)
+    @switcher.switchTo(CounterMode)
 
   onResultError: (jqXHR) ->
     if jqXHR.status == 419

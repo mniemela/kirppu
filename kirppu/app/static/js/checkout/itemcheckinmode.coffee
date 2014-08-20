@@ -2,10 +2,10 @@ class @ItemCheckInMode extends ItemCheckoutMode
 
   title: -> "Vendor Check-In"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
-  initialMenuEnabled: true
 
-  onFormSubmit: (input) ->
-    Api.checkInItem(input, @)
+  actions: -> [[
+    '', (code) => Api.checkInItem(code, @)
+  ]]
 
   onResultSuccess: (data) ->
     row = @createRow("", data.code, data.name, data.price)
