@@ -15,11 +15,11 @@
             <div class="item_name">{{ name }}</div>
             <div class="item_price">{{ price }}</div>
             <div class="barcode_container">
-               <img src="{% url 'kirppu:barcode' code bar_type %}" alt="Barcode: {{ code }}" />
+                <img class="barcode_img" src="{% url 'kirppu:barcode' code bar_type %}" alt="Barcode: {{ code }}" />
+                <div class="item_extra_code">{{ code }}</div>
             </div>
 
             <div class="item_vendor_id">{{ vendor_id }}</div>
-            <div class="item_extra_code">{{ code }}</div>
         </div>
 
         <button class="item_button_delete" type="button">&times;</button>

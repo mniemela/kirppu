@@ -60,11 +60,18 @@ body {
     width: 9.3cm;
     position: relative; /* Needed for absolute positioning of child elements. */
 }
+.item_short .item_body {
+    width: 100%;
+}
+.item_tiny .item_body {
+    width: 100%;
+}
 
 .item_price {
-    width: 3cm;
+    width: 2.5cm;
     font-size: 150%;
     border: 2px inset;
+    margin-top: 3px;
 }
 .item_price:after {
     content:" \20AC"; /* euro */
@@ -98,31 +105,53 @@ body {
     width: 5.5cm;
 }
 
-.barcode_container, .item_extra_code, .item_vendor_id {
-    position: absolute;
-}
 .barcode_container {
-    top: 1.7cm;
-    padding: 0.1cm 0.25cm;
-    background-color: white;
+    left: 0cm;
+    width: 294px;
 }
-.barcode_container > img {
-    width: 5.5cm;
-    height: 1cm;
+.item_short .barcode_container {
+    margin-left: auto;
+    margin-right: auto;
+}
+.item_tiny .barcode_container {
+    margin-left: auto;
+    margin-right: auto;
+    width: 147px;
+}
+.barcode_img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 294px;
+    height: 1.4cm;
     image-rendering: -moz-crisp-edges;         /* Firefox */
     image-rendering:   -o-crisp-edges;         /* Opera */
     image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
 }
+.item_tiny .barcode_img {
+    width: 147px;
+}
 .item_vendor_id {
-    top: 2.8cm;
-    left: 4.5cm;
+    position: absolute;
+    top: 1cm;
+    left: 3cm;
+}
+.item_vendor_id:before {
+    content: 'Vendor: '
 }
 .item_extra_code {
-    top: 2.8cm;
-    left: 1cm;
+    position: relative;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80px;
+    margin-top: -0.25cm;
+    background-color: white;
+    text-align: center;
 }
+
 
 .item_button_delete, .item_button_toggle {
     position: absolute;
@@ -153,6 +182,10 @@ a.item_button_delete {
 }
 
 @media print {
+    .item_extra_code {
+        background-color: white !important;
+    }
+
     .item_price, .item_name {
         border: none;
     }
