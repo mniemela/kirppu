@@ -1,14 +1,6 @@
 class @VendorFindMode extends CheckoutMode
   ModeSwitcher.registerEntryPoint("vendor_find", @)
 
-  constructor: (args...) ->
-    super(args...)
-    @_dummy =
-      id: "42"
-      name: "Erkki Esimerkki"
-      email: "erkki@example.org"
-      phone: "0123456789"
-
   title: -> "Vendor Search"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
@@ -40,25 +32,18 @@ class @VendorFindMode extends CheckoutMode
   findId: (query) =>
     # Remove leading hash.
     query = query.replace(/#/, '')
-    # TODO: actual ajax search
-    @onVendorsFound(@_findBy('id', query))
+    Api.findVendors(id: query, @onVendorsFound)
+
+  findName: (query) =>
+    Api.findVendors(name: query, @onVendorsFound)
 
   findPhoneNumber: (query) =>
     # Remove all whitespace.
     query = query.replace(/\s/g, '')
-    # TODO: actual ajax search
-    @onVendorsFound(@_findBy('phone', query))
+    Api.findVendors(phone: query, @onVendorsFound)
 
   findEmail: (query) =>
-    # TODO: actual ajax search
-    @onVendorsFound(@_findBy('email', query))
-
-  findName: (query) =>
-    # TODO: actual search from backend
-    @onVendorsFound(@_findBy('name', query))
-
-  _findBy: (property, query) =>
-    if @_dummy[property].indexOf(query) >= 0 then [@_dummy] else []
+    Api.findVendors(email: query, @onVendorsFound)
 
   onVendorsFound: (vendors) =>
     @clearReceipt()

@@ -76,7 +76,7 @@ def ajax_request(fn):
         try:
             result = fn(request, *args, **kwargs)
         except AjaxError as e:
-            result = e.status or (500, e.message)
+            result = (e.status or 500), e.message
 
         if isinstance(result, HttpResponse):
             # return HttpResponse(...)

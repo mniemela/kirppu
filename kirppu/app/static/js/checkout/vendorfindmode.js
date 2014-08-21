@@ -8,27 +8,18 @@
   this.VendorFindMode = (function(_super) {
     __extends(VendorFindMode, _super);
 
-    ModeSwitcher.registerEntryPoint("vendor_find", VendorFindMode);
-
     function VendorFindMode() {
-      var args;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       this.createRow = __bind(this.createRow, this);
       this.onVendorsFound = __bind(this.onVendorsFound, this);
-      this._findBy = __bind(this._findBy, this);
-      this.findName = __bind(this.findName, this);
       this.findEmail = __bind(this.findEmail, this);
       this.findPhoneNumber = __bind(this.findPhoneNumber, this);
+      this.findName = __bind(this.findName, this);
       this.findId = __bind(this.findId, this);
       this.onVendorSearch = __bind(this.onVendorSearch, this);
-      VendorFindMode.__super__.constructor.apply(this, args);
-      this._dummy = {
-        id: "42",
-        name: "Erkki Esimerkki",
-        email: "erkki@example.org",
-        phone: "0123456789"
-      };
+      return VendorFindMode.__super__.constructor.apply(this, arguments);
     }
+
+    ModeSwitcher.registerEntryPoint("vendor_find", VendorFindMode);
 
     VendorFindMode.prototype.title = function() {
       return "Vendor Search";
@@ -52,28 +43,28 @@
 
     VendorFindMode.prototype.findId = function(query) {
       query = query.replace(/#/, '');
-      return this.onVendorsFound(this._findBy('id', query));
+      return Api.findVendors({
+        id: query
+      }, this.onVendorsFound);
+    };
+
+    VendorFindMode.prototype.findName = function(query) {
+      return Api.findVendors({
+        name: query
+      }, this.onVendorsFound);
     };
 
     VendorFindMode.prototype.findPhoneNumber = function(query) {
       query = query.replace(/\s/g, '');
-      return this.onVendorsFound(this._findBy('phone', query));
+      return Api.findVendors({
+        phone: query
+      }, this.onVendorsFound);
     };
 
     VendorFindMode.prototype.findEmail = function(query) {
-      return this.onVendorsFound(this._findBy('email', query));
-    };
-
-    VendorFindMode.prototype.findName = function(query) {
-      return this.onVendorsFound(this._findBy('name', query));
-    };
-
-    VendorFindMode.prototype._findBy = function(property, query) {
-      if (this._dummy[property].indexOf(query) >= 0) {
-        return [this._dummy];
-      } else {
-        return [];
-      }
+      return Api.findVendors({
+        email: query
+      }, this.onVendorsFound);
     };
 
     VendorFindMode.prototype.onVendorsFound = function(vendors) {

@@ -7,6 +7,7 @@ class Config
     apiItemCheckIn: null
     apiItemReserve: null
     apiItemRelease: null
+    apiVendorFind: null
     apiReceiptStart: null
     apiReceiptFinish: null
     apiReceiptAbort: null
@@ -133,6 +134,13 @@ class Api
     $.post(@C.urls.apiItemCheckIn, code: itemCode, @_sel(onComplete))
       .error(@_err(onComplete))
 
+  # Find vendors matching the query.
+  #
+  # @param query [Object] The search query parameters.
+  # @param onComplete [dict, class, function, optional] Completion function.
+  @findVendors = (query, onComplete) ->
+    $.get(@C.urls.apiVendorFind, query, @_sel(onComplete))
+      .error(@_err(onComplete))
 
   # Start new receipt.
   #

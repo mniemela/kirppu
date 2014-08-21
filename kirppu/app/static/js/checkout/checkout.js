@@ -13,6 +13,7 @@
       apiItemCheckIn: null,
       apiItemReserve: null,
       apiItemRelease: null,
+      apiVendorFind: null,
       apiReceiptStart: null,
       apiReceiptFinish: null,
       apiReceiptAbort: null
@@ -133,6 +134,10 @@
       return $.post(this.C.urls.apiItemCheckIn, {
         code: itemCode
       }, this._sel(onComplete)).error(this._err(onComplete));
+    };
+
+    Api.findVendors = function(query, onComplete) {
+      return $.get(this.C.urls.apiVendorFind, query, this._sel(onComplete)).error(this._err(onComplete));
     };
 
     Api.startReceipt = function(onComplete) {

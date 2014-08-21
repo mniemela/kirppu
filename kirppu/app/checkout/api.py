@@ -1,4 +1,5 @@
 from functools import wraps
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
@@ -6,6 +7,7 @@ from django.utils.translation import ugettext as _i
 from django.utils.timezone import now
 from kirppu.app.models import Item, Receipt, Clerk, Counter, ReceiptItem
 from kirppu.app.utils import ajax_request
+from kirppu.kirppuauth.models import User
 
 # Some HTTP Status codes that are used here.
 RET_BAD_REQUEST = 400  # Bad request
@@ -96,9 +98,8 @@ def logout_clerk(request):
     """
     Logout currently logged in clerk.
     """
-    del request.session["clerk"]
-    del request.session["clerk_token"]
-    del request.session["counter"]
+    for key in ["clerk", "clerk_token", "counter"]:
+        request.session.pop(key, None)
     return RET_OK
 
 
@@ -124,7 +125,7 @@ def validate_counter(request):
 
 
 @ajax_request
-@require_counter
+@require_clerk
 def get_item(request, *args):
     item = _get_item_or_404(request.GET["code"])
     return item.as_dict()
@@ -133,8 +134,7 @@ def get_item(request, *args):
 @require_POST
 @ajax_request
 @require_clerk
-#@require_counter
-def checkIn_item(request, *args):
+def checkin_item(request, *args):
     item = _get_item_or_404(request.POST["code"])
     if item.state == Item.ADVERTISED:
         item.state = Item.BROUGHT
@@ -149,11 +149,37 @@ def checkIn_item(request, *args):
         return code, message
 
 
+@ajax_request
+@require_clerk
+def find_vendors(request, *args):
+    clauses = [Q(vendor__isnull=False)]
+
+    for field in ['id', 'phone', 'email']:
+        if field in request.GET:
+            clauses.append(Q(
+                **{field: request.GET[field]}
+            ))
+
+    if 'name' in request.GET:
+        for part in request.GET['name'].split():
+            clauses.append(
+                Q(first_name__icontains=part) |
+                Q(last_name__icontains=part)
+            )
+
+    return [
+        {
+            u'id': v.id,
+            u'name': v.first_name  + u' ' + v.last_name,
+            u'email': v.email,
+            u'phone': v.phone,
+        } for v in User.objects.filter(*clauses).all()
+    ]
+
 
 @require_POST
 @ajax_request
 @require_clerk
-@require_counter
 def start_receipt(request, counter, clerk):
     receipt = Receipt()
     receipt.clerk = clerk

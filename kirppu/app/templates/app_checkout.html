@@ -38,7 +38,7 @@
                         <a href="javascript:void(1)" data-entrypoint="vendor_check_out"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
                     </li>
                     <li>
-                        <a href="javascript:void(1)" data-entrypoint="vendor_find"><span class="glyphicon glyphicon-stats"></span> Vendor Search</a>
+                        <a href="javascript:void(1)" data-entrypoint="vendor_find"><span class="glyphicon glyphicon-user"></span> Vendor Search</a>
                     </li>
                     </ul>
                 </li>
@@ -77,9 +77,10 @@
     CheckoutConfig.urls.apiClerkLogin = "{% url 'kirppu:api_clerk_login' %}";
     CheckoutConfig.urls.apiClerkLogout = "{% url 'kirppu:api_clerk_logout' %}";
     CheckoutConfig.urls.apiItemInfo = "{% url 'kirppu:api_item_info' %}";
-    CheckoutConfig.urls.apiItemCheckIn = "{% url 'kirppu:api_item_checkIn' %}";
+    CheckoutConfig.urls.apiItemCheckIn = "{% url 'kirppu:api_item_checkin' %}";
     CheckoutConfig.urls.apiItemReserve = "{% url 'kirppu:api_item_reserve' %}";
     CheckoutConfig.urls.apiItemRelease = "{%  url 'kirppu:api_item_release' %}";
+    CheckoutConfig.urls.apiVendorFind = "{%  url 'kirppu:api_vendor_find' %}";
     CheckoutConfig.urls.apiReceiptStart = "{% url 'kirppu:api_receipt_start' %}";
     CheckoutConfig.urls.apiReceiptFinish = "{% url 'kirppu:api_receipt_finish' %}";
     CheckoutConfig.urls.apiReceiptAbort = "{% url 'kirppu:api_receipt_abort' %}";
