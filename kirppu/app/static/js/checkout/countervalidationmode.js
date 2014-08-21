@@ -19,6 +19,8 @@
       return CounterValidationMode.__super__.constructor.apply(this, arguments);
     }
 
+    ModeSwitcher.registerEntryPoint("counter_validation", CounterValidationMode);
+
     CounterValidationMode.COOKIE = "mCV";
 
     CounterValidationMode.prototype.title = function() {
@@ -31,6 +33,7 @@
 
     CounterValidationMode.prototype.enter = function() {
       var code, data;
+      CounterValidationMode.__super__.enter.apply(this, arguments);
       this.switcher.setMenuEnabled(false);
       code = $.cookie(this.constructor.COOKIE);
       if (code != null) {
@@ -80,7 +83,5 @@
     return CounterValidationMode;
 
   })(CheckoutMode);
-
-  this.ModeSwitcher.registerEntryPoint("counter_validation", CounterValidationMode);
 
 }).call(this);

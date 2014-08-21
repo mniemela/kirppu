@@ -45,15 +45,7 @@
       this._currentMode = new mode(this, this.cfg);
       this.cfg.uiRef.stateText.text(this._currentMode.title());
       this.cfg.uiRef.subtitleText.text(this._currentMode.subtitle() || "");
-      this._clearReceipt();
       return this._currentMode.enter();
-    };
-
-    ModeSwitcher.prototype._clearReceipt = function(mode) {
-      if (mode == null) {
-        mode = this._currentMode;
-      }
-      return $("#receipt_table").empty().append($("<thead>").append($("<tr>").append(mode.columns())), this.cfg.uiRef.receiptResult.empty());
     };
 
     ModeSwitcher.prototype._bindForm = function() {

@@ -19,15 +19,17 @@
     };
 
     CheckoutMode.prototype.enter = function() {
-      return null;
+      return this.clearReceipt();
     };
 
-    CheckoutMode.prototype.exit = function() {
-      return null;
-    };
+    CheckoutMode.prototype.exit = function() {};
 
     CheckoutMode.prototype.actions = function() {
       return [["", function() {}]];
+    };
+
+    CheckoutMode.prototype.clearReceipt = function() {
+      return this.cfg.uiRef.receiptTable.empty().append($("<thead>").append($("<tr>").append(this.columns())), this.cfg.uiRef.receiptResult.empty());
     };
 
     return CheckoutMode;

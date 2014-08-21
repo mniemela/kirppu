@@ -49,15 +49,7 @@ class @ModeSwitcher
 
     @cfg.uiRef.stateText.text(@_currentMode.title())
     @cfg.uiRef.subtitleText.text(@_currentMode.subtitle() or "")
-    @_clearReceipt()
     @_currentMode.enter()
-
-  # Empty the receipt and create new headers.
-  _clearReceipt: (mode=@_currentMode) ->
-    $("#receipt_table").empty().append(
-      $("<thead>").append($("<tr>").append(mode.columns())),
-      @cfg.uiRef.receiptResult.empty()
-    )
 
   # Bind functions to HTML elements.
   _bindForm: ->

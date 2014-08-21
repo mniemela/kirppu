@@ -40,10 +40,7 @@ class @ItemCheckoutMode extends CheckoutMode
       price_str = "#{ rounded_str } (#{ price_str })"
 
     row = $("<tr>")
-    row.append(
-      $("<td>").text(index),
-      $("<td>").text(code),
-      $("<td>").text(name),
-      $("<td>").text(price_str)
+    row.append.apply(
+      row,
+      $("<td>").text(x) for x in [index, code, name, price_str]
     )
-    return row

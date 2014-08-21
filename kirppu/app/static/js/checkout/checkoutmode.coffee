@@ -23,10 +23,10 @@ class @CheckoutMode
   columns: -> []
 
   # Called after switching to this mode.
-  enter: -> null
+  enter: -> do @clearReceipt
 
   # Called after switching out of this mode.
-  exit: -> null
+  exit: ->
 
   # Return an Array where each element is a [prefix, handler function]
   # array. The handler will be called with (code, prefix) where code is
@@ -37,3 +37,10 @@ class @CheckoutMode
   #
   # @return [Array] Mapping from prefixes to handler functions.
   actions: -> [["", ->]]
+
+  # Empty the receipt and create new headers.
+  clearReceipt: ->
+    @cfg.uiRef.receiptTable.empty().append(
+      $("<thead>").append($("<tr>").append(@columns())),
+      @cfg.uiRef.receiptResult.empty(),
+    )

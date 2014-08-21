@@ -13,12 +13,15 @@ b64_to_utf8 = (str) ->
     return unescape(decodeURIComponent(window.atob( str )))
 
 class @CounterValidationMode extends CheckoutMode
+  ModeSwitcher.registerEntryPoint("counter_validation", @)
+
   @COOKIE = "mCV"
 
   title: -> "Locked"
   subtitle: -> "Need to validate counter."
 
   enter: ->
+    super
     @switcher.setMenuEnabled(false)
 
     # If we have values for Counter in cookie storage, use them and
@@ -55,5 +58,3 @@ class @CounterValidationMode extends CheckoutMode
 
   @clearStore: ->
     $.removeCookie(@COOKIE)
-
-@ModeSwitcher.registerEntryPoint("counter_validation", CounterValidationMode)

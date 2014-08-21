@@ -16,6 +16,7 @@ class Config
     codeInput: null
     codeForm: null
     receiptResult: null
+    receiptTable: null
     modeMenu: null
   uiRef:
     stateText: null

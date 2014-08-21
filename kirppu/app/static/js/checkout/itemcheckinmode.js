@@ -10,6 +10,8 @@
       return ItemCheckInMode.__super__.constructor.apply(this, arguments);
     }
 
+    ModeSwitcher.registerEntryPoint("vendor_check_in", ItemCheckInMode);
+
     ItemCheckInMode.prototype.title = function() {
       return "Vendor Check-In";
     };
@@ -47,7 +49,5 @@
     return ItemCheckInMode;
 
   })(ItemCheckoutMode);
-
-  this.ModeSwitcher.registerEntryPoint("vendor_check_in", ItemCheckInMode);
 
 }).call(this);

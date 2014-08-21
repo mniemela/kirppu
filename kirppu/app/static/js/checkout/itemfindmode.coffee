@@ -1,4 +1,5 @@
 class @ItemFindMode extends ItemCheckoutMode
+  ModeSwitcher.registerEntryPoint("reports", @)
 
   title: -> "Find"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
@@ -16,5 +17,3 @@ class @ItemFindMode extends ItemCheckoutMode
       alert("No such item")
       return
     return true
-
-@ModeSwitcher.registerEntryPoint("reports", ItemFindMode)

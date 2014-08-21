@@ -8,6 +8,8 @@
   this.CounterMode = (function(_super) {
     __extends(CounterMode, _super);
 
+    ModeSwitcher.registerEntryPoint("customer_checkout", CounterMode);
+
     function CounterMode() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -207,7 +209,5 @@
     return CounterMode;
 
   })(ItemCheckoutMode);
-
-  this.ModeSwitcher.registerEntryPoint("customer_checkout", CounterMode);
 
 }).call(this);

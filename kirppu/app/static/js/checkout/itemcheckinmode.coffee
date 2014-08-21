@@ -1,4 +1,5 @@
 class @ItemCheckInMode extends ItemCheckoutMode
+  ModeSwitcher.registerEntryPoint("vendor_check_in", @)
 
   title: -> "Vendor Check-In"
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
@@ -16,5 +17,3 @@ class @ItemCheckInMode extends ItemCheckoutMode
       alert("No such item")
       return
     return true
-
-@ModeSwitcher.registerEntryPoint("vendor_check_in", ItemCheckInMode)

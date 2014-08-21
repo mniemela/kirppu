@@ -196,6 +196,7 @@ PIPELINE_JS = {
             "js/checkout/itemcheckinmode.coffee",
             "js/checkout/countermode.coffee",
             "js/checkout/itemfindmode.coffee",
+            "js/checkout/vendorfindmode.coffee",
 
             "js/jquery.cookie-1.4.1-0.js",
         ),

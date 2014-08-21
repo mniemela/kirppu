@@ -1,9 +1,12 @@
 class @ClerkLoginMode extends CheckoutMode
+  ModeSwitcher.registerEntryPoint("clerk_login", @)
 
   title: -> "Locked"
   subtitle: -> "Login..."
 
-  enter: -> @switcher.setMenuEnabled(false)
+  enter: ->
+    super
+    @switcher.setMenuEnabled(false)
 
   actions: -> [[
     @cfg.settings.clerkPrefix,
@@ -22,5 +25,3 @@ class @ClerkLoginMode extends CheckoutMode
       console.log("Login failed: " + jqXHR.responseJSON["message"])
       return
     return true
-
-@ModeSwitcher.registerEntryPoint("clerk_login", ClerkLoginMode)

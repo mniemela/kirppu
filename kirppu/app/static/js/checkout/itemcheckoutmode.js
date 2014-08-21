@@ -15,7 +15,7 @@
     };
 
     ItemCheckoutMode.prototype.createRow = function(index, code, name, price, rounded) {
-      var modulo, price_str, rounded_str, rounded_value, row;
+      var modulo, price_str, rounded_str, rounded_value, row, x;
       if (price == null) {
         price = null;
       }
@@ -44,8 +44,16 @@
         price_str = "" + rounded_str + " (" + price_str + ")";
       }
       row = $("<tr>");
-      row.append($("<td>").text(index), $("<td>").text(code), $("<td>").text(name), $("<td>").text(price_str));
-      return row;
+      return row.append.apply(row, (function() {
+        var _i, _len, _ref, _results;
+        _ref = [index, code, name, price_str];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          _results.push($("<td>").text(x));
+        }
+        return _results;
+      })());
     };
 
     return ItemCheckoutMode;

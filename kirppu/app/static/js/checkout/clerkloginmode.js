@@ -10,6 +10,8 @@
       return ClerkLoginMode.__super__.constructor.apply(this, arguments);
     }
 
+    ModeSwitcher.registerEntryPoint("clerk_login", ClerkLoginMode);
+
     ClerkLoginMode.prototype.title = function() {
       return "Locked";
     };
@@ -19,6 +21,7 @@
     };
 
     ClerkLoginMode.prototype.enter = function() {
+      ClerkLoginMode.__super__.enter.apply(this, arguments);
       return this.switcher.setMenuEnabled(false);
     };
 
@@ -53,7 +56,5 @@
     return ClerkLoginMode;
 
   })(CheckoutMode);
-
-  this.ModeSwitcher.registerEntryPoint("clerk_login", ClerkLoginMode);
 
 }).call(this);

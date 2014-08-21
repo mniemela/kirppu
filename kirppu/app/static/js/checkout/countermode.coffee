@@ -1,4 +1,5 @@
 class @CounterMode extends ItemCheckoutMode
+  ModeSwitcher.registerEntryPoint("customer_checkout", @)
 
   constructor: (args...) ->
     super(args...)
@@ -144,5 +145,3 @@ class @CounterMode extends ItemCheckoutMode
         alert("Logout failed!")
         return true
     )
-
-@ModeSwitcher.registerEntryPoint("customer_checkout", CounterMode)

@@ -10,6 +10,8 @@
       return ItemFindMode.__super__.constructor.apply(this, arguments);
     }
 
+    ModeSwitcher.registerEntryPoint("reports", ItemFindMode);
+
     ItemFindMode.prototype.title = function() {
       return "Find";
     };
@@ -47,7 +49,5 @@
     return ItemFindMode;
 
   })(ItemCheckoutMode);
-
-  this.ModeSwitcher.registerEntryPoint("reports", ItemFindMode);
 
 }).call(this);
