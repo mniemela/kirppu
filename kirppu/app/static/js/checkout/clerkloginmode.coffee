@@ -11,16 +11,19 @@ class @ClerkLoginMode extends CheckoutMode
   actions: -> [[
     @cfg.settings.clerkPrefix,
     (code, prefix) =>
-      Api.clerkLogin(prefix + code, @cfg.settings.counterCode, @)
+      Api.clerk_login(
+        code: prefix + code
+        counter: @cfg.settings.counterCode
+      ).then(@onResultSuccess, @onResultError)
   ]]
 
-  onResultSuccess: (data) ->
+  onResultSuccess: (data) =>
     username = data["user"]
     @cfg.settings.clerkName = username
     console.log("Logged in as #{username}.")
     @switcher.switchTo(CounterMode)
 
-  onResultError: (jqXHR) ->
+  onResultError: (jqXHR) =>
     if jqXHR.status == 419
       console.log("Login failed: " + jqXHR.responseJSON["message"])
       return

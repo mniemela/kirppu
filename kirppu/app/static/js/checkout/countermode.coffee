@@ -47,13 +47,13 @@ class @CounterMode extends ItemCheckoutMode
     # Changes to other modes now would result in fatal errors.
     @switcher.setMenuEnabled(false)
 
-    Api.startReceipt(
-      onResultSuccess: (data) =>
+    Api.receipt_start().then(
+      (data) =>
         @_receipt.data = data
         @cfg.uiRef.receiptResult.empty()
         @reserveItem(code)
 
-      onResultError: (jqHXR) =>
+      (jqHXR) =>
         alert("Could not start receipt!")
         # Rollback.
         @_receipt = null
@@ -62,12 +62,12 @@ class @CounterMode extends ItemCheckoutMode
     )
 
   reserveItem: (code) ->
-      Api.reserveItem(code,
-        onResultSuccess: (data) =>
+      Api.item_reserve(code: code).then(
+        (data) =>
           @addRow(data.code, data.name, data.price)
           @_receipt.total += data.price
 
-        onResultError: () =>
+        =>
           alert("Could not find item: " + code)
           return true
       )
@@ -75,12 +75,12 @@ class @CounterMode extends ItemCheckoutMode
   onRemoveItem: (code) =>
     unless @_receipt? then return
 
-    Api.releaseItem(code,
-      onResultSuccess: (data) =>
+    Api.item_release(code: code).then(
+      (data) =>
         @addRow(data.code, data.name, -data.price)
         @_receipt.total -= data.price
 
-      onResultError: () =>
+      () =>
         alert("Item not found on receipt: " + code)
         return true
     )
@@ -99,15 +99,15 @@ class @CounterMode extends ItemCheckoutMode
       @addRow(null, "Return", input - @_receipt.total, true),
     ]
 
-    Api.finishReceipt(
-      onResultSuccess: (data) =>
+    Api.receipt_finish().then(
+      (data) =>
         @_receipt.data = data
         console.log(@_receipt)
         @_receipt = null
         # Mode switching is safe to use again.
         @switcher.setMenuEnabled(true)
 
-      onResultError: () =>
+      () =>
         alert("Error ending receipt!")
         return true
     )
@@ -115,8 +115,8 @@ class @CounterMode extends ItemCheckoutMode
   onAbortReceipt: =>
     unless @_receipt? then return
 
-    Api.abortReceipt(
-      onResultSuccess: (data) =>
+    Api.receipt_abort().then(
+      (data) =>
         @_receipt.data = data
         console.log(@_receipt)
         @_receipt = null
@@ -125,7 +125,7 @@ class @CounterMode extends ItemCheckoutMode
         # Mode switching is safe to use again.
         @switcher.setMenuEnabled(true)
 
-      onResultError: () =>
+      () =>
         alert("Error ending receipt!")
         return true
     )
@@ -135,13 +135,13 @@ class @CounterMode extends ItemCheckoutMode
       alert("Cannot logout while receipt is active!")
       return
 
-    Api.clerkLogout(
-      onResultSuccess: () =>
+    Api.clerk_logout().then(
+      () =>
         console.log("Logged out #{ @cfg.settings.clerkName }.")
         @cfg.settings.clerkName = null
         @switcher.switchTo(ClerkLoginMode)
 
-      onResultError: () =>
+      () =>
         alert("Logout failed!")
         return true
     )

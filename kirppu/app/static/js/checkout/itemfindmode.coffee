@@ -5,14 +5,17 @@ class @ItemFindMode extends ItemCheckoutMode
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   actions: -> [[
-    '', (code) => Api.findItem(code, @)
+    '', (code) =>
+      Api.item_find(
+        code: code
+      ).then(@onResultSuccess, @onResultError)
   ]]
 
-  onResultSuccess: (data) ->
+  onResultSuccess: (data) =>
     row = @createRow("?", data.code, data.name, data.price)
     @cfg.uiRef.receiptResult.append(row)
 
-  onResultError: (jqXHR) ->
+  onResultError: (jqXHR) =>
     if jqXHR.status == 404
       alert("No such item")
       return

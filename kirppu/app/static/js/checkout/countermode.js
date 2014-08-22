@@ -72,60 +72,55 @@
         data: null
       };
       this.switcher.setMenuEnabled(false);
-      return Api.startReceipt({
-        onResultSuccess: (function(_this) {
-          return function(data) {
-            _this._receipt.data = data;
-            _this.cfg.uiRef.receiptResult.empty();
-            return _this.reserveItem(code);
-          };
-        })(this),
-        onResultError: (function(_this) {
-          return function(jqHXR) {
-            alert("Could not start receipt!");
-            _this._receipt = null;
-            _this.switcher.setMenuEnabled(true);
-            return true;
-          };
-        })(this)
-      });
+      return Api.receipt_start().then((function(_this) {
+        return function(data) {
+          _this._receipt.data = data;
+          _this.cfg.uiRef.receiptResult.empty();
+          return _this.reserveItem(code);
+        };
+      })(this), (function(_this) {
+        return function(jqHXR) {
+          alert("Could not start receipt!");
+          _this._receipt = null;
+          _this.switcher.setMenuEnabled(true);
+          return true;
+        };
+      })(this));
     };
 
     CounterMode.prototype.reserveItem = function(code) {
-      return Api.reserveItem(code, {
-        onResultSuccess: (function(_this) {
-          return function(data) {
-            _this.addRow(data.code, data.name, data.price);
-            return _this._receipt.total += data.price;
-          };
-        })(this),
-        onResultError: (function(_this) {
-          return function() {
-            alert("Could not find item: " + code);
-            return true;
-          };
-        })(this)
-      });
+      return Api.item_reserve({
+        code: code
+      }).then((function(_this) {
+        return function(data) {
+          _this.addRow(data.code, data.name, data.price);
+          return _this._receipt.total += data.price;
+        };
+      })(this), (function(_this) {
+        return function() {
+          alert("Could not find item: " + code);
+          return true;
+        };
+      })(this));
     };
 
     CounterMode.prototype.onRemoveItem = function(code) {
       if (this._receipt == null) {
         return;
       }
-      return Api.releaseItem(code, {
-        onResultSuccess: (function(_this) {
-          return function(data) {
-            _this.addRow(data.code, data.name, -data.price);
-            return _this._receipt.total -= data.price;
-          };
-        })(this),
-        onResultError: (function(_this) {
-          return function() {
-            alert("Item not found on receipt: " + code);
-            return true;
-          };
-        })(this)
-      });
+      return Api.item_release({
+        code: code
+      }).then((function(_this) {
+        return function(data) {
+          _this.addRow(data.code, data.name, -data.price);
+          return _this._receipt.total -= data.price;
+        };
+      })(this), (function(_this) {
+        return function() {
+          alert("Item not found on receipt: " + code);
+          return true;
+        };
+      })(this));
     };
 
     CounterMode.prototype.onPayReceipt = function(input) {
@@ -143,45 +138,39 @@
         row = _ref[_i];
         row.addClass("success");
       }
-      return Api.finishReceipt({
-        onResultSuccess: (function(_this) {
-          return function(data) {
-            _this._receipt.data = data;
-            console.log(_this._receipt);
-            _this._receipt = null;
-            return _this.switcher.setMenuEnabled(true);
-          };
-        })(this),
-        onResultError: (function(_this) {
-          return function() {
-            alert("Error ending receipt!");
-            return true;
-          };
-        })(this)
-      });
+      return Api.receipt_finish().then((function(_this) {
+        return function(data) {
+          _this._receipt.data = data;
+          console.log(_this._receipt);
+          _this._receipt = null;
+          return _this.switcher.setMenuEnabled(true);
+        };
+      })(this), (function(_this) {
+        return function() {
+          alert("Error ending receipt!");
+          return true;
+        };
+      })(this));
     };
 
     CounterMode.prototype.onAbortReceipt = function() {
       if (this._receipt == null) {
         return;
       }
-      return Api.abortReceipt({
-        onResultSuccess: (function(_this) {
-          return function(data) {
-            _this._receipt.data = data;
-            console.log(_this._receipt);
-            _this._receipt = null;
-            _this.addRow(null, "Aborted", null).addClass("danger");
-            return _this.switcher.setMenuEnabled(true);
-          };
-        })(this),
-        onResultError: (function(_this) {
-          return function() {
-            alert("Error ending receipt!");
-            return true;
-          };
-        })(this)
-      });
+      return Api.receipt_abort().then((function(_this) {
+        return function(data) {
+          _this._receipt.data = data;
+          console.log(_this._receipt);
+          _this._receipt = null;
+          _this.addRow(null, "Aborted", null).addClass("danger");
+          return _this.switcher.setMenuEnabled(true);
+        };
+      })(this), (function(_this) {
+        return function() {
+          alert("Error ending receipt!");
+          return true;
+        };
+      })(this));
     };
 
     CounterMode.prototype.onLogout = function() {
@@ -189,21 +178,18 @@
         alert("Cannot logout while receipt is active!");
         return;
       }
-      return Api.clerkLogout({
-        onResultSuccess: (function(_this) {
-          return function() {
-            console.log("Logged out " + _this.cfg.settings.clerkName + ".");
-            _this.cfg.settings.clerkName = null;
-            return _this.switcher.switchTo(ClerkLoginMode);
-          };
-        })(this),
-        onResultError: (function(_this) {
-          return function() {
-            alert("Logout failed!");
-            return true;
-          };
-        })(this)
-      });
+      return Api.clerk_logout().then((function(_this) {
+        return function() {
+          console.log("Logged out " + _this.cfg.settings.clerkName + ".");
+          _this.cfg.settings.clerkName = null;
+          return _this.switcher.switchTo(ClerkLoginMode);
+        };
+      })(this), (function(_this) {
+        return function() {
+          alert("Logout failed!");
+          return true;
+        };
+      })(this));
     };
 
     return CounterMode;

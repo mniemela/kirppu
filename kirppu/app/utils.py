@@ -1,7 +1,7 @@
 from functools import wraps
 import json
 import django.forms
-from django.http.response import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
+from django.http.response import HttpResponseForbidden
 from django.utils.translation import ugettext as _i
 
 __author__ = 'jyrkila'
@@ -64,53 +64,6 @@ else:
 
             height = 1
             return int(width), int(height)
-
-
-class AjaxError(RuntimeError):
-    def __init__(self, *args, **kwargs):
-        status = kwargs.pop("status", None)
-        super(AjaxError, self).__init__(*args, **kwargs)
-        self._status = status
-
-    @property
-    def status(self):
-        return self._status
-
-
-def ajax_request(fn):
-    """
-    Decorator for django views that are meant purely for AJAX access.
-    """
-    @wraps(fn)
-    def inner(request, *args, **kwargs):
-        if not request.is_ajax():
-            return HttpResponseBadRequest("Invalid requester")
-
-        try:
-            result = fn(request, *args, **kwargs)
-        except AjaxError as e:
-            result = (e.status or 500), e.message
-
-        if isinstance(result, HttpResponse):
-            # return HttpResponse(...)
-            return result
-
-        if isinstance(result, int):
-            # return 200
-            return HttpResponse(status=result)
-
-        status_code = 200
-        if isinstance(result, tuple):
-            # return 200, {...}
-            status_code = result[0]
-            result = result[1]
-
-        if isinstance(result, (str, unicode)):
-            # return 200, "..."
-            result = {"message": result}
-
-        return HttpResponse(json.dumps(result), status=status_code, mimetype="application/json")
-    return inner
 
 
 def model_dict_fn(*args, **kwargs):

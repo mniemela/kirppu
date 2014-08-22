@@ -1,13 +1,37 @@
 from functools import wraps
+import json
+import inspect
+
 from django.db.models import Q
 from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_POST
+from django.http.response import (
+    HttpResponse,
+    HttpResponseBadRequest,
+)
+from django.shortcuts import (
+    get_object_or_404,
+    render,
+)
+from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _i
 from django.utils.timezone import now
+
 from kirppu.app.models import Item, Receipt, Clerk, Counter, ReceiptItem
-from kirppu.app.utils import ajax_request
 from kirppu.kirppuauth.models import User
+
+
+class AjaxError(Exception):
+    def __init__(self, status, message='AJAX request failed'):
+        self.status = status
+        self.message = message
+
+    def render(self):
+        return HttpResponse(
+            self.message,
+            content_type='text/plain',
+            status=self.status,
+        )
+
 
 # Some HTTP Status codes that are used here.
 RET_BAD_REQUEST = 400  # Bad request
@@ -16,6 +40,28 @@ RET_CONFLICT = 409  # Conflict
 RET_AUTH_FAILED = 419  # Authentication timeout
 RET_LOCKED = 423  # Locked resource
 RET_OK = 200  # OK
+
+class AjaxFunc(object):
+    def __init__(self, func, url, method):
+        self.name = func.func_name              # name of the view function
+        self.url = url                          # url for url config
+        self.view_name = 'api_' + self.name     # view name for url config
+        self.view = 'kirppu:' + self.view_name  # view name for templates
+        self.method = method                    # http method for templates
+
+# Registry for ajax functions. Maps function names to AjaxFuncs.
+AJAX_FUNCTIONS = {}
+
+
+def checkout_js(request):
+    """
+    Render the JavaScript file that defines the AJAX API functions.
+    """
+    return render(
+        request,
+        "app_checkout_api.js",
+        {'funcs': AJAX_FUNCTIONS},
+    )
 
 
 def _get_item_or_404(code):
@@ -29,161 +75,211 @@ def _get_item_or_404(code):
     return item
 
 
-def require_clerk(fn):
-    @wraps(fn)
-    def inner(request, *args, **kwargs):
-        if "clerk" not in request.session or\
-                "clerk_token" not in request.session or\
-                "counter" not in request.session:
-            return RET_UNAUTHORIZED, _i(u"Not logged in.")
+def get_clerk(request):
+    """
+    Get the Clerk object associated with a request.
 
-        clerk_id = request.session["clerk"]
-        clerk_token = request.session["clerk_token"]
+    Raise AjaxError if session is invalid or clerk is not found.
+    """
+    for key in ["clerk", "clerk_token", "counter"]:
+        if key not in request.session:
+            raise AjaxError(RET_UNAUTHORIZED, _i(u"Not logged in."))
 
-        try:
-            clerk_object = Clerk.objects.get(pk=clerk_id)
-        except Clerk.DoesNotExist:
-            return RET_UNAUTHORIZED, _i(u"Clerk not found.")
-
-        if clerk_object.access_key != clerk_token:
-            return RET_UNAUTHORIZED, _i(u"Bye.")
-
-        return fn(request, clerk_object, *args, **kwargs)
-    return inner
-
-
-def require_counter(fn):
-    @wraps(fn)
-    def inner(request, *args, **kwargs):
-        if "counter" not in request.session:
-            return RET_UNAUTHORIZED, _i(u"Not logged in.")
-
-        counter_id = request.session["counter"]
-        try:
-            counter_object = Counter.objects.get(pk=counter_id)
-        except Counter.DoesNotExist:
-            return RET_UNAUTHORIZED, _i(u"Counter has gone missing.")
-
-        return fn(request, counter_object, *args, **kwargs)
-    return inner
-
-
-@require_POST
-@ajax_request
-def login_clerk(request):
-    if "code" not in request.POST or "counter" not in request.POST:
-        return RET_BAD_REQUEST
-
-    code = request.POST["code"]
-    counter_ident = request.POST["counter"]
-
-    clerk = Clerk.by_code(code)
-    if clerk is None:
-        return RET_AUTH_FAILED, _i(u"Unauthorized.")
+    clerk_id = request.session["clerk"]
+    clerk_token = request.session["clerk_token"]
 
     try:
-        counter = Counter.objects.get(identifier=counter_ident)
+        clerk_object = Clerk.objects.get(pk=clerk_id)
+    except Clerk.DoesNotExist:
+        raise AjaxError(RET_UNAUTHORIZED, _i(u"Clerk not found."))
+
+    if clerk_object.access_key != clerk_token:
+        return AjaxError(RET_UNAUTHORIZED, _i(u"Bye."))
+
+    return clerk_object
+
+
+def get_counter(request):
+    """
+    Get the Counter object associated with a request.
+
+    Raise AjaxError if session is invalid or counter is not found.
+    """
+    if "counter" not in request.session:
+        raise AjaxError(RET_UNAUTHORIZED, _i(u"Not logged in."))
+
+    counter_id = request.session["counter"]
+    try:
+        counter_object = Counter.objects.get(pk=counter_id)
     except Counter.DoesNotExist:
-        return RET_AUTH_FAILED, _i(u"Counter has gone missing.")
+        raise AjaxError(
+            RET_UNAUTHORIZED,
+            _i(u"Counter has gone missing."),
+        )
+
+    return counter_object
+
+
+def ajax_func(url, method='POST', counter=True, clerk=True):
+    """
+    Decorate the view function properly and register it.
+
+    The decorated view will not be called if
+        1. the request is not an AJAX request,
+        2. the request method does not match the given method,
+        3. counter is True but counter has not been validated,
+        4. clerk is True but a clerk has not logged in,
+        OR
+        5. the parameters after the request are not filled by the request
+        data.
+    """
+    def decorator(func):
+        # Get argspec before any decoration.
+        (args, _, _, defaults) = inspect.getargspec(func)
+
+        # Register the function.
+        name = func.func_name
+        AJAX_FUNCTIONS[name] = AjaxFunc(func, url, method)
+
+        # Decorate func.
+        func = require_http_methods([method])(func)
+
+        @wraps(func)
+        def wrapper(request, **kwargs):
+            if not request.is_ajax():
+                return HttpResponseBadRequest("Invalid requester")
+
+            # Pass request params to the view as keyword arguments.
+            # The first argument is skipped since it is the request.
+            request_data = request.GET if method == 'GET' else request.POST
+            for arg in args[1:]:
+                try:
+                    kwargs[arg] = request_data[arg]
+                except KeyError:
+                    return HttpResponseBadRequest()
+
+            try:
+                # Check session counter and clerk.
+                if counter:
+                    get_counter(request)
+                if clerk:
+                    get_clerk(request)
+
+                result = func(request, **kwargs)
+            except AjaxError as ae:
+                return ae.render()
+
+            if isinstance(result, HttpResponse):
+                return result
+            else:
+                return HttpResponse(
+                    json.dumps(result),
+                    status=200,
+                    content_type='application/json',
+                )
+        return wrapper
+
+    return decorator
+
+
+@ajax_func('^clerk/login$', clerk=False, counter=False)
+def clerk_login(request, code, counter):
+    try:
+        counter_obj = Counter.objects.get(identifier=counter)
+    except Counter.DoesNotExist:
+        raise AjaxError(RET_AUTH_FAILED, _i(u"Counter has gone missing."))
+
+    try:
+        clerk = Clerk.by_code(code)
+    except ValueError:
+        clerk = None
+
+    if clerk is None:
+        raise AjaxError(RET_AUTH_FAILED, _i(u"Unauthorized."))
 
     request.session["clerk"] = clerk.pk
     request.session["clerk_token"] = clerk.access_key
-    request.session["counter"] = counter.pk
+    request.session["counter"] = counter_obj.pk
     return clerk.as_dict()
 
 
-@require_POST
-@ajax_request
-def logout_clerk(request):
+@ajax_func('^clerk/logout$', clerk=False, counter=False)
+def clerk_logout(request):
     """
     Logout currently logged in clerk.
     """
     for key in ["clerk", "clerk_token", "counter"]:
         request.session.pop(key, None)
-    return RET_OK
+    return HttpResponse()
 
 
-@require_POST
-@ajax_request
-def validate_counter(request):
+@ajax_func('^counter/validate$', clerk=False, counter=False)
+def counter_validate(request, code):
     """
-    Validates the counter identifier and returns its exact form, if it is valid. The exact form
-    must be supplied to login_clerk.
+    Validates the counter identifier and returns its exact form, if it is
+    valid.
     """
-    if "code" not in request.POST:
-        return RET_BAD_REQUEST
-
-    code = request.POST["code"]
-
     try:
         counter = Counter.objects.get(identifier__iexact=code)
     except Counter.DoesNotExist:
-        return RET_AUTH_FAILED
+        raise AjaxError(RET_AUTH_FAILED)
 
     return {"counter": counter.identifier,
             "name": counter.name}
 
 
-@ajax_request
-@require_clerk
-def get_item(request, *args):
-    item = _get_item_or_404(request.GET["code"])
-    return item.as_dict()
+@ajax_func('^item/find$', method='GET')
+def item_find(request, code):
+    return _get_item_or_404(code).as_dict()
 
 
-@require_POST
-@ajax_request
-@require_clerk
-def checkin_item(request, *args):
-    item = _get_item_or_404(request.POST["code"])
+@ajax_func('^item/checkin$')
+def item_checkin(request, code):
+    item = _get_item_or_404(code)
     if item.state == Item.ADVERTISED:
         item.state = Item.BROUGHT
         item.save()
         return item.as_dict()
 
     else:
-        # Errors.
-        # Not in expected state.
-        message = _i(u"Unexpected item state: {state}").format(state=item.state)
-        code = RET_CONFLICT
-        return code, message
+        # Item not in expected state.
+        raise AjaxError(
+            RET_CONFLICT,
+            _i(u"Unexpected item state: {state}").format(state=item.state),
+        )
 
 
-@ajax_request
-@require_clerk
-def find_vendors(request, *args):
+@ajax_func('^vendor/find$', method='GET')
+def vendor_find(request, q):
     clauses = [Q(vendor__isnull=False)]
 
-    for field in ['id', 'phone', 'email']:
-        if field in request.GET:
-            clauses.append(Q(
-                **{field: request.GET[field]}
-            ))
+    for part in q.split():
+        clause = (
+              Q(phone=part)
+            | Q(first_name__icontains=part)
+            | Q(last_name__icontains=part)
+            | Q(email__icontains=part)
+        )
+        try:
+            clause = clause | Q(id=int(part))
+        except ValueError:
+            pass
 
-    if 'name' in request.GET:
-        for part in request.GET['name'].split():
-            clauses.append(
-                Q(first_name__icontains=part) |
-                Q(last_name__icontains=part)
-            )
+        clauses.append(clause)
 
-    return [
-        {
-            u'id': v.id,
-            u'name': v.first_name  + u' ' + v.last_name,
-            u'email': v.email,
-            u'phone': v.phone,
-        } for v in User.objects.filter(*clauses).all()
-    ]
+    return [{
+        u'id': v.id,
+        u'name': v.first_name  + u' ' + v.last_name,
+        u'email': v.email,
+        u'phone': v.phone,
+    } for v in User.objects.filter(*clauses).all()]
 
 
-@require_POST
-@ajax_request
-@require_clerk
-def start_receipt(request, counter, clerk):
+@ajax_func('^receipt/start$')
+def receipt_start(request):
     receipt = Receipt()
-    receipt.clerk = clerk
-    receipt.counter = counter
+    receipt.clerk = get_clerk(request)
+    receipt.counter = get_counter(request)
 
     receipt.save()
 
@@ -191,11 +287,9 @@ def start_receipt(request, counter, clerk):
     return receipt.as_dict()
 
 
-@require_POST
-@ajax_request
-@require_clerk
-def reserve_item_for_receipt(request, clerk):
-    item = _get_item_or_404(request.POST["code"])
+@ajax_func('^item/reserve$')
+def item_reserve(request, code):
+    item = _get_item_or_404(code)
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
@@ -212,34 +306,17 @@ def reserve_item_for_receipt(request, clerk):
         ret.update(total=receipt.total_cents)
         return ret
 
+    elif item.state == Item.STAGED:
+        # Staged somewhere other?
+        raise AjaxError(RET_LOCKED)
     else:
-        # Errors.
-        if item.state == Item.STAGED:
-            # Staged somewhere other?
-            code = RET_LOCKED
-
-            # Should be either 0 or 1 items long.
-            rec_list = []
-            r_items = ReceiptItem.objects.filter(action=ReceiptItem.ADD, item__id=item.pk)
-            for ri in r_items:
-                rec_list.append(ri.receipt.as_dict())
-
-        else:
-            # Not in expected state.
-            code = RET_CONFLICT
-            rec_list = None
-
-        # Price removed for "safety".
-        ret = item.as_dict()
-        ret.update(price=None, receipts=rec_list)
-        return code, ret
+        # Not in expected state.
+        raise AjaxError(RET_CONFLICT)
 
 
-@require_POST
-@ajax_request
-@require_clerk
-def release_item_from_receipt(request, clerk):
-    item = _get_item_or_404(request.POST["code"])
+@ajax_func('^item/release$')
+def item_release(request, code):
+    item = _get_item_or_404(code)
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
@@ -248,7 +325,7 @@ def release_item_from_receipt(request, clerk):
         .order_by("-add_time")
 
     if len(last_added_item) == 0:
-        return RET_CONFLICT, _i(u"Item is not added to receipt.")
+        raise AjaxError(RET_CONFLICT, _i(u"Item is not added to receipt."))
     assert len(last_added_item) == 1
 
     last_added_item = last_added_item[0]
@@ -267,14 +344,12 @@ def release_item_from_receipt(request, clerk):
     return removal_entry.as_dict()
 
 
-@require_POST
-@ajax_request
-@require_clerk
-def finish_receipt(request, clerk):
+@ajax_func('^receipt/finish$')
+def receipt_finish(request):
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
-
-    assert receipt.status == Receipt.PENDING
+    if receipt.status != Receipt.PENDING:
+        raise AjaxError(RET_CONFLICT)
 
     receipt.sell_time = now()
     receipt.status = Receipt.FINISHED
@@ -286,14 +361,13 @@ def finish_receipt(request, clerk):
     return receipt.as_dict()
 
 
-@require_POST
-@ajax_request
-@require_clerk
-def abort_receipt(request, clerk):
+@ajax_func('^receipt/abort$')
+def receipt_abort(request):
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
-    assert receipt.status == Receipt.PENDING
+    if receipt.status != Receipt.PENDING:
+        raise AjaxError(RET_CONFLICT)
 
     # For all ADDed items, add REMOVE-entries and return the real Item's back to available.
     added_items = ReceiptItem.objects.filter(receipt_id=receipt_id, action=ReceiptItem.ADD)
