@@ -24,14 +24,21 @@ else:
         def __init__(self, format='PNG'):
             BaseWriter.__init__(self, self._init, self._paint_module,
                                 self._paint_text, self._finish)
-            self.format = format
+            self.format = format.lower()
             self.dpi = 300
             self._image = None
             self._draw = None
 
         def _init(self, code):
             size = self.calculate_size(len(code[0]), len(code), self.dpi)
-            self._image = Image.new('RGB', size, self.background)
+
+            if self.format == 'gif':
+                # Monochrome doesn't work with gifs for some reason.
+                color_mode = 'L'
+            else:
+                color_mode = '1'
+
+            self._image = Image.new(color_mode, size, 255)
             self._draw = ImageDraw.Draw(self._image)
 
         def _paint_module(self, xpos, ypos, width, color):
