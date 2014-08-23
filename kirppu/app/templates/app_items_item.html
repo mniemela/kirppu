@@ -1,3 +1,5 @@
+{% load kirppu_tags %}
+
 {% if tag_type == "long" %}
     <div class="item_container">
 {% elif tag_type == "template" %}
@@ -15,7 +17,7 @@
             <div class="item_name">{{ name }}</div>
             <div class="item_price">{{ price }}</div>
             <div class="barcode_container">
-                <img class="barcode_img" src="{% url 'kirppu:barcode' code bar_type %}" alt="Barcode: {{ code }}" />
+                <img class="barcode_img" src="{% barcode_dataurl code bar_type %}" alt="Barcode: {{ code }}" />
                 <div class="item_extra_code">{{ code }}</div>
             </div>
 
