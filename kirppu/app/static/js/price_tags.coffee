@@ -2,16 +2,13 @@
 # better.
 class LocalizationStrings
   toggleDelete:
-    enabledText: 'Disable delete'
-    disabledText: 'Enable delete'
+    enabledText: 'Disable mark button'
+    disabledText: 'Mark individual items'
   deleteItem:
-    enabledTitle: 'Delete this item.'
-    disabledTitle: 'Enable delete by clicking the button at the top of the page.'
+    enabledTitle: 'Mark this item as printed.'
+    disabledTitle: 'Mark this item as printed. Enable this button from the top of the page.'
   deleteAll:
-    confirmText: 'Are you sure you want to delete all items?'
-    failedText: 'Deleting all items failed.'
-    enabledTitle: 'Delete all items.'
-    disabledTitle: 'Enable delete all by clicking the "Enable delete" button'
+    confirmText: 'This will mark all items as printed so they can no longer be edited. Continue?'
 
 L = new LocalizationStrings()  # Local shorthand for localization.
 
@@ -114,7 +111,6 @@ deleteAll = ->
         tags.remove()
       else
         $(tags).show()
-        alert(L.deleteAll.failedText)
   )
 
   return
@@ -131,22 +127,11 @@ toggleDelete = ->
   # Toggle the style of the toggle button it self.
   toggleButton = $('#toggle_delete')
   if deleteIsDisabled
-    toggleButton.removeClass('btn-primary')
+    toggleButton.removeClass('active')
     toggleButton.addClass('btw-default')
-    toggleButton.text(L.toggleDelete.disabledText)
   else
     toggleButton.removeClass('btw-default')
-    toggleButton.addClass('btn-primary')
-    toggleButton.text(L.toggleDelete.enabledText)
-
-  # Toggle the DeleteAll button between disabled/enabled.
-  deleteAllButton = $('#delete_all')
-  if deleteIsDisabled
-    deleteAllButton.attr('disabled', 'disabled')
-    deleteAllButton.attr('title', L.deleteAll.disabledTitle)
-  else
-    deleteAllButton.removeAttr('disabled')
-    deleteAllButton.attr('title', L.deleteItem.enabledTitle)
+    toggleButton.addClass('active')
 
   # Toggle the item delete buttons between enabled/disabled.
   # These items also include the hidden template element, so there is

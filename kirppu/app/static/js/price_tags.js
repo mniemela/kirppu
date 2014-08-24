@@ -6,20 +6,17 @@
     function LocalizationStrings() {}
 
     LocalizationStrings.prototype.toggleDelete = {
-      enabledText: 'Disable delete',
-      disabledText: 'Enable delete'
+      enabledText: 'Disable mark button',
+      disabledText: 'Mark individual items'
     };
 
     LocalizationStrings.prototype.deleteItem = {
-      enabledTitle: 'Delete this item.',
-      disabledTitle: 'Enable delete by clicking the button at the top of the page.'
+      enabledTitle: 'Mark this item as printed.',
+      disabledTitle: 'Mark this item as printed. Enable this button from the top of the page.'
     };
 
     LocalizationStrings.prototype.deleteAll = {
-      confirmText: 'Are you sure you want to delete all items?',
-      failedText: 'Deleting all items failed.',
-      enabledTitle: 'Delete all items.',
-      disabledTitle: 'Enable delete all by clicking the "Enable delete" button'
+      confirmText: 'This will mark all items as printed so they can no longer be edited. Continue?'
     };
 
     return LocalizationStrings;
@@ -145,8 +142,7 @@
         if (textStatus === "success") {
           return tags.remove();
         } else {
-          $(tags).show();
-          return alert(L.deleteAll.failedText);
+          return $(tags).show();
         }
       }
     });
@@ -155,25 +151,15 @@
   deleteIsDisabled = false;
 
   toggleDelete = function() {
-    var deleteAllButton, deleteButtons, toggleButton;
+    var deleteButtons, toggleButton;
     deleteIsDisabled = deleteIsDisabled ? false : true;
     toggleButton = $('#toggle_delete');
     if (deleteIsDisabled) {
-      toggleButton.removeClass('btn-primary');
+      toggleButton.removeClass('active');
       toggleButton.addClass('btw-default');
-      toggleButton.text(L.toggleDelete.disabledText);
     } else {
       toggleButton.removeClass('btw-default');
-      toggleButton.addClass('btn-primary');
-      toggleButton.text(L.toggleDelete.enabledText);
-    }
-    deleteAllButton = $('#delete_all');
-    if (deleteIsDisabled) {
-      deleteAllButton.attr('disabled', 'disabled');
-      deleteAllButton.attr('title', L.deleteAll.disabledTitle);
-    } else {
-      deleteAllButton.removeAttr('disabled');
-      deleteAllButton.attr('title', L.deleteItem.enabledTitle);
+      toggleButton.addClass('active');
     }
     deleteButtons = $('.item_button_delete');
     if (deleteIsDisabled) {
