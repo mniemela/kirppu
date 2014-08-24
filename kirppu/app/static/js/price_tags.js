@@ -89,6 +89,9 @@
     if (type === "short") {
       tag.addClass("item_short");
     }
+    if (type === "tiny") {
+      tag.addClass("item_tiny");
+    }
     $('.item_name', tag).text(name);
     $('.item_price', tag).text(price);
     $('.item_head_price', tag).text(price);

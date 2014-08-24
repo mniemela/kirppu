@@ -63,6 +63,7 @@ createTag = (name, price, vendor_id, code, type) ->
   tag.removeClass("item_template");
 
   if (type == "short") then tag.addClass("item_short")
+  if (type == "tiny") then tag.addClass("item_tiny")
 
   $('.item_name', tag).text(name)
   $('.item_price', tag).text(price)
