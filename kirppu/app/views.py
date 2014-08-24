@@ -208,11 +208,11 @@ def item_update_type(request, code):
 
 
 @login_required
-@require_http_methods(["DELETE"])
-def delete_all_items(request):
+@require_http_methods(["POST"])
+def all_to_print(request):
     vendor = Vendor.get_vendor(request.user)
 
-    items = Item.objects.filter(vendor=vendor)
+    items = Item.objects.filter(vendor=vendor).filter(printed=False)
 
     for item in items:
         item.printed = True

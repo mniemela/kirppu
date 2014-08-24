@@ -39,7 +39,8 @@
       item_add: '',
       barcode_img: '',
       items_delete_all: '',
-      item_to_print: ''
+      item_to_print: '',
+      all_to_print: ''
     };
 
     function PriceTagsConfig() {}
@@ -134,16 +135,19 @@
       return;
     }
     tags = $('#items > .item_container');
-    tags.hide('slow');
+    $(tags).hide('slow');
     $.ajax({
-      url: C.urls.items_delete_all,
-      type: 'DELETE',
-      complete: function(jqXHR, textStatus) {
-        if (textStatus === "success") {
-          return tags.remove();
-        } else {
-          return $(tags).show();
-        }
+      url: C.urls.all_to_print,
+      type: 'POST',
+      success: function() {
+        return $(tags).each(function(index, tag) {
+          var code;
+          code = $(".item_extra_code", tag).text();
+          return moveToList(tag, code);
+        });
+      },
+      error: function() {
+        return $(tags).show('slow');
       }
     });
   };
@@ -249,15 +253,16 @@
     $.ajax({
       url: C.item_delete_url(code),
       type: 'DELETE',
-      complete: function(jqXHR, textStatus) {
-        if (textStatus === "success") {
-          unbindTagEvents($(tag));
-          $('.item_button_delete', tag).click(function() {
-            return onClickToPrint(tag, code);
-          });
-          $(tag).prependTo("#printed_items");
-          $(tag).addClass("item_list");
-        }
+      success: function() {
+        unbindTagEvents($(tag));
+        $('.item_button_delete', tag).click(function() {
+          return onClickToPrint(tag, code);
+        });
+        $(tag).prependTo("#printed_items");
+        $(tag).addClass("item_list");
+        return $(tag).show('slow');
+      },
+      error: function() {
         return $(tag).show('slow');
       }
     });

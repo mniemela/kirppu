@@ -29,6 +29,7 @@ class PriceTagsConfig
     barcode_img: ''
     items_delete_all: ''
     item_to_print: ''
+    all_to_print: ''
 
   constructor: ->
 
@@ -101,16 +102,18 @@ deleteAll = ->
     return
 
   tags = $('#items > .item_container')
-  tags.hide('slow')
+  $(tags).hide('slow')
 
   $.ajax(
-    url:  C.urls.items_delete_all
-    type: 'DELETE'
-    complete: (jqXHR, textStatus) ->
-      if textStatus == "success"
-        tags.remove()
-      else
-        $(tags).show()
+    url:  C.urls.all_to_print
+    type: 'POST'
+    success: ->
+      $(tags).each((index, tag) ->
+        code = $(".item_extra_code", tag).text()
+        moveToList(tag, code)
+      )
+    error: ->
+      $(tags).show('slow')
   )
 
   return
@@ -239,13 +242,16 @@ moveToList = (tag, code) ->
   $.ajax(
     url:  C.item_delete_url(code)
     type: 'DELETE'
-    complete: (jqXHR, textStatus) ->
-      if textStatus == "success"
-        unbindTagEvents($(tag))
 
-        $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
-        $(tag).prependTo("#printed_items")
-        $(tag).addClass("item_list")
+    success: ->
+      unbindTagEvents($(tag))
+
+      $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
+      $(tag).prependTo("#printed_items")
+      $(tag).addClass("item_list")
+      $(tag).show('slow')
+
+    error: ->
       $(tag).show('slow')
   )
   return
