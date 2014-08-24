@@ -157,6 +157,18 @@ toggleDelete = ->
   return
 
 
+listViewIsOn = false;
+
+toggleListView = ->
+  listViewIsOn = if listViewIsOn then false else true
+
+  items = $('#items > .item_container')
+  if listViewIsOn
+    items.addClass('item_list')
+  else
+    items.removeClass('item_list')
+
+
 onPriceChange = ->
   input = $(this)
   formGroup = input.parents(".form-group")
@@ -175,6 +187,7 @@ bindFormEvents = ->
   $('#add_short_item').click(addItem);
   $('#delete_all').click(deleteAll);
   $('#toggle_delete').click(toggleDelete);
+  $('#list_view').click(toggleListView)
   toggleDelete(); # Initialize delete buttons to disabled.
 
   $('#item-add-price').change(onPriceChange);

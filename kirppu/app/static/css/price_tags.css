@@ -47,6 +47,7 @@ body {
 }
 .item_list {
     height: 2em;
+    width: 99.9%;
 }
 
 .item_head {
