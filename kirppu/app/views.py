@@ -205,9 +205,7 @@ def all_to_print(request):
 
     items = Item.objects.filter(vendor=vendor).filter(printed=False)
 
-    for item in items:
-        item.printed = True
-        item.save()
+    items.update(printed=True)
 
     return HttpResponse()
 

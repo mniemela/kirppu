@@ -109,7 +109,7 @@ deleteAll = ->
     success: ->
       $(tags).each((index, tag) ->
         code = $(".item_extra_code", tag).text()
-        moveToList(tag, code)
+        moveItemToList(tag, code)
       )
     error: ->
       $(tags).show('slow')
@@ -237,18 +237,22 @@ moveToPrint = (tag, code) ->
   return
 
 
+moveItemToList = (tag, code) ->
+  unbindTagEvents($(tag))
+
+  $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
+  $(tag).prependTo("#printed_items")
+  $(tag).addClass("item_list")
+  $(tag).show('slow')
+
+
 moveToList = (tag, code) ->
   $.ajax(
     url:  C.item_to_list_url(code)
     type: 'POST'
 
     success: ->
-      unbindTagEvents($(tag))
-
-      $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
-      $(tag).prependTo("#printed_items")
-      $(tag).addClass("item_list")
-      $(tag).show('slow')
+      moveItemToList(tag, code)
 
     error: ->
       $(tag).show('slow')
