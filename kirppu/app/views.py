@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 import decimal
 import json
 import re
+import urllib
 
 import barcode
 from barcode.writer import SVGWriter
@@ -16,6 +17,8 @@ from django.shortcuts import (
     redirect,
 )
 from django.conf import settings
+import django.core.urlresolvers as url
+from django.utils.http import is_safe_url
 from django.utils.translation import ugettext
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
@@ -334,17 +337,32 @@ def checkout_view(request):
     return render(request, "app_checkout.html")
 
 
-@login_required
 def vendor_view(request):
     """
     Render main view for vendors.
 
     :rtype: HttpResponse
     """
-    return HttpResponse(
-        u'hello {first_name} {last_name}!'
-        u''.format(**request.user.__dict__)
+    context = {
+        'user': request.user,
+        'login_url': url.reverse('kirppu:login_view'),
+        'logout_url': url.reverse('kirppu:logout_view'),
+    }
+    return render(request, "app_vendor.html", context)
+
+
+def login_view(request):
+    """
+    Redirect to Kompassi login page.
+    """
+    destination = request.REQUEST.get('next')
+    if not is_safe_url(destination, request.get_host()):
+        destination = request.build_absolute_uri(url.reverse('kirppu:vendor_view'))
+    login_url = '{0}?{1}'.format(
+        settings.LOGIN_URL,
+        urllib.urlencode({'next': destination}),
     )
+    return redirect(login_url)
 
 
 def logout_view(request):
@@ -352,4 +370,11 @@ def logout_view(request):
     Log out user and redirect to Kompassi logout page.
     """
     logout(request)
-    return redirect(settings.LOGOUT_URL)
+    destination = request.REQUEST.get('next')
+    if not is_safe_url(destination, request.get_host()):
+        destination = request.build_absolute_uri(url.reverse('kirppu:vendor_view'))
+    logout_url = '{0}?{1}'.format(
+        settings.LOGOUT_URL,
+        urllib.urlencode({'next': destination}),
+    )
+    return redirect(logout_url)

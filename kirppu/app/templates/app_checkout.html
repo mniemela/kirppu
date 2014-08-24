@@ -1,56 +1,39 @@
+{% extends "common.html" %}
+
 {% load compressed %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kirppu - Checkout</title>
+
+{% block title %}Kirppu - Checkout{% endblock %}
+
+{% block head %}
     {% compressed_css "general" %}
     {% compressed_css "checkout" %}
     {% compressed_js "general" %}
     {% compressed_js "checkout" %}
-</head>
-<body>
-<div class="navbar navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle"
-                    data-toggle="collapse"
-                    data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="javascript:void(1)">Kirppu</a>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav" id="navigation">
-                <li class="dropdown" id="modeMenu"><a href="javascript:void(1)" class="dropdown-toggle" data-toggle="dropdown">Counter mode <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    <li>
-                        <a href="javascript:void(1)" data-entrypoint="customer_checkout"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(1)" data-entrypoint="vendor_check_in"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(1)" data-entrypoint="reports"><span class="glyphicon glyphicon-stats"></span> Reports</a>
-                    </li>
-                    <li class="disabled">
-                        <a href="javascript:void(1)" data-entrypoint="vendor_check_out"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(1)" data-entrypoint="vendor_find"><span class="glyphicon glyphicon-user"></span> Vendor Search</a>
-                    </li>
-                    </ul>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="javascript:void(1)">About</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+{% endblock %}
 
-<div id="body" class="container">
+{% block navbar_left %}
+    <li class="dropdown" id="modeMenu"><a href="javascript:void(1)" class="dropdown-toggle" data-toggle="dropdown">Counter mode <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="customer_checkout"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="vendor_check_in"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="reports"><span class="glyphicon glyphicon-stats"></span> Reports</a>
+        </li>
+        <li class="disabled">
+            <a href="javascript:void(1)" data-entrypoint="vendor_check_out"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="vendor_find"><span class="glyphicon glyphicon-user"></span> Vendor Search</a>
+        </li>
+        </ul>
+    </li>
+{% endblock %}
+
+{% block body %}
     <h1><span id="title_text">Checkout</span> <small id="subtitle_text"/></h1>
     <form role="form" id="code_form">
         <div class="form-group">
@@ -63,7 +46,9 @@
         <tbody id="receipt">
         </tbody>
     </table>
-</div>
+{% endblock  %}
+
+{% block tail %}
 <script type="application/javascript"><!--
     CheckoutConfig.uiId.stateText = "title_text";
     CheckoutConfig.uiId.subtitleText = "subtitle_text";
@@ -90,5 +75,4 @@
         new ModeSwitcher().startDefault();
     });
 //--></script>
-</body>
-</html>
+{% endblock %}

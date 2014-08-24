@@ -1,0 +1,42 @@
+{% load compressed %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Kirppu{% endblock %}</title>
+    {% block head %}
+        {% compressed_css "general" %}
+        {% compressed_js "general" %}
+    {% endblock %}
+</head>
+<body>
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+                    data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="javascript:void(1)">Kirppu</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" id="navigation">
+                {% block navbar_left %}{% endblock %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="javascript:void(1)">About</a></li>
+                {% block navbar_right %}{% endblock %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="body" class="container">
+    {% block body %}{% endblock  %}
+</div>
+
+{% block tail %}{% endblock %}
+</body>
+</html>
