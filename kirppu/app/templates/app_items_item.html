@@ -1,6 +1,8 @@
 {% load kirppu_tags %}
 
-{% if tag_type == "long" %}
+{% if tag_type == "list" %}
+    <div class="item_container item_list">
+{% elif tag_type == "long" %}
     <div class="item_container">
 {% elif tag_type == "template" %}
     <div class="item_container item_template">
