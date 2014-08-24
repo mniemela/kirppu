@@ -112,6 +112,33 @@ def item_add(request):
     return HttpResponse(json.dumps(response), 'application/json')
 
 
+@login_required
+@require_http_methods(['POST'])
+def item_to_print(request, code):
+    vendor = Vendor.get_vendor(request.user)
+
+    item = Item.objects.get(code=code, vendor=vendor)
+    if not item:
+        return HttpResponseBadRequest('No such item.')
+
+    # Create a duplicate of the item with a new code and hide the old item.
+    # This way, even if the user forgets to attach the new tags, the old
+    # printed tag is still in the system.
+    new_item = Item.new(name=item.name, price=item.price, vendor=item.vendor, type=item.type, state=Item.ADVERTISED)
+    item_dict = {
+        'vendor_id': new_item.vendor_id,
+        'code': new_item.code,
+        'name': new_item.name,
+        'price': str(new_item.price).replace('.', ','),
+        'type': new_item.type,
+    }
+
+    item.hidden = True
+    item.save()
+
+    return HttpResponse(json.dumps(item_dict), 'application/json')
+
+
 @require_http_methods(["DELETE"])
 def item_delete(request, code):
     item = Item.get_item_by_barcode(code)
@@ -221,6 +248,7 @@ def get_items(request):
     vendor = Vendor.get_vendor(request.user)
     items = Item.objects.filter(vendor=vendor).filter(printed=False)
     printed_items = Item.objects.filter(vendor=vendor).filter(printed=True)
+    printed_items = printed_items.filter(hidden=False)
 
     # Order from newest to oldest, because that way new items are added
     # to the top and the user immediately sees them without scrolling

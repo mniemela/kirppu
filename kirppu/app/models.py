@@ -301,6 +301,8 @@ class Item(models.Model):
     # Has the user marked this item as printed?
     # Affects whether the item is shown in print view or not.
     printed = models.BooleanField(default=False)
+    # Affects whether the item is shown at all.
+    hidden = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name

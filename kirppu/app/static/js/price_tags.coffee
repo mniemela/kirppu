@@ -31,6 +31,7 @@ class PriceTagsConfig
     item_add: ''
     barcode_img: ''
     items_delete_all: ''
+    item_to_print: ''
 
   constructor: ->
 
@@ -54,6 +55,10 @@ class PriceTagsConfig
     url = @urls.barcode_img
     return url.replace(@url_args.code, code)
 
+  item_to_print_url: (code) ->
+    url = @urls.item_to_print
+    return url.replace(@url_args.code, code)
+
 C = new PriceTagsConfig
 
 
@@ -69,7 +74,7 @@ createTag = (name, price, vendor_id, code, type) ->
   $('.item_price', tag).text(price)
   $('.item_head_price', tag).text(price)
   $('.item_vendor_id', tag).text(vendor_id)
-  $(tag).attr('id', 'item_' + code)
+  $(tag).attr('id', code)
   $('.item_extra_code', tag).text(code)
 
   $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code))
@@ -99,7 +104,7 @@ deleteAll = ->
     return
 
   tags = $('#items > .item_container')
-  tags.hide()
+  tags.hide('slow')
 
   $.ajax(
     url:  C.urls.items_delete_all
@@ -225,21 +230,63 @@ bindNameEditEvents = (tag, code) ->
   return
 
 
+moveToPrint = (tag, code) ->
+  $.ajax(
+    url: C.item_to_print_url(code)
+    type: 'POST'
+
+    success: (item) ->
+      $(tag).remove()
+
+      new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
+      $(new_tag).hide()
+      $(new_tag).appendTo("#items")
+      $(new_tag).show('slow')
+      bindTagEvents($(new_tag))
+
+    error: (item) ->
+      $(tag).show('slow')
+  )
+  return
+
+
+moveToList = (tag, code) ->
+  $.ajax(
+    url:  C.item_delete_url(code)
+    type: 'DELETE'
+    complete: (jqXHR, textStatus) ->
+      if textStatus == "success"
+        unbindTagEvents($(tag))
+
+        $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
+        $(tag).prependTo("#printed_items")
+        $(tag).addClass("item_list")
+      $(tag).show('slow')
+  )
+  return
+
+
+onClickToList = (tag, code) ->
+  $(tag).hide('slow', -> moveToList(tag, code))
+
+
+onClickToPrint = (tag, code) ->
+  $(tag).hide('slow', -> moveToPrint(tag, code))
+
+
 # Bind events for item delete button.
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
-bindItemDeleteEvents = (tag, code) ->
-  onItemDelete = ->
-    $(tag).hide()
-    $.ajax(
-      url:  C.item_delete_url(code)
-      type: 'DELETE'
-      complete: (jqXHR, textStatus) ->
-        if textStatus == "success" then tag.remove() else $(tag).show()
-    )
-    return
+bindItemToListEvents = (tag, code) ->
+  $('.item_button_delete', tag).click(-> onClickToList(tag, code))
+  return
 
-  $('.item_button_delete', tag).click(onItemDelete)
+
+# Bind events for item delete button.
+# @param tag [jQuery element] An '.item_container' element.
+# @param code [String] Barcode string of the item.
+bindItemToPrintEvents = (tag, code) ->
+  $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
   return
 
 
@@ -293,27 +340,46 @@ bindItemToggleEvents = (tag, code) ->
   return
 
 
-# Bind all events for '.item_container' element.
-# @note Target for jQuery.each.
-# @param index [Number] Index from jQuery.each, not used.
-# @param tag [jQuery element] An '.item_container' element.
-bindOneTagsEvents = (index, tag) ->
-  code = $(".item_extra_code", tag).text()
-
-  bindPriceEditEvents(tag, code)
-  bindNameEditEvents(tag, code)
-  bindItemDeleteEvents(tag, code)
-  bindItemToggleEvents(tag, code)
-
-  return
-
-
 # Bind events for a set of '.item_container' elements.
 # @param tags [jQuery set] A set of '.item_container' elements.
 bindTagEvents = (tags) ->
-  tags.each(bindOneTagsEvents)
+  tags.each((index, tag) ->
+    code = $(".item_extra_code", tag).text()
 
+    bindPriceEditEvents(tag, code)
+    bindNameEditEvents(tag, code)
+    bindItemToListEvents(tag, code)
+    bindItemToggleEvents(tag, code)
+
+    return
+  )
   return
+
+
+bindListTagEvents = (tags) ->
+  tags.each((index, tag) ->
+    code = $(".item_extra_code", tag).text()
+
+    bindItemToPrintEvents(tag, code)
+
+    return
+  )
+  return
+
+
+# Unbind events bound by bindTagEvents and bindListTagEvents.
+unbindTagEvents = (tags) ->
+  tags.each((index, tag) ->
+
+    $('.item_name', tag).unbind('click')
+    $('.item_price', tag).unbind('click')
+    $('.item_button_toggle', tag).unbind('click')
+    $('.item_button_delete', tag).unbind('click')
+
+    return
+  )
+  return
+
 
 
 # Expose the localization instance in case we want to modify it.
@@ -323,4 +389,5 @@ window.addItem = addItem
 window.deleteAll = deleteAll
 window.toggleDelete = toggleDelete
 window.bindTagEvents = bindTagEvents
+window.bindListTagEvents = bindListTagEvents
 window.bindFormEvents = bindFormEvents
