@@ -5,7 +5,6 @@ import json
 import re
 
 import barcode
-from barcode.writer import SVGWriter
 
 from django.http.response import (
     HttpResponse,
@@ -139,22 +138,14 @@ def item_to_print(request, code):
     return HttpResponse(json.dumps(item_dict), 'application/json')
 
 
-@require_http_methods(["DELETE"])
-def item_delete(request, code):
+@require_http_methods(["POST"])
+def item_to_list(request, code):
     item = Item.get_item_by_barcode(code)
 
     item.printed = True
     item.save()
 
     return HttpResponse()
-
-
-@login_required
-@require_http_methods(["DELETE"])
-def item_view(request, code):
-    # GET and PUT methods might be put here in the future.
-    if request.method == 'DELETE':
-        return item_delete(request, code)
 
 
 @login_required
@@ -222,7 +213,7 @@ def all_to_print(request):
 
 
 @login_required
-@require_http_methods(["GET", "DELETE"])
+@require_http_methods(["GET"])
 def get_items(request):
     """
     Get a page containing all items for vendor.
@@ -231,8 +222,6 @@ def get_items(request):
     :type request: django.http.request.HttpRequest
     :return: HttpResponse or HttpResponseBadRequest
     """
-    if request.method == "DELETE":
-        return delete_all_items(request)
 
     # Use PNG if we can because SVGs from pyBarcode are huge.
     default_format = 'png' if PixelWriter else 'svg'

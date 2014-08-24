@@ -34,11 +34,10 @@
       roller: '',
       name_update: '',
       price_update: '',
-      item_delete: '',
+      item_to_list: '',
       size_update: '',
       item_add: '',
       barcode_img: '',
-      items_delete_all: '',
       item_to_print: '',
       all_to_print: ''
     };
@@ -57,9 +56,9 @@
       return url.replace(this.url_args.code, code);
     };
 
-    PriceTagsConfig.prototype.item_delete_url = function(code) {
+    PriceTagsConfig.prototype.item_to_list_url = function(code) {
       var url;
-      url = this.urls.item_delete;
+      url = this.urls.item_to_list;
       return url.replace(this.url_args.code, code);
     };
 
@@ -251,8 +250,8 @@
 
   moveToList = function(tag, code) {
     $.ajax({
-      url: C.item_delete_url(code),
-      type: 'DELETE',
+      url: C.item_to_list_url(code),
+      type: 'POST',
       success: function() {
         unbindTagEvents($(tag));
         $('.item_button_delete', tag).click(function() {

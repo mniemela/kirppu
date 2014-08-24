@@ -23,11 +23,10 @@ class PriceTagsConfig
     roller: ''
     name_update: ''
     price_update: ''
-    item_delete: ''
+    item_to_list: ''
     size_update: ''
     item_add: ''
     barcode_img: ''
-    items_delete_all: ''
     item_to_print: ''
     all_to_print: ''
 
@@ -41,8 +40,8 @@ class PriceTagsConfig
     url = @urls.price_update
     return url.replace(@url_args.code, code)
 
-  item_delete_url: (code) ->
-    url = @urls.item_delete
+  item_to_list_url: (code) ->
+    url = @urls.item_to_list
     return url.replace(@url_args.code, code)
 
   size_update_url: (code) ->
@@ -240,8 +239,8 @@ moveToPrint = (tag, code) ->
 
 moveToList = (tag, code) ->
   $.ajax(
-    url:  C.item_delete_url(code)
-    type: 'DELETE'
+    url:  C.item_to_list_url(code)
+    type: 'POST'
 
     success: ->
       unbindTagEvents($(tag))
