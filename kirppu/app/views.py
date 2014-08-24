@@ -116,8 +116,8 @@ def item_add(request):
 def item_delete(request, code):
     item = Item.get_item_by_barcode(code)
 
-    if item.state == Item.ADVERTISED:
-        item.delete()
+    item.printed = True
+    item.save()
 
     return HttpResponse()
 
@@ -187,10 +187,9 @@ def delete_all_items(request):
 
     items = Item.objects.filter(vendor=vendor)
 
-    # Only allow deleting of items that have not been brought to the event yet.
-    items = items.filter(state=Item.ADVERTISED)
-
-    items.delete()
+    for item in items:
+        item.printed = True
+        item.save()
 
     return HttpResponse()
 
@@ -220,7 +219,8 @@ def get_items(request):
         return HttpResponseBadRequest(u"Tag type not supported")
 
     vendor = Vendor.get_vendor(request.user)
-    items = Item.objects.filter(vendor=vendor)
+    items = Item.objects.filter(vendor=vendor).filter(printed=False)
+    printed_items = Item.objects.filter(vendor=vendor).filter(printed=True)
 
     # Order from newest to oldest, because that way new items are added
     # to the top and the user immediately sees them without scrolling
@@ -229,6 +229,7 @@ def get_items(request):
 
     render_params = {
         'items': items,
+        'printed_items': printed_items,
         'bar_type': bar_type,
         'tag_type': tag_type,
     }
