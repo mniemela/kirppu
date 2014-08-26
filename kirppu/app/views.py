@@ -361,8 +361,22 @@ def vendor_view(request):
 
     :rtype: HttpResponse
     """
+    user = request.user
+
+    if user.is_authenticated():
+        vendor = Vendor.get_vendor(user)
+        items = Item.objects.filter(vendor=vendor)
+    else:
+        items = []
+
     context = {
-        'user': request.user,
+        'user': user,
+        'items': items,
+
+        'total_price': sum(i.price for i in items),
+        'num_total':   len(items),
+        'num_printed': len(filter(lambda i: i.printed, items)),
+
         'login_url': url.reverse('kirppu:login_view'),
         'logout_url': url.reverse('kirppu:logout_view'),
         'profile_url': settings.PROFILE_URL,
