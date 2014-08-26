@@ -143,6 +143,8 @@ class Clerk(models.Model):
         :return: Clerk code.
         :rtype: str
         """
+        if self.access_key in ("", None):
+            return ""
         access_key = hex_to_number(self.access_key)
         return self.PREFIX + b32_encode(
             pack([
