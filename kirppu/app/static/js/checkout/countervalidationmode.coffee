@@ -33,10 +33,12 @@ class @CounterValidationMode extends CheckoutMode
 
   actions: -> [[
     @cfg.settings.counterPrefix,
-    (code) => Api.validateCounter(code, @)
+    (code) => Api.counter_validate(
+      code: code,
+    ).then(@onResultSuccess, @onResultError)
   ]]
 
-  onResultSuccess: (data) ->
+  onResultSuccess: (data) =>
     code = data["counter"]
     name = data["name"]
     @cfg.settings.counterCode = code
@@ -50,7 +52,7 @@ class @CounterValidationMode extends CheckoutMode
     )))
     @switcher.switchTo(ClerkLoginMode)
 
-  onResultError: (jqXHR) ->
+  onResultError: (jqXHR) =>
     if jqXHR.status == 419
       console.log("Invalid counter code supplied.")
       return

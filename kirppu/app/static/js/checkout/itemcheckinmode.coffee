@@ -5,14 +5,17 @@ class @ItemCheckInMode extends ItemCheckoutMode
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   actions: -> [[
-    '', (code) => Api.checkInItem(code, @)
+    '', (code) =>
+      Api.item_checkin(
+        code: code
+      ).then(@onResultSuccess, @onResultError)
   ]]
 
-  onResultSuccess: (data) ->
+  onResultSuccess: (data) =>
     row = @createRow("", data.code, data.name, data.price)
     @cfg.uiRef.receiptResult.prepend(row)
 
-  onResultError: (jqXHR) ->
+  onResultError: (jqXHR) =>
     if jqXHR.status == 404
       alert("No such item")
       return

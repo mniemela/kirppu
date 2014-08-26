@@ -11,11 +11,6 @@
     function VendorFindMode() {
       this.createRow = __bind(this.createRow, this);
       this.onVendorsFound = __bind(this.onVendorsFound, this);
-      this.findEmail = __bind(this.findEmail, this);
-      this.findPhoneNumber = __bind(this.findPhoneNumber, this);
-      this.findName = __bind(this.findName, this);
-      this.findId = __bind(this.findId, this);
-      this.onVendorSearch = __bind(this.onVendorSearch, this);
       return VendorFindMode.__super__.constructor.apply(this, arguments);
     }
 
@@ -34,37 +29,17 @@
     };
 
     VendorFindMode.prototype.actions = function() {
-      return [["", this.onVendorSearch]];
-    };
-
-    VendorFindMode.prototype.onVendorSearch = function(query) {
-      return (query.trim() === "" ? (function() {}) : query.match(/^[0-9\s]+$/) != null ? this.findPhoneNumber : query.match(/^#[0-9]+$/) != null ? this.findId : query.match(/@/) != null ? this.findEmail : this.findName)(query);
-    };
-
-    VendorFindMode.prototype.findId = function(query) {
-      query = query.replace(/#/, '');
-      return Api.findVendors({
-        id: query
-      }, this.onVendorsFound);
-    };
-
-    VendorFindMode.prototype.findName = function(query) {
-      return Api.findVendors({
-        name: query
-      }, this.onVendorsFound);
-    };
-
-    VendorFindMode.prototype.findPhoneNumber = function(query) {
-      query = query.replace(/\s/g, '');
-      return Api.findVendors({
-        phone: query
-      }, this.onVendorsFound);
-    };
-
-    VendorFindMode.prototype.findEmail = function(query) {
-      return Api.findVendors({
-        email: query
-      }, this.onVendorsFound);
+      return [
+        [
+          "", (function(_this) {
+            return function(query) {
+              return Api.vendor_find({
+                q: query
+              }).done(_this.onVendorsFound);
+            };
+          })(this)
+        ]
+      ];
     };
 
     VendorFindMode.prototype.onVendorsFound = function(vendors) {

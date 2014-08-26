@@ -49,6 +49,9 @@
 {% endblock  %}
 
 {% block tail %}
+<script type="application/javascript"
+        src="{% url 'kirppu:checkout_js' %}"
+        charset="UTF-8"></script>
 <script type="application/javascript"><!--
     CheckoutConfig.uiId.stateText = "title_text";
     CheckoutConfig.uiId.subtitleText = "subtitle_text";
@@ -57,18 +60,6 @@
     CheckoutConfig.uiId.receiptTable = "receipt_table";
     CheckoutConfig.uiId.receiptResult = "receipt";
     CheckoutConfig.uiId.modeMenu = "modeMenu";
-
-    CheckoutConfig.urls.apiValidateCounter = "{% url 'kirppu:api_validate_counter' %}";
-    CheckoutConfig.urls.apiClerkLogin = "{% url 'kirppu:api_clerk_login' %}";
-    CheckoutConfig.urls.apiClerkLogout = "{% url 'kirppu:api_clerk_logout' %}";
-    CheckoutConfig.urls.apiItemInfo = "{% url 'kirppu:api_item_info' %}";
-    CheckoutConfig.urls.apiItemCheckIn = "{% url 'kirppu:api_item_checkin' %}";
-    CheckoutConfig.urls.apiItemReserve = "{% url 'kirppu:api_item_reserve' %}";
-    CheckoutConfig.urls.apiItemRelease = "{%  url 'kirppu:api_item_release' %}";
-    CheckoutConfig.urls.apiVendorFind = "{%  url 'kirppu:api_vendor_find' %}";
-    CheckoutConfig.urls.apiReceiptStart = "{% url 'kirppu:api_receipt_start' %}";
-    CheckoutConfig.urls.apiReceiptFinish = "{% url 'kirppu:api_receipt_finish' %}";
-    CheckoutConfig.urls.apiReceiptAbort = "{% url 'kirppu:api_receipt_abort' %}";
     $(document).ready(function() {
         setupAjax();
         CheckoutConfig.check();

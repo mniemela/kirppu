@@ -12,38 +12,10 @@ class @VendorFindMode extends CheckoutMode
     '<th class="receipt_item">phone</th>',
   ].map($)
 
-  actions: -> [["", @onVendorSearch]]
-
-  onVendorSearch: (query) =>
-    (
-      # Heuristics to select what to search.
-      if query.trim() == ""
-        (->)
-      else if query.match(/^[0-9\s]+$/)?
-        @findPhoneNumber
-      else if query.match(/^#[0-9]+$/)?
-        @findId
-      else if query.match(/@/)?
-        @findEmail
-      else
-        @findName
-    )(query)
-
-  findId: (query) =>
-    # Remove leading hash.
-    query = query.replace(/#/, '')
-    Api.findVendors(id: query, @onVendorsFound)
-
-  findName: (query) =>
-    Api.findVendors(name: query, @onVendorsFound)
-
-  findPhoneNumber: (query) =>
-    # Remove all whitespace.
-    query = query.replace(/\s/g, '')
-    Api.findVendors(phone: query, @onVendorsFound)
-
-  findEmail: (query) =>
-    Api.findVendors(email: query, @onVendorsFound)
+  actions: -> [[
+    "", (query) =>
+      Api.vendor_find(q: query).done(@onVendorsFound)
+  ]]
 
   onVendorsFound: (vendors) =>
     @clearReceipt()

@@ -6,7 +6,6 @@ import re
 import urllib
 
 import barcode
-from barcode.writer import SVGWriter
 
 from django.http.response import (
     HttpResponse,
@@ -15,6 +14,7 @@ from django.http.response import (
 from django.shortcuts import (
     render,
     redirect,
+    get_object_or_404,
 )
 from django.conf import settings
 import django.core.urlresolvers as url
@@ -115,22 +115,40 @@ def item_add(request):
     return HttpResponse(json.dumps(response), 'application/json')
 
 
-@require_http_methods(["DELETE"])
-def item_delete(request, code):
-    item = Item.get_item_by_barcode(code)
+@login_required
+@require_http_methods(['POST'])
+def item_to_print(request, code):
+    vendor = Vendor.get_vendor(request.user)
+    item = get_object_or_404(Item.objects, code=code, vendor=vendor)
 
-    if item.state == Item.ADVERTISED:
-        item.delete()
+    # Create a duplicate of the item with a new code and hide the old item.
+    # This way, even if the user forgets to attach the new tags, the old
+    # printed tag is still in the system.
+    new_item = Item.new(name=item.name, price=item.price, vendor=item.vendor, type=item.type, state=Item.ADVERTISED)
+    item_dict = {
+        'vendor_id': new_item.vendor_id,
+        'code': new_item.code,
+        'name': new_item.name,
+        'price': str(new_item.price).replace('.', ','),
+        'type': new_item.type,
+    }
 
-    return HttpResponse()
+    item.hidden = True
+    item.save()
+
+    return HttpResponse(json.dumps(item_dict), 'application/json')
 
 
 @login_required
-@require_http_methods(["DELETE"])
-def item_view(request, code):
-    # GET and PUT methods might be put here in the future.
-    if request.method == 'DELETE':
-        return item_delete(request, code)
+@require_http_methods(["POST"])
+def item_to_list(request, code):
+    vendor = Vendor.get_vendor(request.user)
+    item = get_object_or_404(Item.objects, code=code, vendor=vendor)
+
+    item.printed = True
+    item.save()
+
+    return HttpResponse()
 
 
 @login_required
@@ -151,7 +169,8 @@ def item_update_price(request, code):
     elif price > Decimal('400'):
         return HttpResponseBadRequest("Price too high.")
 
-    item = Item.get_item_by_barcode(code)
+    vendor = Vendor.get_vendor(request.user)
+    item = get_object_or_404(Item.objects, code=code, vendor=vendor)
     item.price = str(price)
     item.save()
 
@@ -165,7 +184,8 @@ def item_update_name(request, code):
     
     name = name[:80]
 
-    item = Item.get_item_by_barcode(code)
+    vendor = Vendor.get_vendor(request.user)
+    item = get_object_or_404(Item.objects, code=code, vendor=vendor)
     item.name = name
     item.save()
 
@@ -177,29 +197,26 @@ def item_update_name(request, code):
 def item_update_type(request, code):
     tag_type = request.POST.get("tag_type", None)
 
-    item = Item.get_item_by_barcode(code)
+    vendor = Vendor.get_vendor(request.user)
+    item = get_object_or_404(Item.objects, code=code, vendor=vendor)
     item.type = tag_type
     item.save()
     return HttpResponse()
 
 
 @login_required
-@require_http_methods(["DELETE"])
-def delete_all_items(request):
+@require_http_methods(["POST"])
+def all_to_print(request):
     vendor = Vendor.get_vendor(request.user)
+    items = Item.objects.filter(vendor=vendor).filter(printed=False)
 
-    items = Item.objects.filter(vendor=vendor)
-
-    # Only allow deleting of items that have not been brought to the event yet.
-    items = items.filter(state=Item.ADVERTISED)
-
-    items.delete()
+    items.update(printed=True)
 
     return HttpResponse()
 
 
 @login_required
-@require_http_methods(["GET", "DELETE"])
+@require_http_methods(["GET"])
 def get_items(request):
     """
     Get a page containing all items for vendor.
@@ -208,8 +225,6 @@ def get_items(request):
     :type request: django.http.request.HttpRequest
     :return: HttpResponse or HttpResponseBadRequest
     """
-    if request.method == "DELETE":
-        return delete_all_items(request)
 
     # Use PNG if we can because SVGs from pyBarcode are huge.
     default_format = 'png' if PixelWriter else 'svg'
@@ -223,7 +238,9 @@ def get_items(request):
         return HttpResponseBadRequest(u"Tag type not supported")
 
     vendor = Vendor.get_vendor(request.user)
-    items = Item.objects.filter(vendor=vendor)
+    items = Item.objects.filter(vendor=vendor).filter(printed=False)
+    printed_items = Item.objects.filter(vendor=vendor).filter(printed=True)
+    printed_items = printed_items.filter(hidden=False)
 
     # Order from newest to oldest, because that way new items are added
     # to the top and the user immediately sees them without scrolling
@@ -232,6 +249,7 @@ def get_items(request):
 
     render_params = {
         'items': items,
+        'printed_items': printed_items,
         'bar_type': bar_type,
         'tag_type': tag_type,
     }

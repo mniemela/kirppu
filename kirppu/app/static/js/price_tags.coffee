@@ -2,16 +2,13 @@
 # better.
 class LocalizationStrings
   toggleDelete:
-    enabledText: 'Disable delete'
-    disabledText: 'Enable delete'
+    enabledText: 'Disable mark button'
+    disabledText: 'Mark individual items'
   deleteItem:
-    enabledTitle: 'Delete this item.'
-    disabledTitle: 'Enable delete by clicking the button at the top of the page.'
+    enabledTitle: 'Mark this item as printed.'
+    disabledTitle: 'Mark this item as printed. Enable this button from the top of the page.'
   deleteAll:
-    confirmText: 'Are you sure you want to delete all items?'
-    failedText: 'Deleting all items failed.'
-    enabledTitle: 'Delete all items.'
-    disabledTitle: 'Enable delete all by clicking the "Enable delete" button'
+    confirmText: 'This will mark all items as printed so they can no longer be edited. Continue?'
 
 L = new LocalizationStrings()  # Local shorthand for localization.
 
@@ -26,11 +23,12 @@ class PriceTagsConfig
     roller: ''
     name_update: ''
     price_update: ''
-    item_delete: ''
+    item_to_list: ''
     size_update: ''
     item_add: ''
     barcode_img: ''
-    items_delete_all: ''
+    item_to_print: ''
+    all_to_print: ''
 
   constructor: ->
 
@@ -42,8 +40,8 @@ class PriceTagsConfig
     url = @urls.price_update
     return url.replace(@url_args.code, code)
 
-  item_delete_url: (code) ->
-    url = @urls.item_delete
+  item_to_list_url: (code) ->
+    url = @urls.item_to_list
     return url.replace(@url_args.code, code)
 
   size_update_url: (code) ->
@@ -52,6 +50,10 @@ class PriceTagsConfig
 
   barcode_img_url: (code) ->
     url = @urls.barcode_img
+    return url.replace(@url_args.code, code)
+
+  item_to_print_url: (code) ->
+    url = @urls.item_to_print
     return url.replace(@url_args.code, code)
 
 C = new PriceTagsConfig
@@ -63,12 +65,13 @@ createTag = (name, price, vendor_id, code, type) ->
   tag.removeClass("item_template");
 
   if (type == "short") then tag.addClass("item_short")
+  if (type == "tiny") then tag.addClass("item_tiny")
 
   $('.item_name', tag).text(name)
   $('.item_price', tag).text(price)
   $('.item_head_price', tag).text(price)
   $('.item_vendor_id', tag).text(vendor_id)
-  $(tag).attr('id', 'item_' + code)
+  $(tag).attr('id', code)
   $('.item_extra_code', tag).text(code)
 
   $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code))
@@ -98,17 +101,18 @@ deleteAll = ->
     return
 
   tags = $('#items > .item_container')
-  tags.hide()
+  $(tags).hide('slow')
 
   $.ajax(
-    url:  C.urls.items_delete_all
-    type: 'DELETE'
-    complete: (jqXHR, textStatus) ->
-      if textStatus == "success"
-        tags.remove()
-      else
-        $(tags).show()
-        alert(L.deleteAll.failedText)
+    url:  C.urls.all_to_print
+    type: 'POST'
+    success: ->
+      $(tags).each((index, tag) ->
+        code = $(".item_extra_code", tag).text()
+        moveItemToList(tag, code)
+      )
+    error: ->
+      $(tags).show('slow')
   )
 
   return
@@ -125,22 +129,11 @@ toggleDelete = ->
   # Toggle the style of the toggle button it self.
   toggleButton = $('#toggle_delete')
   if deleteIsDisabled
-    toggleButton.removeClass('btn-primary')
+    toggleButton.removeClass('active')
     toggleButton.addClass('btw-default')
-    toggleButton.text(L.toggleDelete.disabledText)
   else
     toggleButton.removeClass('btw-default')
-    toggleButton.addClass('btn-primary')
-    toggleButton.text(L.toggleDelete.enabledText)
-
-  # Toggle the DeleteAll button between disabled/enabled.
-  deleteAllButton = $('#delete_all')
-  if deleteIsDisabled
-    deleteAllButton.attr('disabled', 'disabled')
-    deleteAllButton.attr('title', L.deleteAll.disabledTitle)
-  else
-    deleteAllButton.removeAttr('disabled')
-    deleteAllButton.attr('title', L.deleteItem.enabledTitle)
+    toggleButton.addClass('active')
 
   # Toggle the item delete buttons between enabled/disabled.
   # These items also include the hidden template element, so there is
@@ -154,6 +147,18 @@ toggleDelete = ->
     deleteButtons.attr('title', L.deleteItem.enabledTitle)
 
   return
+
+
+listViewIsOn = false;
+
+toggleListView = ->
+  listViewIsOn = if listViewIsOn then false else true
+
+  items = $('#items > .item_container')
+  if listViewIsOn
+    items.addClass('item_list')
+  else
+    items.removeClass('item_list')
 
 
 onPriceChange = ->
@@ -174,6 +179,7 @@ bindFormEvents = ->
   $('#add_short_item').click(addItem);
   $('#delete_all').click(deleteAll);
   $('#toggle_delete').click(toggleDelete);
+  $('#list_view').click(toggleListView)
   toggleDelete(); # Initialize delete buttons to disabled.
 
   $('#item-add-price').change(onPriceChange);
@@ -211,21 +217,70 @@ bindNameEditEvents = (tag, code) ->
   return
 
 
+moveToPrint = (tag, code) ->
+  $.ajax(
+    url: C.item_to_print_url(code)
+    type: 'POST'
+
+    success: (item) ->
+      $(tag).remove()
+
+      new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
+      $(new_tag).hide()
+      $(new_tag).appendTo("#items")
+      $(new_tag).show('slow')
+      bindTagEvents($(new_tag))
+
+    error: (item) ->
+      $(tag).show('slow')
+  )
+  return
+
+
+moveItemToList = (tag, code) ->
+  unbindTagEvents($(tag))
+
+  $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
+  $(tag).prependTo("#printed_items")
+  $(tag).addClass("item_list")
+  $(tag).show('slow')
+
+
+moveToList = (tag, code) ->
+  $.ajax(
+    url:  C.item_to_list_url(code)
+    type: 'POST'
+
+    success: ->
+      moveItemToList(tag, code)
+
+    error: ->
+      $(tag).show('slow')
+  )
+  return
+
+
+onClickToList = (tag, code) ->
+  $(tag).hide('slow', -> moveToList(tag, code))
+
+
+onClickToPrint = (tag, code) ->
+  $(tag).hide('slow', -> moveToPrint(tag, code))
+
+
 # Bind events for item delete button.
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
-bindItemDeleteEvents = (tag, code) ->
-  onItemDelete = ->
-    $(tag).hide()
-    $.ajax(
-      url:  C.item_delete_url(code)
-      type: 'DELETE'
-      complete: (jqXHR, textStatus) ->
-        if textStatus == "success" then tag.remove() else $(tag).show()
-    )
-    return
+bindItemToListEvents = (tag, code) ->
+  $('.item_button_delete', tag).click(-> onClickToList(tag, code))
+  return
 
-  $('.item_button_delete', tag).click(onItemDelete)
+
+# Bind events for item delete button.
+# @param tag [jQuery element] An '.item_container' element.
+# @param code [String] Barcode string of the item.
+bindItemToPrintEvents = (tag, code) ->
+  $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
   return
 
 
@@ -279,27 +334,46 @@ bindItemToggleEvents = (tag, code) ->
   return
 
 
-# Bind all events for '.item_container' element.
-# @note Target for jQuery.each.
-# @param index [Number] Index from jQuery.each, not used.
-# @param tag [jQuery element] An '.item_container' element.
-bindOneTagsEvents = (index, tag) ->
-  code = $(".item_extra_code", tag).text()
-
-  bindPriceEditEvents(tag, code)
-  bindNameEditEvents(tag, code)
-  bindItemDeleteEvents(tag, code)
-  bindItemToggleEvents(tag, code)
-
-  return
-
-
 # Bind events for a set of '.item_container' elements.
 # @param tags [jQuery set] A set of '.item_container' elements.
 bindTagEvents = (tags) ->
-  tags.each(bindOneTagsEvents)
+  tags.each((index, tag) ->
+    code = $(".item_extra_code", tag).text()
 
+    bindPriceEditEvents(tag, code)
+    bindNameEditEvents(tag, code)
+    bindItemToListEvents(tag, code)
+    bindItemToggleEvents(tag, code)
+
+    return
+  )
   return
+
+
+bindListTagEvents = (tags) ->
+  tags.each((index, tag) ->
+    code = $(".item_extra_code", tag).text()
+
+    bindItemToPrintEvents(tag, code)
+
+    return
+  )
+  return
+
+
+# Unbind events bound by bindTagEvents and bindListTagEvents.
+unbindTagEvents = (tags) ->
+  tags.each((index, tag) ->
+
+    $('.item_name', tag).unbind('click')
+    $('.item_price', tag).unbind('click')
+    $('.item_button_toggle', tag).unbind('click')
+    $('.item_button_delete', tag).unbind('click')
+
+    return
+  )
+  return
+
 
 
 # Expose the localization instance in case we want to modify it.
@@ -309,4 +383,5 @@ window.addItem = addItem
 window.deleteAll = deleteAll
 window.toggleDelete = toggleDelete
 window.bindTagEvents = bindTagEvents
+window.bindListTagEvents = bindListTagEvents
 window.bindFormEvents = bindFormEvents

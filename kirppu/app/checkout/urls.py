@@ -1,17 +1,12 @@
 from django.conf.urls import url, patterns
+from .api import AJAX_FUNCTIONS
 
 __author__ = 'jyrkila'
 
-urlpatterns = patterns('kirppu.app.checkout.api',
-    url(r'^validate_counter', 'validate_counter', name='api_validate_counter'),
-    url(r'^clerk/login$', 'login_clerk', name='api_clerk_login'),
-    url(r'^clerk/logout$', 'logout_clerk', name='api_clerk_logout'),
-    url(r'^item/info$', 'get_item', name='api_item_info'),
-    url(r'^item/checkin$', 'checkin_item', name='api_item_checkin'),
-    url(r'^item/reserve$', 'reserve_item_for_receipt', name='api_item_reserve'),
-    url(r'^item/release$', 'release_item_from_receipt', name='api_item_release'),
-    url(r'^vendor$', 'find_vendors', name='api_vendor_find'),
-    url(r'^receipt/start$', 'start_receipt', name='api_receipt_start'),
-    url(r'^receipt/finish$', 'finish_receipt', name='api_receipt_finish'),
-    url(r'^receipt/abort$', 'abort_receipt', name='api_receipt_abort'),
-)
+_urls = [url('^checkout.js$', 'checkout_js', name='checkout_js')]
+_urls.extend([
+    url(func.url, func.name, name=func.view_name)
+    for func in AJAX_FUNCTIONS.itervalues()
+])
+
+urlpatterns = patterns('kirppu.app.checkout.api', *_urls)

@@ -1,15 +1,6 @@
 {% load kirppu_tags %}
 
-{% if tag_type == "long" %}
-    <div class="item_container">
-{% elif tag_type == "template" %}
-    <div class="item_container item_template">
-{% elif tag_type == "tiny" %}
-    <div class="item_container item_tiny">
-{% else %}
-    <div class="item_container item_short">
-{% endif %}
-
+    <div class="item_container item_{{ tag_type }}" id="{{ code }}">
         <div class="item_head">
             <span class="item_head_price">{{ price }}</span>
         </div>
@@ -24,6 +15,6 @@
             <div class="item_vendor_id">{{ vendor_id }}</div>
         </div>
 
-        <button class="item_button_delete" type="button">&times;</button>
-        <button class="item_button_toggle" type="button">&lt;&gt;</button>
+        <button class="item_button_delete" type="button"><span class="glyphicon glyphicon-sort"></span></button>
+        <button class="item_button_toggle" title="Toggle size." type="button"><span class="glyphicon glyphicon-resize-horizontal"></span></button>
     </div>
