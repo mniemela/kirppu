@@ -365,6 +365,7 @@ def vendor_view(request):
         'user': request.user,
         'login_url': url.reverse('kirppu:login_view'),
         'logout_url': url.reverse('kirppu:logout_view'),
+        'profile_url': settings.PROFILE_URL,
     }
     return render(request, "app_vendor.html", context)
 

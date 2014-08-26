@@ -290,6 +290,7 @@ KOMPASSI_API_APPLICATION_PASSWORD = KOMPASSI_CROWD_APPLICATION_PASSWORD
 
 LOGIN_URL = 'https://kompassidev.tracon.fi/crowd'
 LOGOUT_URL = 'https://kompassidev.tracon.fi/logout'
+PROFILE_URL = 'https://kompassidev.tracon.fi/profile'
 
 KIRPPU_CHECKOUT_ACTIVE = False
 
