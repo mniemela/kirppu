@@ -80,11 +80,16 @@
 .item_price {
     width: 2.5cm;
     font-size: 150%;
-    border: 2px inset;
     margin-top: 3px;
+    margin: 2px; /* Compensate for border not being there for locked items */
+}
+.item_editable .item_price {
+    margin: 0px;
+    border: 2px inset;
 }
 .item_list .item_price {
     border: none;
+    margin: 0px;
     margin-top: 0px;
     font-size: 100%;
 }
@@ -114,6 +119,10 @@
 .item_name {
     width: 8.7cm;
     height: 2em;
+    margin: 2px; /* Compensate for border not being there for locked items */
+}
+.item_editable .item_name {
+    margin: 0px;
     border: 2px inset;
 }
 .item_tiny .item_name {
@@ -122,6 +131,7 @@
 .item_list .item_name {
     position: absolute;
     border: none;
+    margin: 0px;
     width: 100%;
     left: 1.5cm;
 }

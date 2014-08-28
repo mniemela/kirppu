@@ -1,6 +1,6 @@
 {% load kirppu_tags %}
 
-    <div class="item_container item_{{ tag_type }}" id="{{ code }}">
+    <div class="item_container item_{{ tag_type }} {{ locked|yesno:',item_editable' }}" id="{{ code }}">
         <div class="item_head">
             <span class="item_head_price">{{ price }}</span>
         </div>
