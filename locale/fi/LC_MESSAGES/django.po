@@ -1,0 +1,202 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Jyrki Launonen, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-29 08:05+0300\n"
+"PO-Revision-Date: 2014-08-28 21:44+0300\n"
+"Last-Translator: Jyrki Launonen\n"
+"Language-Team: Finnish <>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.5\n"
+
+#: kirppu/settings.py:44
+msgid "Finnish"
+msgstr "Suomi"
+
+#: kirppu/settings.py:45
+msgid "English"
+msgstr "English"
+
+#: kirppu/app/admin.py:16
+msgid "Generate bar codes for items missing it"
+msgstr "Luo viivakoodit tuotteille joilta se puuttuu"
+
+#: kirppu/app/admin.py:21
+msgid "Delete generated bar codes"
+msgstr "Poista luodut viivakoodit"
+
+#: kirppu/app/admin.py:27
+msgid "Re-generate bar codes for items"
+msgstr "Luo tavaroiden viivakoodit uudelleen"
+
+#: kirppu/app/admin.py:56
+msgid "Generate missing Clerk access codes"
+msgstr "Luo puuttuvat kassatätien käyttötunnisteet"
+
+#: kirppu/app/admin.py:60
+msgid "Delete Clerk access codes"
+msgstr "Poista kassatädin käyttötunniste"
+
+#: kirppu/app/admin.py:64
+msgid ""
+"Must select exactly one 'unbound' and one 'bound' Clerk for this operation"
+msgstr ""
+
+#: kirppu/app/admin.py:88
+#, python-brace-format
+msgid "Access code set for '{0}'"
+msgstr "Käyttötunniste asetettu '{0}':lle"
+
+#: kirppu/app/admin.py:89
+msgid "Move unused access code to existing Clerk."
+msgstr "Siirrä käyttämätön tunniste olemassaolevalle kassatädille"
+
+#: kirppu/app/models.py:30
+msgid "Access key value"
+msgstr "Käyttötunnisteen arvo"
+
+#: kirppu/app/models.py:31
+msgid "Access code assigned to the clerk."
+msgstr "Kassatädin käyttötunniste"
+
+#: kirppu/app/models.py:173
+msgid "Advertised"
+msgstr "Ilmoitettu"
+
+#: kirppu/app/models.py:174
+msgid "Brought to event"
+msgstr "Tuotu tapahtumaan"
+
+#: kirppu/app/models.py:175
+msgid "Staged for selling"
+msgstr "Varattu myytäväksi"
+
+#: kirppu/app/models.py:176
+msgid "Sold"
+msgstr "Myyty"
+
+#: kirppu/app/models.py:177
+msgid "Missing"
+msgstr "Puuttuu"
+
+#: kirppu/app/models.py:178
+msgid "Returned to vendor"
+msgstr "Palautettu myyjälle"
+
+#: kirppu/app/models.py:179
+msgid "Compensated to vendor"
+msgstr "Hyvitetty myyjälle"
+
+#: kirppu/app/models.py:186
+msgid "Tiny price tag"
+msgstr "Mini-hintalappu"
+
+#: kirppu/app/models.py:187
+msgid "Short price tag"
+msgstr "Lyhyt hintalappu"
+
+#: kirppu/app/models.py:188
+msgid "Long price tag"
+msgstr "Pitkä hintalappu"
+
+#: kirppu/app/models.py:199
+msgid "Barcode content of the product"
+msgstr "Tuotteen viivakoodisisältö"
+
+#: kirppu/app/models.py:309
+msgid "Identifier of the counter"
+msgstr "Kassan tunniste"
+
+#: kirppu/app/models.py:315
+msgid "Name of the counter"
+msgstr "Kassan nimi"
+
+#: kirppu/app/models.py:328
+msgid "Added to receipt"
+msgstr "Lisätty kuittiin"
+
+#: kirppu/app/models.py:329
+msgid "Removed later"
+msgstr "Poistettu myöhemmin"
+
+#: kirppu/app/models.py:330
+msgid "Removed from receipt"
+msgstr "Poistettu kuitista"
+
+#: kirppu/app/models.py:352
+msgid "Not finished"
+msgstr "Ei valmis"
+
+#: kirppu/app/models.py:353
+msgid "Finished"
+msgstr "Valmis"
+
+#: kirppu/app/models.py:354
+msgid "Aborted"
+msgstr "Keskeytetty"
+
+#: kirppu/app/templates/app_frontpage.html:45
+msgid "Registered items"
+msgstr "Rekisteröidyt tavarat"
+
+#: kirppu/app/templates/app_frontpage.html:48
+msgid "name"
+msgstr "nimi"
+
+#: kirppu/app/templates/app_frontpage.html:49
+msgid "code"
+msgstr "koodi"
+
+#: kirppu/app/templates/app_frontpage.html:50
+msgid "price"
+msgstr "hinta"
+
+#: kirppu/app/templates/app_frontpage.html:51
+msgid "printed"
+msgstr "tulostettu"
+
+#: kirppu/app/templates/app_frontpage.html:61
+msgid "yes,no"
+msgstr "kyllä,ei"
+
+#: kirppu/app/templates/app_frontpage.html:67
+msgid "Total:"
+msgstr "Yhteensä:"
+
+#: kirppu/app/templates/app_frontpage.html:71
+#, python-format
+msgid "%(num_printed)s of %(num_total)s"
+msgstr "%(num_printed)s / %(num_total)s"
+
+#: kirppu/app/templates/app_frontpage.html:77
+msgid "No registered items."
+msgstr "Ei rekisteröityjä tavaroita."
+
+#: kirppu/app/templates/app_vendor.html:23
+msgid "Profile"
+msgstr "Profiili"
+
+#: kirppu/app/templates/app_vendor.html:24
+msgid "Log out"
+msgstr "Kirjaudu ulos"
+
+#: kirppu/app/templates/app_vendor.html:28
+msgid "Log in"
+msgstr "Kirjaudu sisään"
+
+#: kirppu/app/templates/common.html:29
+msgid "About"
+msgstr "Tietoja"
+
+#: templates/admin/app/change_list.html:8
+#, python-format
+msgid "Add unbound %(name)s"
+msgstr "Lisää irrallinen %(name)s"

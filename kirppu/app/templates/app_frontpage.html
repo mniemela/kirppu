@@ -1,4 +1,4 @@
-{% extends "app_vendor.html" %}
+{% extends "app_vendor.html" %}{% load i18n %}
 
 {% block body %}
     <h1 id="title_text">Kirppu</h1>
@@ -42,13 +42,13 @@
 
     {% if items %}
         <table class="table table-striped table-hover table-condensed">
-            <caption><h4>Registered items</h4></caption>
+            <caption><h4>{% trans "Registered items" %}</h4></caption>
             <thead>
                 <th>#</th>
-                <th>name</th>
-                <th>code</th>
-                <th>price</th>
-                <th>printed</th>
+                <th>{% trans "name" %}</th>
+                <th>{% trans "code" %}</th>
+                <th>{% trans "price" %}</th>
+                <th>{% trans "printed" %}</th>
             </thead>
             <tbody>
         {% for i in items %}
@@ -58,22 +58,22 @@
                 <td>{{ i.name }}</td>
                 <td>{{ i.code }}</td>
                 <td>{{ i.price }} €</td>
-                <td>{% if i.printed %} yes {% else %} no {% endif %}</td>
+                <td>{{ i.printed|yesno:_("yes,no") }}</td>
             </tr>
 
         {% endfor %}
 
             <tr>
-                <th>Total:</th>
+                <th>{% trans "Total:" %}</th>
                 <th></th>
                 <th></th>
                 <th>{{ total_price }} €</th>
-                <th>{{ num_printed }} of {{ num_total }}</th>
+                <th>{% blocktrans %}{{ num_printed }} of {{ num_total }}{% endblocktrans %}</th>
             </tr>
 
             </tbody>
         </table>
     {% elif user.is_authenticated %}
-        No registered items.
+        {% trans "No registered items." %}
     {% endif %}
 {% endblock  %}

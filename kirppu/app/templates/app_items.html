@@ -85,6 +85,7 @@
         {% for i in printed_items %}
             {% include 'app_items_item.html' with name=i.name price=i.price code=i.code vendor_id=i.vendor_id tag_type="list" %}
         {% endfor %}
+    </div>
 {% endblock %}
 
 {% block tail %}

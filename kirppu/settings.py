@@ -1,5 +1,6 @@
 # Django settings for kirppu project.
 import os.path
+from django.utils.translation import ugettext_lazy as _
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 _path = lambda path: os.path.normpath(os.path.join(BASE, '..', path))
@@ -38,6 +39,15 @@ TIME_ZONE = 'Europe/Helsinki'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'fi'
+
+LANGUAGES = (
+    ('fi', _("Finnish")),
+    ('en', _("English")),
+)
+
+LOCALE_PATHS = (
+    _path("locale"),
+)
 
 SITE_ID = 1
 
@@ -97,8 +107,9 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 

@@ -1,4 +1,4 @@
-{% extends "common.html" %}
+{% extends "common.html" %}{% load i18n %}
 
 {% block title %}Kirppu{% endblock %}
 
@@ -20,11 +20,11 @@
                 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{{ profile_url }}" target="_blank">Profile</a></li>
-                <li><a href="{{ logout_url }}">Log out</a></li>
+                <li><a href="{{ profile_url }}" target="_blank">{% trans "Profile" %}</a></li>
+                <li><a href="{{ logout_url }}">{% trans "Log out" %}</a></li>
             </ul>
         </li>
     {% else %}
-        <li><a href="{{ login_url }}">Log in</a></li>
+        <li><a href="{{ login_url }}">{% trans "Log in" %}</a></li>
     {% endif %}
 {% endblock %}

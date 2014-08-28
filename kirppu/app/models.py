@@ -27,8 +27,8 @@ class Clerk(models.Model):
         unique=True,
         null=True,
         blank=True,
-        verbose_name=u"Access key value",
-        help_text=u"Access code assigned to the clerk.")
+        verbose_name=_(u"Access key value"),
+        help_text=_(u"Access code assigned to the clerk."))
 
     def __unicode__(self):
         if self.user is not None:
