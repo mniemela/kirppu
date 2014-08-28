@@ -170,6 +170,10 @@ def item_update_price(request, code):
 
     vendor = Vendor.get_vendor(request.user)
     item = get_object_or_404(Item.objects, code=code, vendor=vendor)
+
+    if item.is_locked():
+        return HttpResponseBadRequest("Item has been brought to event. Price can't be changed.")
+
     item.price = str(price)
     item.save()
 
@@ -185,6 +189,10 @@ def item_update_name(request, code):
 
     vendor = Vendor.get_vendor(request.user)
     item = get_object_or_404(Item.objects, code=code, vendor=vendor)
+
+    if item.is_locked():
+        return HttpResponseBadRequest("Item has been brought to event. Name can't be changed.")
+
     item.name = name
     item.save()
 

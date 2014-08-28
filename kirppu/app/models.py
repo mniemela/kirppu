@@ -265,6 +265,9 @@ class Item(models.Model):
             ], checksum_bits=4)
         )
 
+    def is_locked(self):
+        return self.state != Item.ADVERTISED
+
     @staticmethod
     def parse_barcode(data):
         """
