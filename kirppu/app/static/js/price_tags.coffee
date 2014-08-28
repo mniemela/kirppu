@@ -108,7 +108,7 @@ deleteAll = ->
     type: 'POST'
     success: ->
       $(tags).each((index, tag) ->
-        code = $(".item_extra_code", tag).text()
+        code = $(tag).attr('id')
         moveItemToList(tag, code)
       )
     error: ->
@@ -338,7 +338,7 @@ bindItemToggleEvents = (tag, code) ->
 # @param tags [jQuery set] A set of '.item_container' elements.
 bindTagEvents = (tags) ->
   tags.each((index, tag) ->
-    code = $(".item_extra_code", tag).text()
+    code = $(tag).attr('id')
 
     bindPriceEditEvents(tag, code)
     bindNameEditEvents(tag, code)
@@ -352,7 +352,7 @@ bindTagEvents = (tags) ->
 
 bindListTagEvents = (tags) ->
   tags.each((index, tag) ->
-    code = $(".item_extra_code", tag).text()
+    code = $(tag).attr('id')
 
     bindItemToPrintEvents(tag, code)
 

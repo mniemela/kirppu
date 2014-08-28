@@ -141,7 +141,7 @@
       success: function() {
         return $(tags).each(function(index, tag) {
           var code;
-          code = $(".item_extra_code", tag).text();
+          code = $(tag).attr('id');
           return moveItemToList(tag, code);
         });
       },
@@ -354,7 +354,7 @@
   bindTagEvents = function(tags) {
     tags.each(function(index, tag) {
       var code;
-      code = $(".item_extra_code", tag).text();
+      code = $(tag).attr('id');
       bindPriceEditEvents(tag, code);
       bindNameEditEvents(tag, code);
       bindItemToListEvents(tag, code);
@@ -365,7 +365,7 @@
   bindListTagEvents = function(tags) {
     tags.each(function(index, tag) {
       var code;
-      code = $(".item_extra_code", tag).text();
+      code = $(tag).attr('id');
       bindItemToPrintEvents(tag, code);
     });
   };

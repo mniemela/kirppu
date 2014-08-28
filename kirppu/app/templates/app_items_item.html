@@ -1,20 +1,25 @@
 {% load kirppu_tags %}
 
     <div class="item_container item_{{ tag_type }} {{ locked|yesno:',item_editable' }}" id="{{ code }}">
-        <div class="item_head">
-            <span class="item_head_price">{{ price }}</span>
-        </div>
+        {% if tag_type != "list" %}
+            <div class="item_head">
+                <span class="item_head_price">{{ price }}</span>
+            </div>
+        {% endif %}
         <div class="item_body">
             <div class="item_name">{{ name }}</div>
             <div class="item_price">{{ price }}</div>
-            <div class="barcode_container">
-                <img class="barcode_img" src="{% barcode_dataurl code bar_type %}" alt="Barcode: {{ code }}" />
-                <div class="item_extra_code">{{ code }}</div>
-            </div>
-
-            <div class="item_vendor_id">{{ vendor_id }}</div>
+            {% if tag_type != "list" %}
+                <div class="barcode_container">
+                    <img class="barcode_img" src="{% barcode_dataurl code bar_type %}" alt="Barcode: {{ code }}" />
+                    <div class="item_extra_code">{{ code }}</div>
+                </div>
+                <div class="item_vendor_id">{{ vendor_id }}</div>
+            {% endif %}
         </div>
 
         <button class="item_button_delete" type="button"><span class="glyphicon glyphicon-sort"></span></button>
-        <button class="item_button_toggle" title="Toggle size." type="button"><span class="glyphicon glyphicon-resize-horizontal"></span></button>
+        {% if tag_type != "list" %}
+            <button class="item_button_toggle" title="Toggle size." type="button"><span class="glyphicon glyphicon-resize-horizontal"></span></button>
+        {% endif %}
     </div>
