@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-29 19:05+0300\n"
-"PO-Revision-Date: 2014-08-29 19:06+0300\n"
+"POT-Creation-Date: 2014-08-29 21:50+0300\n"
+"PO-Revision-Date: 2014-08-29 21:50+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
 "Language: fi\n"
@@ -35,9 +35,14 @@ msgid "Mark this item as printed."
 msgstr "Merkitse tämä tulostetuksi."
 
 #: kirppu/app/static/js/price_tags.js:191
-#: kirppu/app/static/js/price_tags.js:203
+#: kirppu/app/static/js/price_tags.js:204
 msgid "Click to edit..."
 msgstr "Klikkaa muokataksesi…"
+
+#: kirppu/app/static/js/price_tags.js:192
+#: kirppu/app/static/js/price_tags.js:205
+msgid "<em>Click to edit</em>"
+msgstr "<em>Klikkaa muokataksesi</em>"
 
 #~ msgid "Disable mark button"
 #~ msgstr "Poista merkintäpainike käytöstä"

@@ -189,6 +189,7 @@
     $(".item_price", tag).editable(C.price_update_url(code), {
       indicator: "<img src='" + C.urls.roller + "'>",
       tooltip: gettext("Click to edit..."),
+      placeholder: gettext("<em>Click to edit</em>"),
       onblur: "submit",
       style: "width: 2cm",
       callback: function(value) {
@@ -201,6 +202,7 @@
     $(".item_name", tag).editable(C.name_update_url(code), {
       indicator: "<img src='" + C.urls.roller + "'>",
       tooltip: gettext("Click to edit..."),
+      placeholder: gettext("<em>Click to edit</em>"),
       onblur: "submit",
       style: "inherit"
     });

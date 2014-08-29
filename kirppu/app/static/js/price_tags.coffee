@@ -181,6 +181,7 @@ bindPriceEditEvents = (tag, code) ->
     C.price_update_url(code),
     indicator: "<img src='" + C.urls.roller + "'>"
     tooltip:   gettext("Click to edit...")
+    placeholder: gettext("Click to edit")
     onblur:    "submit"
     style:     "width: 2cm"
     # Update the extra price display for long tags.
@@ -197,6 +198,7 @@ bindNameEditEvents = (tag, code) ->
     C.name_update_url(code),
     indicator: "<img src='" + C.urls.roller + "'>"
     tooltip:   gettext("Click to edit...")
+    placeholder: gettext("Click to edit")
     onblur:    "submit"
     style:     "inherit"
   )

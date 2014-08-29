@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-29 19:06+0300\n"
-"PO-Revision-Date: 2014-08-29 19:26+0300\n"
+"POT-Creation-Date: 2014-08-29 21:50+0300\n"
+"PO-Revision-Date: 2014-08-29 21:35+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
 "Language: fi\n"
@@ -49,6 +49,8 @@ msgstr "Poista kassatädin käyttötunniste"
 msgid ""
 "Must select exactly one 'unbound' and one 'bound' Clerk for this operation"
 msgstr ""
+"On valittava tasan yksi 'irrallinen' ja yksi 'kiinnitetty' kassatäti tähän "
+"operaatioon."
 
 #: kirppu/app/admin.py:88
 #, python-brace-format
@@ -194,9 +196,9 @@ msgid ""
 "            Size can be modified later by pressing the arrow button on the "
 "price tag."
 msgstr ""
-"Lisättävän lapun koon voi valita koko-valitsimella. "
-"Kokoa voi muuttaa myöhemmin painamalla <span class=\"glyphicon "
-"glyphicon-resize-horizontal\"></span> painiketta."
+"Lisättävän lapun koon voi valita koko-valitsimella. Kokoa voi muuttaa "
+"myöhemmin painamalla <span class=\"glyphicon glyphicon-resize-horizontal\"></"
+"span> painiketta."
 
 #: kirppu/app/templates/app_items.html:27
 msgid ""
@@ -206,10 +208,9 @@ msgid ""
 "            Suffix 'Blue Red' would create items 'Manga Blue' and 'Manga "
 "Red'."
 msgstr ""
-"Lisää useampi samankaltainen tuote kerralla lisäämällä pääte. "
-"Esim. nimellä 'Manga ' ja päätteellä '1-3' lisättäisiin tuotteet 'Manga 1', "
-"'Manga 2' ja 'Manga 3'. "
-"Pääte 'Blue Red' lisäisi tuotteet 'Manga Blue' ja 'Manga Red'."
+"Lisää useampi samankaltainen tuote kerralla lisäämällä pääte. Esim. nimellä "
+"'Manga ' ja päätteellä '1-3' lisättäisiin tuotteet 'Manga 1', 'Manga 2' ja "
+"'Manga 3'. Pääte 'Blue Red' lisäisi tuotteet 'Manga Blue' ja 'Manga Red'."
 
 #: kirppu/app/templates/app_items.html:32
 msgid "Name:"
@@ -262,12 +263,16 @@ msgstr "Merkitse kaikki tulostetuiksi"
 #: kirppu/app/templates/app_items.html:70
 msgid "Enable mark buttons (<span class=\"glyphicon glyphicon-sort\"></span>)"
 msgstr ""
-"Ota merkintäpainikkeet käyttöön (<span class=\"glyphicon glyphicon-sort\"><"
-"/span>)"
+"Ota merkintäpainikkeet käyttöön (<span class=\"glyphicon glyphicon-sort\"></"
+"span>)"
 
 #: kirppu/app/templates/app_items_item.html:23
 msgid "Toggle size."
 msgstr "Vaihda kokoa."
+
+#: kirppu/app/templates/app_vendor.html:11
+msgid "Item list"
+msgstr "Tavaralista"
 
 #: kirppu/app/templates/app_vendor.html:23
 msgid "Profile"
@@ -289,5 +294,3 @@ msgstr "Tietoja"
 #, python-format
 msgid "Add unbound %(name)s"
 msgstr "Lisää irrallinen %(name)s"
-
-

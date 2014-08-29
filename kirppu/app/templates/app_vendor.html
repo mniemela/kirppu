@@ -8,7 +8,7 @@
 
 {% block navbar_left %}
     {% if user.is_authenticated %}
-        <li><a href="{% url 'kirppu:page' %}">Item list</a></li>
+        <li><a href="{% url 'kirppu:page' %}">{% trans "Item list" %}</a></li>
     {% endif %}
 {% endblock %}
 
