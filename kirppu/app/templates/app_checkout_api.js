@@ -6,7 +6,7 @@ Api['{{ name }}'] = function(params, onSuccess, onError) {
     return $.ajax({
         type: '{{ f.method }}',
         url:  '{% url f.view %}',
-        data: params,
+        data: params
     });
 };
 
