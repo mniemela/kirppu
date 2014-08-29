@@ -116,7 +116,7 @@ def item_add(request):
 
 @login_required
 @require_http_methods(['POST'])
-def item_to_print(request, code):
+def item_to_not_printed(request, code):
     vendor = Vendor.get_vendor(request.user)
     item = get_object_or_404(Item.objects, code=code, vendor=vendor)
 
@@ -145,7 +145,7 @@ def item_to_print(request, code):
 
 @login_required
 @require_http_methods(["POST"])
-def item_to_list(request, code):
+def item_to_printed(request, code):
     vendor = Vendor.get_vendor(request.user)
     item = get_object_or_404(Item.objects, code=code, vendor=vendor)
 

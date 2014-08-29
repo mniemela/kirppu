@@ -95,7 +95,7 @@ deleteAll = ->
     success: ->
       $(tags).each((index, tag) ->
         code = $(tag).attr('id')
-        moveItemToList(tag, code)
+        moveTagToPrinted(tag, code)
       )
     error: ->
       $(tags).show('slow')
@@ -181,7 +181,7 @@ bindPriceEditEvents = (tag, code) ->
     C.price_update_url(code),
     indicator: "<img src='" + C.urls.roller + "'>"
     tooltip:   gettext("Click to edit...")
-    placeholder: gettext("Click to edit")
+    placeholder: gettext("<em>Click to edit</em>")
     onblur:    "submit"
     style:     "width: 2cm"
     # Update the extra price display for long tags.
@@ -198,14 +198,14 @@ bindNameEditEvents = (tag, code) ->
     C.name_update_url(code),
     indicator: "<img src='" + C.urls.roller + "'>"
     tooltip:   gettext("Click to edit...")
-    placeholder: gettext("Click to edit")
+    placeholder: gettext("<em>Click to edit</em>")
     onblur:    "submit"
     style:     "inherit"
   )
   return
 
 
-moveToPrint = (tag, code) ->
+moveItemToNotPrinted = (tag, code) ->
   $.ajax(
     url: C.item_to_print_url(code)
     type: 'POST'
@@ -225,22 +225,23 @@ moveToPrint = (tag, code) ->
   return
 
 
-moveItemToList = (tag, code) ->
+moveTagToPrinted = (tag, code) ->
   unbindTagEvents($(tag))
 
-  $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
+  $('.item_button_delete', tag).click(-> onClickMoveToNotPrinted(tag, code))
   $(tag).prependTo("#printed_items")
   $(tag).addClass("item_list")
   $(tag).show('slow')
+  return
 
 
-moveToList = (tag, code) ->
+moveItemToPrinted = (tag, code) ->
   $.ajax(
     url:  C.item_to_list_url(code)
     type: 'POST'
 
     success: ->
-      moveItemToList(tag, code)
+      moveTagToPrinted(tag, code)
 
     error: ->
       $(tag).show('slow')
@@ -248,27 +249,23 @@ moveToList = (tag, code) ->
   return
 
 
-onClickToList = (tag, code) ->
-  $(tag).hide('slow', -> moveToList(tag, code))
-
-
-onClickToPrint = (tag, code) ->
-  $(tag).hide('slow', -> moveToPrint(tag, code))
-
-
 # Bind events for item delete button.
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
-bindItemToListEvents = (tag, code) ->
-  $('.item_button_delete', tag).click(-> onClickToList(tag, code))
+bindItemToPrintedEvents = (tag, code) ->
+  $('.item_button_delete', tag).click( ->
+    $(tag).hide('slow', -> moveItemToPrinted(tag, code))
+  )
   return
 
 
 # Bind events for item delete button.
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
-bindItemToPrintEvents = (tag, code) ->
-  $('.item_button_delete', tag).click(-> onClickToPrint(tag, code))
+bindItemToNotPrintedEvents = (tag, code) ->
+  $('.item_button_delete', tag).click( ->
+    $(tag).hide('slow', -> moveItemToNotPrinted(tag, code))
+  )
   return
 
 
@@ -330,7 +327,7 @@ bindTagEvents = (tags) ->
 
     bindPriceEditEvents(tag, code)
     bindNameEditEvents(tag, code)
-    bindItemToListEvents(tag, code)
+    bindItemToPrintedEvents(tag, code)
     bindItemToggleEvents(tag, code)
 
     return
@@ -342,7 +339,7 @@ bindListTagEvents = (tags) ->
   tags.each((index, tag) ->
     code = $(tag).attr('id')
 
-    bindItemToPrintEvents(tag, code)
+    bindItemToNotPrintedEvents(tag, code)
 
     return
   )
