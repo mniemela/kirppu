@@ -1,0 +1,46 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Jyrki Launonen, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-29 19:05+0300\n"
+"PO-Revision-Date: 2014-08-29 19:06+0300\n"
+"Last-Translator: Jyrki Launonen\n"
+"Language-Team: Finnish <>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.5\n"
+
+#: kirppu/app/static/js/price_tags.js:110
+msgid ""
+"This will mark all items as printed so they can no longer be edited. "
+"Continue?"
+msgstr ""
+"Tämä merkitsee kaikki laput tulostetuiksi joten et voi muokata niitä enää "
+"tämän jälkeen. Jatka?"
+
+#: kirppu/app/static/js/price_tags.js:147
+msgid "Mark this item as printed. Enable this button from the top of the page."
+msgstr ""
+"Merkitse tämä tulostetuksi. Ota tämä painike käyttöön sivun ylälaidasta."
+
+#: kirppu/app/static/js/price_tags.js:150
+msgid "Mark this item as printed."
+msgstr "Merkitse tämä tulostetuksi."
+
+#: kirppu/app/static/js/price_tags.js:191
+#: kirppu/app/static/js/price_tags.js:203
+msgid "Click to edit..."
+msgstr "Klikkaa muokataksesi…"
+
+#~ msgid "Disable mark button"
+#~ msgstr "Poista merkintäpainike käytöstä"
+
+#~ msgid "Mark individual items"
+#~ msgstr "Merkitse yksittäisiä lappuja"

@@ -1,17 +1,3 @@
-# All localizable strings for this file for now, until we have something
-# better.
-class LocalizationStrings
-  toggleDelete:
-    enabledText: 'Disable mark button'
-    disabledText: 'Mark individual items'
-  deleteItem:
-    enabledTitle: 'Mark this item as printed.'
-    disabledTitle: 'Mark this item as printed. Enable this button from the top of the page.'
-  deleteAll:
-    confirmText: 'This will mark all items as printed so they can no longer be edited. Continue?'
-
-L = new LocalizationStrings()  # Local shorthand for localization.
-
 
 class PriceTagsConfig
   url_args:
@@ -97,7 +83,7 @@ addItem = ->
 
 
 deleteAll = ->
-  if not confirm(L.deleteAll.confirmText)
+  if not confirm(gettext('This will mark all items as printed so they can no longer be edited. Continue?'))
     return
 
   tags = $('#items > .item_container')
@@ -141,10 +127,10 @@ toggleDelete = ->
   deleteButtons = $('.item_button_delete')
   if deleteIsDisabled
     deleteButtons.attr('disabled', 'disabled')
-    deleteButtons.attr('title', L.deleteItem.disabledTitle)
+    deleteButtons.attr('title', gettext('Mark this item as printed. Enable this button from the top of the page.'))
   else
     deleteButtons.removeAttr('disabled')
-    deleteButtons.attr('title', L.deleteItem.enabledTitle)
+    deleteButtons.attr('title', gettext('Mark this item as printed.'))
 
   return
 
@@ -194,7 +180,7 @@ bindPriceEditEvents = (tag, code) ->
   $(".item_price", tag).editable(
     C.price_update_url(code),
     indicator: "<img src='" + C.urls.roller + "'>"
-    tooltip:   "Click to edit..."
+    tooltip:   gettext("Click to edit...")
     onblur:    "submit"
     style:     "width: 2cm"
     # Update the extra price display for long tags.
@@ -210,7 +196,7 @@ bindNameEditEvents = (tag, code) ->
   $(".item_name", tag).editable(
     C.name_update_url(code),
     indicator: "<img src='" + C.urls.roller + "'>"
-    tooltip:   "Click to edit..."
+    tooltip:   gettext("Click to edit...")
     onblur:    "submit"
     style:     "inherit"
   )
@@ -376,8 +362,6 @@ unbindTagEvents = (tags) ->
 
 
 
-# Expose the localization instance in case we want to modify it.
-window.localization = L
 window.itemsConfig = C
 window.addItem = addItem
 window.deleteAll = deleteAll

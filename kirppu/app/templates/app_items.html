@@ -9,6 +9,7 @@
     {% compressed_js 'general' %}
     {% compressed_js 'jeditable' %}
     {% compressed_js 'price_tags' %}
+    <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 {% endblock %}
 
 {% block body %}
