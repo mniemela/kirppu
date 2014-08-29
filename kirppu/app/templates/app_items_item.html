@@ -1,4 +1,4 @@
-{% load kirppu_tags %}
+{% load kirppu_tags %}{% load i18n %}
 
     <div class="item_container item_{{ tag_type }} {{ locked|yesno:',item_editable' }}" id="{{ code }}">
         {% if tag_type != "list" %}
@@ -20,6 +20,6 @@
 
         <button class="item_button_delete" type="button"><span class="glyphicon glyphicon-sort"></span></button>
         {% if tag_type != "list" %}
-            <button class="item_button_toggle" title="Toggle size." type="button"><span class="glyphicon glyphicon-resize-horizontal"></span></button>
+            <button class="item_button_toggle" title="{% trans "Toggle size." %}" type="button"><span class="glyphicon glyphicon-resize-horizontal"></span></button>
         {% endif %}
     </div>
