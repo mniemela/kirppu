@@ -29,7 +29,6 @@ from django.utils.translation import ugettext as _i
 from kirppu.app.models import (
     Item,
     Clerk,
-    CommandCode,
     Vendor,
 )
 from kirppu.app.utils import require_setting, PixelWriter
@@ -287,30 +286,6 @@ def get_barcode(request, data, ext):
     })
 
     return response
-
-
-def get_commands(request):
-    bar_type = request.GET.get("format", "svg").lower()
-
-    if bar_type not in ('svg', 'png'):
-        return HttpResponseBadRequest(u"Image extension not supported")
-
-    items = []
-    code_item = namedtuple("CodeItem", "name code action")
-
-    for c in Clerk.objects.all():
-        code = c.id
-        name = c.user.get_short_name()
-        if len(name) == 0:
-            name = c.user.get_username()
-
-        cc = CommandCode.encode_code(CommandCode.START_CLERK, code)
-        items.append(code_item(name=name, code=cc, action=ugettext(u"Start")))
-
-        cc = CommandCode.encode_code(CommandCode.END_CLERK, code)
-        items.append(code_item(name=name, code=cc, action=ugettext(u"End")))
-
-    return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
 
 
 @login_required
