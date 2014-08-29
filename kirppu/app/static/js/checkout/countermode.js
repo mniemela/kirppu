@@ -34,6 +34,11 @@
       return [[this.cfg.settings.abortPrefix, this.onAbortReceipt], [this.cfg.settings.logoutPrefix, this.onLogout], [this.cfg.settings.payPrefix, this.onPayReceipt], [this.cfg.settings.removeItemPrefix, this.onRemoveItem], ["", this.onAddItem]];
     };
 
+    CounterMode.prototype.enter = function() {
+      CounterMode.__super__.enter.call(this);
+      return this._setSum();
+    };
+
     CounterMode.prototype.addRow = function(code, item, price, rounded) {
       var index, row;
       if (rounded == null) {
@@ -51,6 +56,9 @@
       }
       row = this.createRow(index, code, item, price, rounded);
       this.cfg.uiRef.receiptResult.prepend(row);
+      if (this._receipt != null) {
+        this._setSum(this._receipt.total);
+      }
       return row;
     };
 
@@ -76,6 +84,7 @@
         return function(data) {
           _this._receipt.data = data;
           _this.cfg.uiRef.receiptResult.empty();
+          _this._setSum();
           return _this.reserveItem(code);
         };
       })(this), (function(_this) {
@@ -88,13 +97,20 @@
       })(this));
     };
 
+    CounterMode.prototype._setSum = function(sum) {
+      if (sum == null) {
+        sum = 0;
+      }
+      return this.cfg.uiRef.receiptSum.text("Total: " + sum.formatCents() + " €");
+    };
+
     CounterMode.prototype.reserveItem = function(code) {
       return Api.item_reserve({
         code: code
       }).then((function(_this) {
         return function(data) {
-          _this.addRow(data.code, data.name, data.price);
-          return _this._receipt.total += data.price;
+          _this._receipt.total += data.price;
+          return _this.addRow(data.code, data.name, data.price);
         };
       })(this), (function(_this) {
         return function() {
@@ -112,8 +128,8 @@
         code: code
       }).then((function(_this) {
         return function(data) {
-          _this.addRow(data.code, data.name, -data.price);
-          return _this._receipt.total -= data.price;
+          _this._receipt.total -= data.price;
+          return _this.addRow(data.code, data.name, -data.price);
         };
       })(this), (function(_this) {
         return function() {

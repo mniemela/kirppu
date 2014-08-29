@@ -6,6 +6,7 @@ class Config
     codeForm: null
     receiptResult: null
     receiptTable: null
+    receiptSum: null
     modeMenu: null
   uiRef:
     stateText: null
@@ -13,6 +14,8 @@ class Config
     codeInput: null
     codeForm: null
     receiptResult: null
+    receiptTable: null
+    receiptSum: null
     modeMenu: null
   settings:
     itemPrefix: null

@@ -29,7 +29,8 @@
     };
 
     CheckoutMode.prototype.clearReceipt = function() {
-      return this.cfg.uiRef.receiptTable.empty().append($("<thead>").append($("<tr>").append(this.columns())), this.cfg.uiRef.receiptResult.empty());
+      this.cfg.uiRef.receiptTable.empty().append($("<thead>").append($("<tr>").append(this.columns())), this.cfg.uiRef.receiptResult.empty());
+      return this.cfg.uiRef.receiptSum.empty();
     };
 
     return CheckoutMode;

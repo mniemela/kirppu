@@ -17,6 +17,10 @@ class @CounterMode extends ItemCheckoutMode
     ["",                              @onAddItem]
   ]
 
+  enter: ->
+    super()
+    @_setSum()
+
   addRow: (code, item, price, rounded=false) ->
     if code?
       @_receipt.rowCount++
@@ -28,6 +32,8 @@ class @CounterMode extends ItemCheckoutMode
 
     row = @createRow(index, code, item, price, rounded)
     @cfg.uiRef.receiptResult.prepend(row)
+    if @_receipt?
+      @_setSum(@_receipt.total)
     return row
 
   onAddItem: (code) =>
@@ -51,6 +57,7 @@ class @CounterMode extends ItemCheckoutMode
       (data) =>
         @_receipt.data = data
         @cfg.uiRef.receiptResult.empty()
+        @_setSum()
         @reserveItem(code)
 
       (jqHXR) =>
@@ -61,11 +68,14 @@ class @CounterMode extends ItemCheckoutMode
         return true
     )
 
+  _setSum: (sum=0) ->
+    @cfg.uiRef.receiptSum.text("Total: " + (sum).formatCents() + " €")
+
   reserveItem: (code) ->
       Api.item_reserve(code: code).then(
         (data) =>
-          @addRow(data.code, data.name, data.price)
           @_receipt.total += data.price
+          @addRow(data.code, data.name, data.price)
 
         =>
           alert("Could not find item: " + code)
@@ -77,8 +87,8 @@ class @CounterMode extends ItemCheckoutMode
 
     Api.item_release(code: code).then(
       (data) =>
-        @addRow(data.code, data.name, -data.price)
         @_receipt.total -= data.price
+        @addRow(data.code, data.name, -data.price)
 
       () =>
         alert("Item not found on receipt: " + code)

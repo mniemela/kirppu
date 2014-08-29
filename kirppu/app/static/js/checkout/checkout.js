@@ -12,6 +12,7 @@
       codeForm: null,
       receiptResult: null,
       receiptTable: null,
+      receiptSum: null,
       modeMenu: null
     };
 
@@ -21,6 +22,8 @@
       codeInput: null,
       codeForm: null,
       receiptResult: null,
+      receiptTable: null,
+      receiptSum: null,
       modeMenu: null
     };
 

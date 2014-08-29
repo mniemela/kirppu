@@ -44,3 +44,4 @@ class @CheckoutMode
       $("<thead>").append($("<tr>").append(@columns())),
       @cfg.uiRef.receiptResult.empty(),
     )
+    @cfg.uiRef.receiptSum.empty()
