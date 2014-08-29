@@ -305,6 +305,8 @@ PROFILE_URL = 'https://kompassidev.tracon.fi/profile'
 
 KIRPPU_CHECKOUT_ACTIVE = False
 
+KIRPPU_COPY_ITEM_WHEN_UNPRINTED = False
+
 
 # Load local settings that are not stored in repository. This must be last at end of settings.
 try:

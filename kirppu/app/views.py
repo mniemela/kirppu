@@ -120,10 +120,18 @@ def item_to_print(request, code):
     vendor = Vendor.get_vendor(request.user)
     item = get_object_or_404(Item.objects, code=code, vendor=vendor)
 
-    # Create a duplicate of the item with a new code and hide the old item.
-    # This way, even if the user forgets to attach the new tags, the old
-    # printed tag is still in the system.
-    new_item = Item.new(name=item.name, price=item.price, vendor=item.vendor, type=item.type, state=Item.ADVERTISED)
+    if settings.KIRPPU_COPY_ITEM_WHEN_UNPRINTED:
+        # Create a duplicate of the item with a new code and hide the old item.
+        # This way, even if the user forgets to attach the new tags, the old
+        # printed tag is still in the system.
+        new_item = Item.new(name=item.name, price=item.price,
+                vendor=item.vendor, type=item.type, state=Item.ADVERTISED)
+        item.hidden = True
+    else:
+        item.printed = False
+        new_item = item
+    item.save()
+
     item_dict = {
         'vendor_id': new_item.vendor_id,
         'code': new_item.code,
@@ -131,9 +139,6 @@ def item_to_print(request, code):
         'price': str(new_item.price).replace('.', ','),
         'type': new_item.type,
     }
-
-    item.hidden = True
-    item.save()
 
     return HttpResponse(json.dumps(item_dict), 'application/json')
 
