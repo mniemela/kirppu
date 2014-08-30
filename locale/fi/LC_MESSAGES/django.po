@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-30 14:21+0300\n"
+"POT-Creation-Date: 2014-08-30 19:12+0300\n"
 "PO-Revision-Date: 2014-08-29 21:35+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
@@ -204,6 +204,9 @@ msgstr "Vaihda listanäkymä"
 msgid "Mark all as printed"
 msgstr "Merkitse kaikki tulostetuiksi"
 
+msgid "Switch item between printed and not printed lists."
+msgstr "Siirrä tavara tulostettujen listaan tai sieltä takaisin."
+
 msgid "Toggle size."
 msgstr "Vaihda kokoa."
 
@@ -219,9 +222,9 @@ msgstr "Kirjaudu ulos"
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
-msgid "About"
-msgstr "Tietoja"
-
 #, python-format
 msgid "Add unbound %(name)s"
 msgstr "Lisää irrallinen %(name)s"
+
+#~ msgid "About"
+#~ msgstr "Tietoja"

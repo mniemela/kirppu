@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-30 14:21+0300\n"
+"POT-Creation-Date: 2014-08-30 19:12+0300\n"
 "PO-Revision-Date: 2014-08-29 21:33+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
@@ -202,6 +202,9 @@ msgstr "Toggle List View"
 msgid "Mark all as printed"
 msgstr "Mark all as printed"
 
+msgid "Switch item between printed and not printed lists."
+msgstr "Switch item between printed and not printed lists."
+
 msgid "Toggle size."
 msgstr "Toggle size."
 
@@ -217,9 +220,9 @@ msgstr "Log out"
 msgid "Log in"
 msgstr "Log in"
 
-msgid "About"
-msgstr "About"
-
 #, python-format
 msgid "Add unbound %(name)s"
 msgstr "Add unbound %(name)s"
+
+#~ msgid "About"
+#~ msgstr "About"

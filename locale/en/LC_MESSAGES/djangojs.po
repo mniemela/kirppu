@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-30 14:20+0300\n"
+"POT-Creation-Date: 2014-08-30 19:12+0300\n"
 "PO-Revision-Date: 2014-08-29 21:50+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
@@ -29,4 +29,3 @@ msgstr "Click to edit…"
 
 msgid "<em>Click to edit</em>"
 msgstr "<em>Click to edit</em>"
-
