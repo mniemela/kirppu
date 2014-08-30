@@ -191,6 +191,7 @@ PIPELINE_JS = {
     },
     'price_tags': {
         "source_filenames": (
+            "js/number_test.coffee",
             "js/price_tags.coffee",
         ),
         "output_filename": "price_tags.js",
@@ -209,6 +210,7 @@ PIPELINE_JS = {
             "js/checkout/itemfindmode.coffee",
             "js/checkout/vendorfindmode.coffee",
 
+            "js/number_test.coffee",
             "js/jquery.cookie-1.4.1-0.js",
         ),
         "output_filename": "cout.js",

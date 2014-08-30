@@ -97,6 +97,7 @@ class @CounterMode extends ItemCheckoutMode
 
   onPayReceipt: (input) =>
     unless @_receipt? then return
+    unless Number.isConvertible(input) then return
     input = input - 0
 
     if input < @_receipt.total

@@ -144,6 +144,9 @@
       if (this._receipt == null) {
         return;
       }
+      if (!Number.isConvertible(input)) {
+        return;
+      }
       input = input - 0;
       if (input < this._receipt.total) {
         alert("Not enough given money!");
