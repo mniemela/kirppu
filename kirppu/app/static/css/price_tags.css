@@ -103,6 +103,18 @@
 .item_head_price:after {
     content:" \20AC"; /* euro */
 }
+
+/* Price tag edit forms. */
+.item_editable .item_body form {
+    display: inline;
+}
+.item_editable .item_body form input {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
 .item_head_price {
     font-size: 100%;
     width: 1.5cm; /* Width of price before scaling. */

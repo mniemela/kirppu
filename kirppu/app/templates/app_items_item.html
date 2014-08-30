@@ -8,7 +8,7 @@
         {% endif %}
         <div class="item_body">
             <div class="item_name">{{ name }}</div>
-            <div class="item_price">{{ price }}</div>
+            <span class="item_price">{{ price }}</span>
             {% if tag_type != "list" %}
                 <div class="barcode_container">
                     <img class="barcode_img" src="{% barcode_dataurl code bar_type %}" alt="Barcode: {{ code }}" />
