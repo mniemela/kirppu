@@ -21,10 +21,10 @@
             </a>
             <ul class="dropdown-menu">
                 <li><a href="{{ profile_url }}" target="_blank">{% trans "Profile" %}</a></li>
-                <li><a href="{{ logout_url }}">{% trans "Log out" %}</a></li>
+                <li><a href="{% url 'kirppu:logout_view' %}">{% trans "Log out" %}</a></li>
             </ul>
         </li>
     {% else %}
-        <li><a href="{{ login_url }}">{% trans "Log in" %}</a></li>
+        <li><a href="{% url 'kirppu:login_view' %}">{% trans "Log in" %}</a></li>
     {% endif %}
 {% endblock %}

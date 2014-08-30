@@ -264,6 +264,8 @@ def get_items(request):
         'printed_items': printed_items,
         'bar_type': bar_type,
         'tag_type': tag_type,
+
+        'profile_url': settings.PROFILE_URL,
     }
 
     return render(request, "app_items.html", render_params)
@@ -365,8 +367,6 @@ def vendor_view(request):
         'num_total':   len(items),
         'num_printed': len(filter(lambda i: i.printed, items)),
 
-        'login_url': url.reverse('kirppu:login_view'),
-        'logout_url': url.reverse('kirppu:logout_view'),
         'profile_url': settings.PROFILE_URL,
     }
     return render(request, "app_frontpage.html", context)
