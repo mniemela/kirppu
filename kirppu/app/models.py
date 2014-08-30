@@ -1,4 +1,5 @@
 import random
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
@@ -160,6 +161,11 @@ class Vendor(models.Model):
         return user.vendor
 
 
+def validate_positive(value):
+    if value < 0.0:
+        raise ValidationError(_(u"Value cannot be negative"))
+
+
 class Item(models.Model):
     ADVERTISED = "AD"
     BROUGHT = "BR"
@@ -198,9 +204,8 @@ class Item(models.Model):
         db_index=True,
         help_text=_(u"Barcode content of the product"),
     )
-    name = models.CharField(max_length=256)
-    # FIXME: prevent negative prices
-    price = models.DecimalField(max_digits=8, decimal_places=2)
+    name = models.CharField(max_length=256, blank=True)
+    price = models.DecimalField(max_digits=8, decimal_places=2, validators=[validate_positive])
     vendor = models.ForeignKey(Vendor)
     state = models.CharField(
         choices=STATE,
@@ -238,6 +243,7 @@ class Item(models.Model):
         :rtype: Item
         """
         obj = cls(*args, **kwargs)
+        obj.full_clean()
         obj.save()
 
         obj.code = obj.gen_barcode()
