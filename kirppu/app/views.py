@@ -48,13 +48,13 @@ def item_add(request):
     suffix_str = request.POST.get("range", "")
 
     if not price:
-        return HttpResponseBadRequest(_("Item must have a price."))
+        return HttpResponseBadRequest(_(u"Item must have a price."))
 
     price = price.replace(",", ".")
     try:
         price = Decimal(price).quantize(Decimal('0.1'), rounding=decimal.ROUND_UP)
     except InvalidOperation:
-        return HttpResponseBadRequest(_("Price must be numeric."))
+        return HttpResponseBadRequest(_(u"Price must be numeric."))
 
     # Round up to nearest 50 cents.
     remainder = price % Decimal('.5')

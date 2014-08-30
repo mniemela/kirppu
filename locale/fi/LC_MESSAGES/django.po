@@ -119,11 +119,9 @@ msgstr "Tavaralla täytyy olla hinta."
 msgid "Price must be numeric."
 msgstr "Hinnan täytyy olla numero."
 
-#, fuzzy
 msgid "Price too low. (min 0.5 euros)"
 msgstr "Hinta on liian pieni. (minimi 0,5 euroa)"
 
-#, fuzzy
 msgid "Price too high. (max 400 euros)"
 msgstr "Hinta on liian suuri. (maksimi 400 euroa)"
 
