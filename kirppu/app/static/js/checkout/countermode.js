@@ -97,11 +97,19 @@
       })(this));
     };
 
-    CounterMode.prototype._setSum = function(sum) {
+    CounterMode.prototype._setSum = function(sum, ret) {
+      var text;
       if (sum == null) {
         sum = 0;
       }
-      return this.cfg.uiRef.receiptSum.text("Total: " + sum.formatCents() + " €");
+      if (ret == null) {
+        ret = null;
+      }
+      text = "Total: " + sum.formatCents() + " €";
+      if (ret != null) {
+        text += " / Return: " + ret.formatCents() + " €";
+      }
+      return this.cfg.uiRef.receiptSum.text(text);
     };
 
     CounterMode.prototype.reserveItem = function(code) {
@@ -140,7 +148,7 @@
     };
 
     CounterMode.prototype.onPayReceipt = function(input) {
-      var row, _i, _len, _ref;
+      var return_amount, row, _i, _len, _ref;
       if (this._receipt == null) {
         return;
       }
@@ -152,11 +160,17 @@
         alert("Not enough given money!");
         return;
       }
-      _ref = [this.addRow(null, "Subtotal", this._receipt.total, true), this.addRow(null, "Cash", input), this.addRow(null, "Return", input - this._receipt.total, true)];
+      if (input > 400 * 100) {
+        alert("Not accepting THAT much money!");
+        return;
+      }
+      return_amount = input - this._receipt.total;
+      _ref = [this.addRow(null, "Subtotal", this._receipt.total, true), this.addRow(null, "Cash", input), this.addRow(null, "Return", return_amount, true)];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         row = _ref[_i];
         row.addClass("success");
       }
+      this._setSum(this._receipt.total, return_amount.round5());
       return Api.receipt_finish().then((function(_this) {
         return function(data) {
           _this._receipt.data = data;

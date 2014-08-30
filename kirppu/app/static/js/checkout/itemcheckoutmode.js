@@ -15,7 +15,7 @@
     };
 
     ItemCheckoutMode.prototype.createRow = function(index, code, name, price, rounded) {
-      var modulo, price_str, rounded_str, rounded_value, row, x;
+      var price_str, rounded_str, row, x;
       if (price == null) {
         price = null;
       }
@@ -34,13 +34,7 @@
         rounded = false;
       }
       if (rounded) {
-        modulo = price % 5;
-        if (modulo >= 3) {
-          rounded_value = price + (5 - modulo);
-        } else {
-          rounded_value = price - modulo;
-        }
-        rounded_str = rounded_value.formatCents() + "€";
+        rounded_str = price.round5().formatCents() + "€";
         price_str = "" + rounded_str + " (" + price_str + ")";
       }
       row = $("<tr>");
@@ -59,5 +53,15 @@
     return ItemCheckoutMode;
 
   })(CheckoutMode);
+
+  Number.prototype.round5 = function() {
+    var modulo;
+    modulo = this % 5;
+    if (modulo >= 2.5) {
+      return this + (5 - modulo);
+    } else {
+      return this - modulo;
+    }
+  };
 
 }).call(this);

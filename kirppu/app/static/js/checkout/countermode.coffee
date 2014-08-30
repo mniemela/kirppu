@@ -68,8 +68,11 @@ class @CounterMode extends ItemCheckoutMode
         return true
     )
 
-  _setSum: (sum=0) ->
-    @cfg.uiRef.receiptSum.text("Total: " + (sum).formatCents() + " €")
+  _setSum: (sum=0, ret=null) ->
+    text = "Total: " + (sum).formatCents() + " €"
+    if ret?
+      text += " / Return: " + (ret).formatCents() + " €"
+    @cfg.uiRef.receiptSum.text(text)
 
   reserveItem: (code) ->
       Api.item_reserve(code: code).then(
@@ -104,11 +107,19 @@ class @CounterMode extends ItemCheckoutMode
       alert("Not enough given money!")
       return
 
+    if input > 400*100
+      alert("Not accepting THAT much money!")
+      return
+
+    return_amount = input - @_receipt.total
     row.addClass("success") for row in [
       @addRow(null, "Subtotal", @_receipt.total, true),
       @addRow(null, "Cash", input),
-      @addRow(null, "Return", input - @_receipt.total, true),
+      @addRow(null, "Return", return_amount, true),
     ]
+
+    # Also display the return amount in the top.
+    @_setSum(@_receipt.total, return_amount.round5())
 
     Api.receipt_finish().then(
       (data) =>
