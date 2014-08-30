@@ -1,7 +1,7 @@
 PYTHON=python
 .PHONY: none messages compile
 LOCS=-l fi -l en
-MM_ARGS=${LOCS} -i KirppuVenv
+MM_ARGS=${LOCS} -i KirppuVenv --no-location
 
 none:
 
