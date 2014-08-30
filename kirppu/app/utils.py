@@ -1,12 +1,16 @@
 from functools import wraps
-import json
+from django.conf import settings
 import django.forms
 from django.http.response import HttpResponseForbidden
 from django.utils.translation import ugettext as _i
+from django.utils import timezone
+import pytz
 
 __author__ = 'jyrkila'
 
 RFC2822TIME = "%a, %d %b %Y %H:%M:%S %z"
+MEM_TIMES = {}
+
 
 from barcode.writer import BaseWriter, mm2px
 
@@ -176,3 +180,46 @@ def require_setting(setting, value):
             return fn(request, *args, **kwargs)
         return inner
     return decorator
+
+
+def is_now_after(date_str):
+    """
+    Check if the current time is after given datetime string.
+    The string must be in "YYYY-MM-DD HH:MM:SS" format and it is expected to be in settings.TIME_ZONE timezone.
+
+    Parsed date_str values are cached in MEM_TIMES, so this function is not suitable for testing random user inputs.
+
+    :param date_str: Instant to test against.
+    :type date_str: str
+    :return: True if current time is after the given datetime. False if not.
+    """
+    cached_instant = MEM_TIMES.get(date_str)
+    if cached_instant is None:
+        naive = timezone.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        MEM_TIMES[date_str] = cached_instant = pytz.timezone(settings.TIME_ZONE).localize(naive)
+
+    return timezone.now() > cached_instant
+
+
+def is_vendor_open():
+    """
+    Test if Item edit for vendor is currently open.
+
+    :return: True if open, False if not and modifications by vendor must not be allowed.
+    """
+    return not is_now_after(settings.KIRPPU_REGISTER_ACTIVE_UNTIL)
+
+
+def require_vendor_open(fn):
+    """
+    Decorate (view) function so that it will return Forbidden if Item edit for vendor is not open.
+
+    :param fn: Function to decorate.
+    :return: Decorated function.
+    """
+    @wraps(fn)
+    def inner(*args, **kwargs):
+        if not is_vendor_open():
+            return HttpResponseForbidden("Registration is closed")
+        return fn(*args, **kwargs)
+    return inner

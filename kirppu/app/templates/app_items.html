@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block body %}
+    {% if is_registration_open %}
     <form id="item-add-form" method="POST" class="form-horizontal">
         {% csrf_token %}
         <p class="help-block">
@@ -68,6 +69,7 @@
         </div>
 
     </form>
+    {% endif %}
 
     <form id="item-add-form" method="POST" class="form-horizontal">
         <div class="form-group">
@@ -107,6 +109,7 @@
         itemsConfig.urls.all_to_print = "{% url 'kirppu:all_to_print' %}";
         itemsConfig.urls.roller = "{% static "img/roller.gif" %}";
         itemsConfig.urls.item_to_print = "{% url 'kirppu:item_to_not_printed' '__placeholder__' %}";
+        {% if not is_registration_open %}itemsConfig.enabled = false;{% endif %}
 
         $(document).ready(function() {
             setupAjax();

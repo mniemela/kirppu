@@ -309,6 +309,9 @@ KIRPPU_CHECKOUT_ACTIVE = False
 
 KIRPPU_COPY_ITEM_WHEN_UNPRINTED = False
 
+# Datetime of the instant of which Item registration is open until, in "YYYY-MM-DD HH:MM:SS" format.
+# The specified date is expected to be in TIME_ZONE timezone.
+KIRPPU_REGISTER_ACTIVE_UNTIL = "2024-12-31 23:59:59"
 
 # Load local settings that are not stored in repository. This must be last at end of settings.
 try:

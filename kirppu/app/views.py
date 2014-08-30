@@ -19,7 +19,6 @@ from django.shortcuts import (
 from django.conf import settings
 import django.core.urlresolvers as url
 from django.utils.http import is_safe_url
-from django.utils.translation import ugettext
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import logout
@@ -31,7 +30,7 @@ from kirppu.app.models import (
     Clerk,
     Vendor,
 )
-from kirppu.app.utils import require_setting, PixelWriter
+from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open
 
 
 def index(request):
@@ -40,6 +39,7 @@ def index(request):
 
 @login_required
 @require_http_methods(["POST"])
+@require_vendor_open
 def item_add(request):
     vendor = Vendor.get_vendor(request.user)
     name = request.POST.get("name", "")
@@ -124,6 +124,9 @@ def item_to_not_printed(request, code):
         # Create a duplicate of the item with a new code and hide the old item.
         # This way, even if the user forgets to attach the new tags, the old
         # printed tag is still in the system.
+        if not is_vendor_open():
+            return HttpResponseForbidden("Registration is closed")
+
         new_item = Item.new(name=item.name, price=item.price,
                 vendor=item.vendor, type=item.type, state=Item.ADVERTISED)
         item.hidden = True
@@ -157,6 +160,7 @@ def item_to_printed(request, code):
 
 @login_required
 @require_http_methods(["POST"])
+@require_vendor_open
 def item_update_price(request, code):
     price = request.POST.get("value", "0")
     price = price.replace(",", ".")
@@ -187,6 +191,7 @@ def item_update_price(request, code):
 
 @login_required
 @require_http_methods(["POST"])
+@require_vendor_open
 def item_update_name(request, code):
     name = request.POST.get("value", "no name")
     
@@ -266,6 +271,8 @@ def get_items(request):
         'tag_type': tag_type,
 
         'profile_url': settings.PROFILE_URL,
+
+        'is_registration_open': is_vendor_open(),
     }
 
     return render(request, "app_items.html", render_params)

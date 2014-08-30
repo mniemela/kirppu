@@ -19,6 +19,8 @@
       all_to_print: ''
     };
 
+    PriceTagsConfig.prototype.enabled = true;
+
     function PriceTagsConfig() {}
 
     PriceTagsConfig.prototype.name_update_url = function(code) {
@@ -330,9 +332,14 @@
   bindTagEvents = function(tags) {
     tags.each(function(index, tag) {
       var code;
-      code = $(tag).attr('id');
-      bindPriceEditEvents(tag, code);
-      bindNameEditEvents(tag, code);
+      tag = $(tag);
+      code = tag.attr('id');
+      if (C.enabled) {
+        bindPriceEditEvents(tag, code);
+        bindNameEditEvents(tag, code);
+      } else {
+        tag.removeClass("item_editable");
+      }
       bindItemToPrintedEvents(tag, code);
       bindItemToggleEvents(tag, code);
     });

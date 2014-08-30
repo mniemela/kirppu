@@ -16,6 +16,8 @@ class PriceTagsConfig
     item_to_print: ''
     all_to_print: ''
 
+  enabled: true
+
   constructor: ->
 
   name_update_url: (code) ->
@@ -325,10 +327,14 @@ bindItemToggleEvents = (tag, code) ->
 # @param tags [jQuery set] A set of '.item_container' elements.
 bindTagEvents = (tags) ->
   tags.each((index, tag) ->
-    code = $(tag).attr('id')
+    tag = $(tag)
+    code = tag.attr('id')
 
-    bindPriceEditEvents(tag, code)
-    bindNameEditEvents(tag, code)
+    if C.enabled
+      bindPriceEditEvents(tag, code)
+      bindNameEditEvents(tag, code)
+    else
+      tag.removeClass("item_editable")
     bindItemToPrintedEvents(tag, code)
     bindItemToggleEvents(tag, code)
 
