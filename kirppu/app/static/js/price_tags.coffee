@@ -70,6 +70,8 @@ addItem = ->
   onSuccess = (items) ->
     for item in items
       tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
+      if listViewIsOn
+        tag.addClass('item_list')
       $('#items').prepend(tag)
       bindTagEvents($(tag))
 
