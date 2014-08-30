@@ -1,0 +1,7 @@
+table .numeric {
+    text-align: right;
+}
+
+table .bool {
+    text-align: center;
+}

@@ -176,7 +176,7 @@ msgstr "Yhteensä:"
 #: kirppu/app/templates/app_frontpage.html:73
 #, python-format
 msgid "%(num_printed)s of %(num_total)s"
-msgstr "%(num_printed)s / %(num_total)s"
+msgstr "%(num_printed)s&nbsp; / &nbsp;%(num_total)s"
 
 #: kirppu/app/templates/app_frontpage.html:79
 msgid "No registered items."

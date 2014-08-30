@@ -156,6 +156,7 @@ AUTH_USER_MODEL = 'kirppuauth.User'
 PIPELINE_CSS = {
     'general': {
         "source_filenames": (
+            "css/general.css",
             "css/bootstrap.css",
             "css/bootstrap-theme.css",
         ),
