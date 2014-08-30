@@ -163,6 +163,8 @@ def item_to_printed(request, code):
 @require_vendor_open
 def item_update_price(request, code):
     price = request.POST.get("value", "0")
+    if len(price) > 8:
+        return HttpResponseBadRequest("Invalid price.")
     price = price.replace(",", ".")
 
     price = Decimal(price).quantize(Decimal('.1'), rounding=decimal.ROUND_UP)
