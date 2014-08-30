@@ -112,7 +112,7 @@
 
   deleteAll = function() {
     var tags;
-    if (!confirm(gettext('This will mark all items as printed so they can no longer be edited. Continue?'))) {
+    if (!confirm(gettext("This will mark all items as printed so they won't be printed again accidentally. Continue?"))) {
       return;
     }
     tags = $('#items > .item_container');

@@ -89,7 +89,7 @@ addItem = ->
 
 
 deleteAll = ->
-  if not confirm(gettext('This will mark all items as printed so they can no longer be edited. Continue?'))
+  if not confirm(gettext("This will mark all items as printed so they won't be printed again accidentally. Continue?"))
     return
 
   tags = $('#items > .item_container')
