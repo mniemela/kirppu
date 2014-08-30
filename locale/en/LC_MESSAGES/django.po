@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-30 23:19+0300\n"
-"PO-Revision-Date: 2014-08-29 21:33+0300\n"
+"PO-Revision-Date: 2014-08-30 23:46+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
 "MIME-Version: 1.0\n"
@@ -118,11 +118,9 @@ msgstr "Item must have a price."
 msgid "Price must be numeric."
 msgstr "Price must be numeric."
 
-#, fuzzy
 msgid "Price too low. (min 0.5 euros)"
 msgstr "Price too low. (min 0.5 euros)"
 
-#, fuzzy
 msgid "Price too high. (max 400 euros)"
 msgstr "Price too high. (max 400 euros)"
 
