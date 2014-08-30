@@ -106,7 +106,7 @@ def item_add(request):
             'vendor_id': vendor.id,
             'code': item.code,
             'name': item.name,
-            'price': str(item.price).replace('.', ','),
+            'price': str(item.price_fmt).replace('.', ','),
             'type': item.type,
         }
         response.append(item_dict)

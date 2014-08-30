@@ -1,4 +1,5 @@
 import random
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
@@ -194,8 +195,14 @@ class Item(models.Model):
         (TYPE_LONG, _(u"Long price tag")),
     )
 
+    # Count of digits after decimal separator.
     FRACTION_LEN = 2
+
+    # Denominator, a power of 10, for representing numbers with FRACTION_LEN digits.
     FRACTION = 10 ** FRACTION_LEN
+
+    # Number "one", represented with precision defined by FRACTION(_LEN).
+    Q_EXP = Decimal(FRACTION).scaleb(-FRACTION_LEN)
 
     code = models.CharField(
         max_length=16,
@@ -231,6 +238,23 @@ class Item(models.Model):
     @property
     def price_cents(self):
         return long(self.price * self.FRACTION)
+
+    @property
+    def price_fmt(self):
+        """
+        Get Item price formatted human-printable:
+        If the value is exact integer, returned value contains only the integer part.
+        Else, the value precision is as defined with FRACTION variable.
+
+        :return: Decimal object formatted for humans.
+        :rtype: Decimal
+        """
+        # If value is exact integer, return only the integer part.
+        int_value = self.price.to_integral_value()
+        if int_value == self.price:
+            return int_value
+        # Else, display digits with precision from FRACTION*.
+        return self.price.quantize(Item.Q_EXP)
 
     @classmethod
     def new(cls, *args, **kwargs):
