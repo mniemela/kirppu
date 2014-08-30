@@ -64,7 +64,6 @@
         <div class="form-group">
             <div class="col-sm-offset-1 col-sm-11">
                 <button id="add_short_item" type="button" class="btn btn-primary">{% trans "Add item" %}</button>
-                <button id="list_view" type="button" class="btn btn-default">{% trans "Toggle List View" %}</button>
             </div>
         </div>
 
@@ -74,6 +73,7 @@
     <form id="item-add-form" method="POST" class="form-horizontal">
         <div class="form-group">
             <div class="col-sm-12">
+                <button id="list_view" type="button" class="btn btn-default">{% trans "Toggle List View" %}</button>
                 <button id="delete_all" type="button" class="btn btn-default">{% trans "Mark all as printed" %}</button>
                 <button id="toggle_delete" type="button" class="btn btn-default">{% blocktrans %}Enable mark buttons (<span class="glyphicon glyphicon-sort"></span>){% endblocktrans %}</button>
             </div>
