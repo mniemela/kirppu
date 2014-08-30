@@ -1,3 +1,4 @@
 *.pyc
+*.mo
 /static/
 kirppu/local_settings.py
