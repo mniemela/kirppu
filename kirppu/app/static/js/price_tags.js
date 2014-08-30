@@ -89,9 +89,10 @@
   };
 
   addItem = function() {
-    var content, onSuccess;
+    var content, onError, onSuccess;
     onSuccess = function(items) {
       var item, tag, _i, _len, _results;
+      $('#form-errors').empty();
       _results = [];
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         item = items[_i];
@@ -101,13 +102,25 @@
       }
       return _results;
     };
+    onError = function(jqXHR, textStatus, errorThrown) {
+      $('#form-errors').empty();
+      if (jqXHR.responseText) {
+        return $('<p>' + jqXHR.responseText + '</p>').appendTo($('#form-errors'));
+      }
+    };
     content = {
       name: $("#item-add-name").val(),
       price: $("#item-add-price").val(),
       range: $("#item-add-suffixes").val(),
       type: $("input[name=item-add-type]:checked").val()
     };
-    return $.post(C.urls.item_add, content, onSuccess);
+    return $.ajax({
+      url: C.urls.item_add,
+      type: 'POST',
+      data: content,
+      success: onSuccess,
+      error: onError
+    });
   };
 
   deleteAll = function() {

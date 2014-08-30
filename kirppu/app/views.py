@@ -23,7 +23,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _i
+from django.utils.translation import ugettext as _
 
 from kirppu.app.models import (
     Item,
@@ -48,13 +48,13 @@ def item_add(request):
     suffix_str = request.POST.get("range", "")
 
     if not price:
-        return HttpResponseBadRequest("Item must have a price.")
+        return HttpResponseBadRequest(_("Item must have a price."))
 
     price = price.replace(",", ".")
     try:
         price = Decimal(price).quantize(Decimal('0.1'), rounding=decimal.ROUND_UP)
     except InvalidOperation:
-        return HttpResponseBadRequest("Price must be numeric.")
+        return HttpResponseBadRequest(_("Price must be numeric."))
 
     # Round up to nearest 50 cents.
     remainder = price % Decimal('.5')
@@ -62,9 +62,9 @@ def item_add(request):
         price += Decimal('.5') - remainder
 
     if price <= Decimal('0'):
-        return HttpResponseBadRequest("Price too low.")
+        return HttpResponseBadRequest(_(u"Price too low. (min 0.5 euros)"))
     elif price > Decimal('400'):
-        return HttpResponseBadRequest("Price too high.")
+        return HttpResponseBadRequest(_(u"Price too high. (max 400 euros)"))
 
     def expand_suffixes(input_str):
         """Turn 'a b 1 3-4' to ['a', 'b', '1', '3', '4']"""
@@ -78,7 +78,7 @@ def item_add(request):
                 # Turn '1-3' to ['1', '2', '3'] and so on
                 left, right = map(int, match.groups())
                 if abs(left - right) + 1 >= 100:
-                    raise ValueError('Maximum of 100 items allowed by a single range statement.')
+                    return None
                 if left > right:
                     left, right = right, left
                 result.extend(map(str, range(left, right + 1)))
@@ -87,10 +87,9 @@ def item_add(request):
 
         return result
 
-    try:
-        suffixes = expand_suffixes(suffix_str)
-    except ValueError as e:
-        return HttpResponseBadRequest(e.message)
+    suffixes = expand_suffixes(suffix_str)
+    if suffixes is None:
+        return HttpResponseBadRequest(_(u'Maximum of 100 items allowed by a single range statement.'))
 
     if not suffixes:
         # If there are no suffixes the name is added as is just once.
@@ -315,7 +314,7 @@ def get_barcode(request, data, ext):
 @login_required
 def get_clerk_codes(request):
     if not request.user.is_staff:
-        return HttpResponseForbidden(_i(u"Forbidden"))
+        return HttpResponseForbidden(_(u"Forbidden"))
     bar_type = request.GET.get("format", "svg").lower()
 
     if bar_type not in ('svg', 'png'):

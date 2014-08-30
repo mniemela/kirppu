@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-30 19:12+0300\n"
+"POT-Creation-Date: 2014-08-30 23:19+0300\n"
 "PO-Revision-Date: 2014-08-29 21:35+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
@@ -112,6 +112,26 @@ msgstr "Valmis"
 
 msgid "Aborted"
 msgstr "Keskeytetty"
+
+msgid "Item must have a price."
+msgstr "Tavaralla täytyy olla hinta."
+
+msgid "Price must be numeric."
+msgstr "Hinnan täytyy olla numero."
+
+#, fuzzy
+msgid "Price too low. (min 0.5 euros)"
+msgstr "Hinta on liian pieni. (minimi 0,5 euroa)"
+
+#, fuzzy
+msgid "Price too high. (max 400 euros)"
+msgstr "Hinta on liian suuri. (maksimi 400 euroa)"
+
+msgid "Maximum of 100 items allowed by a single range statement."
+msgstr "Lukuvärimerkinnän lukuväli saa olla maksimissaan 100."
+
+msgid "Forbidden"
+msgstr "Kielletty"
 
 msgid "Registered items"
 msgstr "Rekisteröidyt tavarat"

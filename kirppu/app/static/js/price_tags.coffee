@@ -74,10 +74,16 @@ createTag = (name, price, vendor_id, code, type) ->
 # Add an item with name and price set to form contents.
 addItem = ->
   onSuccess = (items) ->
+    $('#form-errors').empty()
     for item in items
       tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
       $('#items').prepend(tag)
       bindTagEvents($(tag))
+
+  onError = (jqXHR, textStatus, errorThrown) ->
+    $('#form-errors').empty()
+    if jqXHR.responseText
+      $('<p>' + jqXHR.responseText + '</p>').appendTo($('#form-errors'))
 
   content =
     name: $("#item-add-name").val()
@@ -85,7 +91,13 @@ addItem = ->
     range: $("#item-add-suffixes").val()
     type: $("input[name=item-add-type]:checked").val()
 
-  $.post(C.urls.item_add, content, onSuccess)
+  $.ajax(
+    url: C.urls.item_add
+    type: 'POST'
+    data: content
+    success: onSuccess
+    error: onError
+  )
 
 
 deleteAll = ->
