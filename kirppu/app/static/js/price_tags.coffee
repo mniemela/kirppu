@@ -64,6 +64,10 @@ createTag = (name, price, vendor_id, code, type) ->
 
   $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code))
 
+
+  if listViewIsOn
+    tag.addClass('item_list')
+
   return tag
 
 
@@ -72,8 +76,6 @@ addItem = ->
   onSuccess = (items) ->
     for item in items
       tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
-      if listViewIsOn
-        tag.addClass('item_list')
       $('#items').prepend(tag)
       bindTagEvents($(tag))
 

@@ -82,6 +82,9 @@
     $(tag).attr('id', code);
     $('.item_extra_code', tag).text(code);
     $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code));
+    if (listViewIsOn) {
+      tag.addClass('item_list');
+    }
     return tag;
   };
 
@@ -93,9 +96,6 @@
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         item = items[_i];
         tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type);
-        if (listViewIsOn) {
-          tag.addClass('item_list');
-        }
         $('#items').prepend(tag);
         _results.push(bindTagEvents($(tag)));
       }
