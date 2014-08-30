@@ -233,7 +233,9 @@
   moveTagToPrinted = function(tag, code) {
     unbindTagEvents($(tag));
     $('.item_button_delete', tag).click(function() {
-      return onClickMoveToNotPrinted(tag, code);
+      return $(tag).hide('slow', function() {
+        return moveItemToNotPrinted(tag, code);
+      });
     });
     $(tag).prependTo("#printed_items");
     $(tag).addClass("item_list");

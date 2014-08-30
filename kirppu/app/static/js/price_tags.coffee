@@ -230,7 +230,7 @@ moveItemToNotPrinted = (tag, code) ->
 moveTagToPrinted = (tag, code) ->
   unbindTagEvents($(tag))
 
-  $('.item_button_delete', tag).click(-> onClickMoveToNotPrinted(tag, code))
+  $('.item_button_delete', tag).click(-> $(tag).hide('slow', -> moveItemToNotPrinted(tag, code)))
   $(tag).prependTo("#printed_items")
   $(tag).addClass("item_list")
   $(tag).show('slow')
