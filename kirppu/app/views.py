@@ -77,7 +77,7 @@ def item_add(request):
             if match:
                 # Turn '1-3' to ['1', '2', '3'] and so on
                 left, right = map(int, match.groups())
-                if abs(left - right) + 1 >= 100:
+                if abs(left - right) + 1 > 100:
                     return None
                 if left > right:
                     left, right = right, left
