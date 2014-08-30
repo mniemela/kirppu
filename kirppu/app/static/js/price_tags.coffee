@@ -110,37 +110,6 @@ deleteAll = ->
   return
 
 
-# Whether delete buttons are in disabled state or not.
-deleteIsDisabled = false
-
-# Toggle between enabled and disabled states for all item delete buttons..
-toggleDelete = ->
-  # Toggle global state for all buttons between enabled and disabled.
-  deleteIsDisabled = if deleteIsDisabled then false else true
-
-  # Toggle the style of the toggle button it self.
-  toggleButton = $('#toggle_delete')
-  if deleteIsDisabled
-    toggleButton.removeClass('active')
-    toggleButton.addClass('btw-default')
-  else
-    toggleButton.removeClass('btw-default')
-    toggleButton.addClass('active')
-
-  # Toggle the item delete buttons between enabled/disabled.
-  # These items also include the hidden template element, so there is
-  # no need to handle that separately.
-  deleteButtons = $('.item_button_delete')
-  if deleteIsDisabled
-    deleteButtons.attr('disabled', 'disabled')
-    deleteButtons.attr('title', gettext('Mark this item as printed. Enable this button from the top of the page.'))
-  else
-    deleteButtons.removeAttr('disabled')
-    deleteButtons.attr('title', gettext('Mark this item as printed.'))
-
-  return
-
-
 listViewIsOn = false;
 
 toggleListView = ->
@@ -170,9 +139,7 @@ onPriceChange = ->
 bindFormEvents = ->
   $('#add_short_item').click(addItem);
   $('#delete_all').click(deleteAll);
-  $('#toggle_delete').click(toggleDelete);
   $('#list_view').click(toggleListView)
-  toggleDelete(); # Initialize delete buttons to disabled.
 
   $('#item-add-price').change(onPriceChange);
 
@@ -374,7 +341,6 @@ unbindTagEvents = (tags) ->
 window.itemsConfig = C
 window.addItem = addItem
 window.deleteAll = deleteAll
-window.toggleDelete = toggleDelete
 window.bindTagEvents = bindTagEvents
 window.bindListTagEvents = bindListTagEvents
 window.bindFormEvents = bindFormEvents
