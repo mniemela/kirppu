@@ -209,6 +209,7 @@ class Item(models.Model):
         blank=True,
         null=False,
         db_index=True,
+        unique=True,
         help_text=_(u"Barcode content of the product"),
     )
     name = models.CharField(max_length=256, blank=True)
