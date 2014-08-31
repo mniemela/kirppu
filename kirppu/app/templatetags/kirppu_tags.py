@@ -2,6 +2,7 @@ from kirppu.app.utils import PixelWriter
 import barcode
 from barcode.charsets import code128
 from django import template
+from django.conf import settings
 register = template.Library()
 import base64
 from cStringIO import StringIO
@@ -62,8 +63,9 @@ def generate_dataurl(code, ext):
     # These measurements have to be exactly the same as the ones used in
     # price_tags.css. If they are not the image might be distorted enough
     # to not register on the scanner.
-    assert(height == 1)
-    assert(width == 143)
+    if settings.DEBUG:
+        assert(height == 1)
+        assert(width == 143)
 
     pil_image.save(memory_file, format=ext)
     data = memory_file.getvalue()
