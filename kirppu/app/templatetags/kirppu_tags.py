@@ -1,5 +1,6 @@
 from kirppu.app.utils import PixelWriter
 import barcode
+from barcode.charsets import code128
 from django import template
 register = template.Library()
 import base64
@@ -31,6 +32,19 @@ class FifoDict(OrderedDict):
 barcode_dataurl_cache = FifoDict(limit=50000)
 
 
+class KirppuBarcode(barcode.Code128):
+    """Make sure barcode is always the same width"""
+
+    def _maybe_switch_charset(self, pos):
+        """Do not switch ever."""
+        char = self.code[pos]
+        assert(char in code128.B)
+        return []
+
+    def _try_to_optimize(self, encoded):
+        return encoded
+
+
 def generate_dataurl(code, ext):
     if not code:
         return ''
@@ -39,7 +53,7 @@ def generate_dataurl(code, ext):
     mimetype = 'image/' + ext
 
     # PIL only writes to
-    bar = barcode.Code128(code, writer=writer)
+    bar = KirppuBarcode(code, writer=writer)
     memory_file = StringIO()
     pil_image = bar.render({ 'module_width': 1 })
 
