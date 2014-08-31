@@ -96,9 +96,17 @@ def item_add(request):
         # This is equivalent to adding empty string as suffix.
         suffixes.append('')
 
+    item_cnt = Item.objects.filter(vendor=vendor).count()
+
     # Create the items and construct a response containing all the items that have been added.
     response = []
+    max_items = settings.KIRPPU_MAX_ITEMS_PER_VENDOR
     for suffix in suffixes:
+        if item_cnt >= max_items:
+            error_msg = _(u"You have %(max_items)s items, which is the maximum. No more items can be registered.")
+            return HttpResponseBadRequest(error_msg % {'max_items': max_items})
+        item_cnt += 1
+
         suffixed_name = name + suffix
         item = Item.new(name=suffixed_name, price=str(price), vendor=vendor, type=tag_type, state=Item.ADVERTISED)
         item_dict = {

@@ -309,6 +309,7 @@ PROFILE_URL = 'https://kompassidev.tracon.fi/profile'
 KIRPPU_CHECKOUT_ACTIVE = False
 
 KIRPPU_COPY_ITEM_WHEN_UNPRINTED = False
+KIRPPU_MAX_ITEMS_PER_VENDOR = 1000
 
 # Datetime of the instant of which Item registration is open until, in "YYYY-MM-DD HH:MM:SS" format.
 # The specified date is expected to be in TIME_ZONE timezone.
