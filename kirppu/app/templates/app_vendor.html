@@ -7,9 +7,9 @@
 {% endblock %}
 
 {% block navbar_left %}
-    {% if user.is_authenticated %}
-        <li><a href="{% url 'kirppu:page' %}">{% trans "Item list" %}</a></li>
-    {% endif %}
+    {% for item in menu %}
+        <li{% if item.active %} class="active"{% endif %}><a href="{{ item.url }}">{{ item.name }}</a></li>
+    {% endfor %}
 {% endblock %}
 
 {% block navbar_right %}

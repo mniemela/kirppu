@@ -233,6 +233,27 @@ def all_to_print(request):
     return HttpResponse()
 
 
+def _vendor_menu_contents(request):
+    """
+    Generate menu for Vendor views.
+    Returned tuple contains entries for the menu, each entry containing a
+    name, url, and flag indicating whether the entry is currently active
+    or not.
+
+    :param request: Current request being processed.
+    :return: List of menu items containing name, url and active fields.
+    :rtype: tuple[MenuItem,...]
+    """
+    active = request.resolver_match.view_name
+    menu_item = namedtuple("MenuItem", "name url active")
+    fill = lambda name, func: menu_item(name, url.reverse(func), func == active)
+
+    return (
+        fill(_(u"Home"), "kirppu:vendor_view"),
+        fill(_(u"Item list"), "kirppu:page"),
+    )
+
+
 @login_required
 @require_http_methods(["GET"])
 def get_items(request):
@@ -274,6 +295,7 @@ def get_items(request):
         'profile_url': settings.PROFILE_URL,
 
         'is_registration_open': is_vendor_open(),
+        'menu': _vendor_menu_contents(request),
     }
 
     return render(request, "app_items.html", render_params)
@@ -376,6 +398,7 @@ def vendor_view(request):
         'num_printed': len(filter(lambda i: i.printed, items)),
 
         'profile_url': settings.PROFILE_URL,
+        'menu': _vendor_menu_contents(request),
     }
     return render(request, "app_frontpage.html", context)
 
