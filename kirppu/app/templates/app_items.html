@@ -39,6 +39,13 @@
             having already been printed with the 'Mark all as printed' button. Doing so moves them
             to the bottom of the page and they are no longer printed when you print the page.{% endblocktrans %}
         </p>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Lisää uusi</h3>
+            </div>
+            <div class="panel-body">
+
         <div class="form-group">
             <label for="item-add-name" class="col-sm-1 control-label">{% trans "Name:" %}</label>
             <div class="col-sm-6">
@@ -77,7 +84,7 @@
                 <button id="add_short_item" type="button" class="btn btn-primary">{% trans "Add item" %}</button>
             </div>
         </div>
-
+        </div></div>{# panel-body, panel #}
     </form>
     {% endif %}
 
@@ -92,7 +99,7 @@
 
     {# Output a single item_container as a template for javascript. #}
     {% include 'app_items_item.html' with tag_type="template" name="" price="0" code="X" vendor_id="" locked=False %}
-    
+
     <div id="items">
         {# Output a template container for every non-printed item user has. #}
         {% for i in items %}
