@@ -67,7 +67,8 @@ else:
             width += 2 * self._quiet_zone  # quiet zone
 
             height = 1
-            return int(width), int(height)
+
+            return width, height
 
 
 def model_dict_fn(*args, **kwargs):

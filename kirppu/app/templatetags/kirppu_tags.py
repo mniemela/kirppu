@@ -42,6 +42,15 @@ def generate_dataurl(code, ext):
     bar = barcode.Code128(code, writer=writer)
     memory_file = StringIO()
     pil_image = bar.render({ 'module_width': 1 })
+
+    width, height = pil_image.size
+
+    # These measurements have to be exactly the same as the ones used in
+    # price_tags.css. If they are not the image might be distorted enough
+    # to not register on the scanner.
+    assert(height == 1)
+    assert(width == 143)
+
     pil_image.save(memory_file, format=ext)
     data = memory_file.getvalue()
 

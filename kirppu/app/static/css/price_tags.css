@@ -156,9 +156,11 @@
     left: 1.5cm;
 }
 
+/* This container is for centering the barcode text on the barcode.
+   So it should be the same size or bigger than the barcode img. */
 .barcode_container {
     left: 0cm;
-    width: 294px;
+    width: 286px;
 }
 .item_short .barcode_container {
     margin-left: auto;
@@ -167,7 +169,7 @@
 .item_tiny .barcode_container {
     margin-left: auto;
     margin-right: auto;
-    width: 147px;
+    width: 143px;
 }
 .item_list .barcode_container {
     display: none;
@@ -176,7 +178,7 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 294px;
+    width: 286px;
     height: 1.4cm;
     image-rendering: -moz-crisp-edges;         /* Firefox */
     image-rendering:   -o-crisp-edges;         /* Opera */
@@ -185,7 +187,7 @@
     -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
 }
 .item_tiny .barcode_img {
-    width: 147px;
+    width: 143px;
 }
 .item_vendor_id {
     position: absolute;
