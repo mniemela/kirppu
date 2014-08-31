@@ -42,10 +42,10 @@ def index(request):
 @require_vendor_open
 def item_add(request):
     vendor = Vendor.get_vendor(request.user)
-    name = request.POST.get("name", "")
+    name = request.POST.get("name", u"").strip()
     price = request.POST.get("price", "")
     tag_type = request.POST.get("type", "short")
-    suffix_str = request.POST.get("range", "")
+    suffix_str = request.POST.get("range", u"")
 
     if not price:
         return HttpResponseBadRequest(_(u"Item must have a price."))
@@ -81,7 +81,7 @@ def item_add(request):
                     return None
                 if left > right:
                     left, right = right, left
-                result.extend(map(str, range(left, right + 1)))
+                result.extend(map(unicode, range(left, right + 1)))
             else:
                 result.append(word)
 
@@ -94,7 +94,7 @@ def item_add(request):
     if not suffixes:
         # If there are no suffixes the name is added as is just once.
         # This is equivalent to adding empty string as suffix.
-        suffixes.append('')
+        suffixes.append(u"")
 
     item_cnt = Item.objects.filter(vendor=vendor).count()
 
@@ -107,7 +107,7 @@ def item_add(request):
             return HttpResponseBadRequest(error_msg % {'max_items': max_items})
         item_cnt += 1
 
-        suffixed_name = name + suffix
+        suffixed_name = (name + u" " + suffix).strip()
         item = Item.new(name=suffixed_name, price=str(price), vendor=vendor, type=tag_type, state=Item.ADVERTISED)
         item_dict = {
             'vendor_id': vendor.id,
