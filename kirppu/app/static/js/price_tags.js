@@ -172,7 +172,10 @@
   };
 
   bindFormEvents = function() {
-    $('#add_short_item').click(addItem);
+    $('#item-add-form').bind('submit', function() {
+      addItem();
+      return false;
+    });
     $('#delete_all').click(deleteAll);
     $('#list_view').click(toggleListView);
     $('#item-add-price').change(onPriceChange);
