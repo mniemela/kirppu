@@ -47,7 +47,7 @@ class PriceTagsConfig
 C = new PriceTagsConfig
 
 
-createTag = (name, price, vendor_id, code, type) ->
+createTag = (name, price, vendor_id, code, dataurl, type) ->
   # Find the hidden template element, clone it and replace the contents.
   tag = $(".item_template").clone();
   tag.removeClass("item_template");
@@ -62,7 +62,7 @@ createTag = (name, price, vendor_id, code, type) ->
   $(tag).attr('id', code)
   $('.item_extra_code', tag).text(code)
 
-  $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code))
+  $('.barcode_container > img', tag).attr('src', dataurl)
 
 
   if listViewIsOn
@@ -76,7 +76,7 @@ addItem = ->
   onSuccess = (items) ->
     $('#form-errors').empty()
     for item in items
-      tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
+      tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type)
       $('#items').prepend(tag)
       bindTagEvents($(tag))
 
@@ -198,7 +198,7 @@ moveItemToNotPrinted = (tag, code) ->
     success: (item) ->
       $(tag).remove()
 
-      new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type)
+      new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type)
       $(new_tag).hide()
       $(new_tag).appendTo("#items")
       $(new_tag).show('slow')

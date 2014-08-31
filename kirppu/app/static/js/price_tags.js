@@ -65,7 +65,7 @@
 
   C = new PriceTagsConfig;
 
-  createTag = function(name, price, vendor_id, code, type) {
+  createTag = function(name, price, vendor_id, code, dataurl, type) {
     var tag;
     tag = $(".item_template").clone();
     tag.removeClass("item_template");
@@ -81,7 +81,7 @@
     $('.item_vendor_id', tag).text(vendor_id);
     $(tag).attr('id', code);
     $('.item_extra_code', tag).text(code);
-    $('.barcode_container > img', tag).attr('src', C.barcode_img_url(code));
+    $('.barcode_container > img', tag).attr('src', dataurl);
     if (listViewIsOn) {
       tag.addClass('item_list');
     }
@@ -96,7 +96,7 @@
       _results = [];
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         item = items[_i];
-        tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type);
+        tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type);
         $('#items').prepend(tag);
         _results.push(bindTagEvents($(tag)));
       }
@@ -208,7 +208,7 @@
       success: function(item) {
         var new_tag;
         $(tag).remove();
-        new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.type);
+        new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type);
         $(new_tag).hide();
         $(new_tag).appendTo("#items");
         $(new_tag).show('slow');

@@ -31,6 +31,7 @@ from kirppu.app.models import (
     Vendor,
 )
 from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open
+from templatetags.kirppu_tags import get_dataurl
 
 
 def index(request):
@@ -112,6 +113,7 @@ def item_add(request):
         item_dict = {
             'vendor_id': vendor.id,
             'code': item.code,
+            'barcode_dataurl': get_dataurl(item.code, 'png'),
             'name': item.name,
             'price': str(item.price_fmt).replace('.', ','),
             'type': item.type,
@@ -145,6 +147,7 @@ def item_to_not_printed(request, code):
     item_dict = {
         'vendor_id': new_item.vendor_id,
         'code': new_item.code,
+        'barcode_dataurl': get_dataurl(item.code, 'png'),
         'name': new_item.name,
         'price': str(new_item.price).replace('.', ','),
         'type': new_item.type,
