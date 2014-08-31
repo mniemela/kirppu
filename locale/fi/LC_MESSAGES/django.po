@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 21:26+0300\n"
+"POT-Creation-Date: 2014-08-31 22:08+0300\n"
 "PO-Revision-Date: 2014-08-31 21:26+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
-"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 1.5\n"
 
@@ -44,7 +44,6 @@ msgstr ""
 "On valittava tasan yksi 'irrallinen' ja yksi 'kiinnitetty' kassatäti tähän "
 "operaatioon."
 
-#, python-brace-format
 msgid "Access code set for '{0}'"
 msgstr "Käyttötunniste asetettu '{0}':lle"
 
@@ -245,13 +244,13 @@ msgid "Size:"
 msgstr "Koko:"
 
 msgid "Tiny"
-msgstr "Mini"
+msgstr "6 cm"
 
 msgid "Short"
-msgstr "Lyhyt"
+msgstr "9 cm"
 
 msgid "Long"
-msgstr "Pitkä"
+msgstr "18 cm (kirjanmerkki)"
 
 msgid "Add item"
 msgstr "Lisää tavara"
