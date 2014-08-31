@@ -34,7 +34,7 @@ from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, 
 
 
 def index(request):
-    return HttpResponse("")
+    return redirect("kirppu:vendor_view")
 
 
 @login_required
