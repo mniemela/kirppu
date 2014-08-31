@@ -14,7 +14,6 @@ from ..util import (
     b32_decode,
     pack,
     unpack,
-    InvalidChecksum,
 )
 
 User = settings.AUTH_USER_MODEL
@@ -118,8 +117,9 @@ class Clerk(models.Model):
         :return: The newly generated token.
         """
         key = None
+        i_max = 2 ** 56 - 1
         while key is None or Clerk.objects.filter(access_key=key).exists():
-            key = random.randint(1, 2 ** 56 - 1)
+            key = random.randint(1, i_max)
         self.access_key = number_to_hex(key, 56)
         return key
 
@@ -267,70 +267,52 @@ class Item(models.Model):
         :rtype: Item
         """
         obj = cls(*args, **kwargs)
+        obj.code = Item.gen_barcode()
         obj.full_clean()
         obj.save()
 
-        obj.code = obj.gen_barcode()
-        obj.save(update_fields=["code"])
         return obj
 
-    def gen_barcode(self):
+    @staticmethod
+    def gen_barcode():
         """
-        Generate and return barcode data for the Item.
+        Generate new random barcode for item.
 
         Format of the code:
-            vendor id:  12 bits
-            item id:    24 bits
+            random:     36 bits
             checksum:    4 bits
             -------------------
             total:      40 bits
 
-        :return: Barcode data.
-        :rtype str
+
+        :return: The newly generated code.
+        :rtype: str
         """
-        return b32_encode(
-            pack([
-                (12, self.vendor.id),
-                (24, self.pk),
-            ], checksum_bits=4)
-        )
+        key = None
+        i_max = 2 ** 36 - 1
+        while key is None or Item.objects.filter(code=key).exists():
+            key = b32_encode(
+                pack([
+                    (36, random.randint(1, i_max)),
+                ], checksum_bits=4)
+            )
+        return key
 
     def is_locked(self):
         return self.state != Item.ADVERTISED
 
     @staticmethod
-    def parse_barcode(data):
-        """
-        Parse barcode data into vendor id and item id.
-
-        :param data: Barcode data scanned from product
-        :type data: str
-        :return: Vendor id and item id
-        :rtype: (int, int)
-        :raise InvalidChecksum: If the checksum does not match the data.
-        """
-        return unpack(
-            b32_decode(data),
-            [12, 24],
-            checksum_bits=4,
-        )
-
-    @staticmethod
     def get_item_by_barcode(data):
         """
-        Get Item by barcode. If code check fails, returns None.
+        Get Item by barcode.
 
         :param data: Barcode data scanned from product
         :type data: str
 
-        :rtype: Item | None
+        :rtype: Item
         :raise Item.DoesNotExist: If no Item matches the code.
         """
-        try:
-            vendor_id, _ = Item.parse_barcode(data)
-        except InvalidChecksum:
-            return None
-        return Item.objects.get(code=data, vendor__id=vendor_id)
+        return Item.objects.get(code=data)
 
 
 class Counter(models.Model):
@@ -406,12 +388,14 @@ class Receipt(models.Model):
     def total_cents(self):
         return long(self.total * Item.FRACTION)
 
-    as_dict = model_dict_fn("status",
+    as_dict = model_dict_fn(
+        "status",
         total="total_cents",
         start_time=lambda self: format_datetime(self.start_time),
         sell_time=lambda self: format_datetime(self.sell_time) if self.sell_time is not None else None,
         clerk=lambda self: self.clerk.as_dict(),
-        counter=lambda self: self.counter.name)
+        counter=lambda self: self.counter.name
+    )
 
     def calculate_total(self):
         result = ReceiptItem.objects.filter(action=ReceiptItem.ADD, receipt=self)\

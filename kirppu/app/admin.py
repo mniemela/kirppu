@@ -11,7 +11,7 @@ __author__ = 'jyrkila'
 def _gen_ean(modeladmin, request, queryset):
     for item in queryset:
         if item.code is None or len(item.code) == 0:
-            item.code = item.gen_barcode()
+            item.code = Item.gen_barcode()
             item.save(update_fields=["code"])
 _gen_ean.short_description = ugettext(u"Generate bar codes for items missing it")
 
