@@ -13,6 +13,13 @@
       return this.dom.text(sum);
     };
 
+    ReceiptSum.prototype.setEnabled = function(enabled) {
+      if (enabled == null) {
+        enabled = true;
+      }
+      return setClass(this.dom, "text-muted", !enabled);
+    };
+
     return ReceiptSum;
 
   })();

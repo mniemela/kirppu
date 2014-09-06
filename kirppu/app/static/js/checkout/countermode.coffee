@@ -73,6 +73,7 @@ class @CounterMode extends ItemCheckoutMode
     if ret?
       text += " / Return: " + (ret).formatCents() + " €"
     @receiptSum.set(text)
+    @receiptSum.setEnabled(@_receipt?)
 
   reserveItem: (code) ->
       Api.item_reserve(code: code).then(
@@ -128,6 +129,7 @@ class @CounterMode extends ItemCheckoutMode
         @_receipt = null
         # Mode switching is safe to use again.
         @switcher.setMenuEnabled(true)
+        @receiptSum.setEnabled(false)
 
       () =>
         alert("Error ending receipt!")
@@ -146,6 +148,7 @@ class @CounterMode extends ItemCheckoutMode
         @addRow(null, "Aborted", null).addClass("danger")
         # Mode switching is safe to use again.
         @switcher.setMenuEnabled(true)
+        @receiptSum.setEnabled(false)
 
       () =>
         alert("Error ending receipt!")

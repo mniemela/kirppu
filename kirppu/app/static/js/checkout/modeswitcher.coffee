@@ -4,7 +4,7 @@
 # @param cls [String] CSS Class name to adjust.
 # @param enabled [Boolean] Whether the class should exist in the element.
 # @return [$] The element.
-setClass = (element, cls, enabled) ->
+@setClass = (element, cls, enabled) ->
   if element.hasClass(cls) != enabled
     if enabled
       element.addClass(cls)

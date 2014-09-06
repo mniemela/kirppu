@@ -5,3 +5,5 @@ class @ReceiptSum
   render: -> @dom
 
   set: (sum) -> @dom.text(sum)
+
+  setEnabled: (enabled=true) -> setClass(@dom, "text-muted", not enabled)

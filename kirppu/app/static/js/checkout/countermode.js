@@ -107,7 +107,8 @@
       if (ret != null) {
         text += " / Return: " + ret.formatCents() + " €";
       }
-      return this.receiptSum.set(text);
+      this.receiptSum.set(text);
+      return this.receiptSum.setEnabled(this._receipt != null);
     };
 
     CounterMode.prototype.reserveItem = function(code) {
@@ -174,7 +175,8 @@
           _this._receipt.data = data;
           console.log(_this._receipt);
           _this._receipt = null;
-          return _this.switcher.setMenuEnabled(true);
+          _this.switcher.setMenuEnabled(true);
+          return _this.receiptSum.setEnabled(false);
         };
       })(this), (function(_this) {
         return function() {
@@ -194,7 +196,8 @@
           console.log(_this._receipt);
           _this._receipt = null;
           _this.addRow(null, "Aborted", null).addClass("danger");
-          return _this.switcher.setMenuEnabled(true);
+          _this.switcher.setMenuEnabled(true);
+          return _this.receiptSum.setEnabled(false);
         };
       })(this), (function(_this) {
         return function() {
