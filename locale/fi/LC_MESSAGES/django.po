@@ -116,6 +116,12 @@ msgstr "Valmis"
 msgid "Aborted"
 msgstr "Keskeytetty"
 
+msgid "Registration is closed"
+msgstr "Rekisteröinti on suljettu"
+
+msgid "Image extension not supported"
+msgstr "Kuvatyyppi ei ole tuettu"
+
 msgid "Item must have a price."
 msgstr "Tavaralla täytyy olla hinta."
 
@@ -144,9 +150,6 @@ msgstr "Etusivu"
 
 msgid "Item list"
 msgstr "Tavaralista"
-
-msgid "Forbidden"
-msgstr "Kielletty"
 
 msgid "Registered items"
 msgstr "Rekisteröidyt tavarat"
@@ -279,6 +282,9 @@ msgstr "Kirjaudu sisään"
 #, python-format
 msgid "Add unbound %(name)s"
 msgstr "Lisää irrallinen %(name)s"
+
+#~ msgid "Forbidden"
+#~ msgstr "Kielletty"
 
 #~ msgid "About"
 #~ msgstr "Tietoja"

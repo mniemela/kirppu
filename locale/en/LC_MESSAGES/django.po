@@ -115,6 +115,12 @@ msgstr "Finished"
 msgid "Aborted"
 msgstr "Aborted"
 
+msgid "Registration is closed"
+msgstr "Registration is closed"
+
+msgid "Image extension not supported"
+msgstr "Image extension not supported"
+
 msgid "Item must have a price."
 msgstr "Item must have a price."
 
@@ -143,9 +149,6 @@ msgstr "Home"
 
 msgid "Item list"
 msgstr "Item list"
-
-msgid "Forbidden"
-msgstr "Forbidden"
 
 msgid "Registered items"
 msgstr "Registered items"
@@ -278,6 +281,9 @@ msgstr "Log in"
 #, python-format
 msgid "Add unbound %(name)s"
 msgstr "Add unbound %(name)s"
+
+#~ msgid "Forbidden"
+#~ msgstr "Forbidden"
 
 #~ msgid "About"
 #~ msgstr "About"

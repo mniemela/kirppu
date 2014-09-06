@@ -1,8 +1,9 @@
 from functools import wraps
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 import django.forms
-from django.http.response import HttpResponseForbidden
-from django.utils.translation import ugettext as _i
+from django.http.response import HttpResponseForbidden, HttpResponseBadRequest
+from django.utils.translation import ugettext as _
 from django.utils import timezone
 import pytz
 
@@ -177,7 +178,7 @@ def require_setting(setting, value):
         def inner(request, *args, **kwargs):
             current_value = getattr(settings, setting, None)
             if not ((not callback and current_value == value) or (callback and value(current_value))):
-                return HttpResponseForbidden(_i(u"Forbidden"))
+                raise PermissionDenied()
             return fn(request, *args, **kwargs)
         return inner
     return decorator
@@ -221,6 +222,46 @@ def require_vendor_open(fn):
     @wraps(fn)
     def inner(*args, **kwargs):
         if not is_vendor_open():
-            return HttpResponseForbidden("Registration is closed")
+            return HttpResponseForbidden(_(u"Registration is closed"))
         return fn(*args, **kwargs)
+    return inner
+
+
+def require_test(test):
+    """
+    Decorate view function so that it will return Forbidden if given test does not return True when called.
+
+    :param test: Test function. It will be called with `request` argument.
+    :type test: callable
+    :return: Decorated function.
+    """
+    def wrapper(fn):
+        @wraps(fn)
+        def inner(request, *args, **kwargs):
+            if not test(request):
+                raise PermissionDenied()
+            return fn(request, *args, **kwargs)
+        return inner
+    return wrapper
+
+
+def barcode_view(fn):
+    """
+    Decorator for views that render bar-codes. This will select image format, and on failure, return BadRequest.
+
+    :param fn: Function to decorate. Function will get extra keyword argument `bar_type` containing the image format
+        name.
+    :return: Decorated function.
+    """
+    @wraps(fn)
+    def inner(request, *args, **kwargs):
+        # Use PNG if we can because SVGs from pyBarcode are huge.
+        default_format = 'png' if PixelWriter else 'svg'
+        bar_type = request.GET.get("format", default_format).lower()
+
+        if bar_type not in ('svg', 'png', 'gif', 'bmp'):
+            return HttpResponseBadRequest(_(u"Image extension not supported"))
+
+        kwargs["bar_type"] = bar_type
+        return fn(request, *args, **kwargs)
     return inner

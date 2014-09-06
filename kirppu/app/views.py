@@ -30,7 +30,8 @@ from kirppu.app.models import (
     Clerk,
     Vendor,
 )
-from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open
+from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open, barcode_view, \
+    require_test
 from templatetags.kirppu_tags import get_dataurl
 
 
@@ -267,7 +268,8 @@ def _vendor_menu_contents(request):
 
 @login_required
 @require_http_methods(["GET"])
-def get_items(request):
+@barcode_view
+def get_items(request, bar_type):
     """
     Get a page containing all items for vendor.
 
@@ -276,14 +278,7 @@ def get_items(request):
     :return: HttpResponse or HttpResponseBadRequest
     """
 
-    # Use PNG if we can because SVGs from pyBarcode are huge.
-    default_format = 'png' if PixelWriter else 'svg'
-
-    bar_type = request.GET.get("format", default_format).lower()
     tag_type = request.GET.get("tag", "short").lower()
-
-    if bar_type not in ('svg', 'png', 'gif', 'bmp'):
-        return HttpResponseBadRequest(u"Image extension not supported")
     if tag_type not in ('short', 'long'):
         return HttpResponseBadRequest(u"Tag type not supported")
 
@@ -332,11 +327,11 @@ def get_barcode(request, data, ext):
         return HttpResponseBadRequest(u"Image extension not supported")
 
     # FIXME: TypeError if PIL is not installed
-    writer, mimetype = PixelWriter(format=ext), 'image/' + ext
+    writer, mime_type = PixelWriter(format=ext), 'image/' + ext
 
     bar = barcode.Code128(data, writer=writer)
 
-    response = HttpResponse(mimetype=mimetype)
+    response = HttpResponse(mimetype=mime_type)
     bar.write(response, {
         'module_width': 1,  # pixels per smallest line
     })
@@ -345,18 +340,9 @@ def get_barcode(request, data, ext):
 
 
 @login_required
-def get_clerk_codes(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden(_(u"Forbidden"))
-
-    # Use PNG if we can because SVGs from pyBarcode are huge.
-    default_format = 'png' if PixelWriter else 'svg'
-
-    bar_type = request.GET.get("format", default_format).lower()
-
-    if bar_type not in ('svg', 'png'):
-        return HttpResponseBadRequest(u"Image extension not supported")
-
+@require_test(lambda request: request.user.is_staff)
+@barcode_view
+def get_clerk_codes(request, bar_type):
     items = []
     code_item = namedtuple("CodeItem", "name code")
 
