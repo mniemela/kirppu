@@ -1,5 +1,5 @@
 {% load compressed %}{% load kirppu_tags %}{% load i18n %}
-{% with barcode_width=220 %}
+{% with display_width=display_width|default:barcode_width %}
 <!doctype html>
 <html>
 <head>
@@ -17,19 +17,22 @@
         .item_name {
             height: 1.5em;
             margin-left: 1em;
+            font-size: larger;
+            font-weight: bold;
         }
         .item_container .barcode_container {
-            width: {{ barcode_width }}px;
+            width: {{ display_width }}px;
         }
         .item_container .barcode_img {
-            width: {{ barcode_width }}px;
+            width: {{ display_width }}px;
         }
     </style>
 </head>
 <body style="padding-left: 0.5cm;">
 <div id="items">
+    {% for ignored in repeat %}
     {% for i in items %}
-    <div class="item_container item_short" id="{{ i.code }}">
+    <div class="item_container item_short">
         <div class="item_body">
             <div class="item_name">{{ i.name }}</div>
             <div class="barcode_container">
@@ -38,6 +41,8 @@
             </div>
         </div>
     </div>
+    {% endfor %}
+    <div style="clear:both;"></div>
     {% endfor %}
 </div>
 </body>

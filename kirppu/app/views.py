@@ -32,7 +32,7 @@ from kirppu.app.models import (
 )
 from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open, barcode_view, \
     require_test
-from templatetags.kirppu_tags import get_dataurl
+from templatetags.kirppu_tags import get_dataurl, KirppuBarcode
 
 
 def index(request):
@@ -357,7 +357,13 @@ def get_clerk_codes(request, bar_type):
 
         items.append(code_item(name=name, code=code))
 
-    return render(request, "app_clerks.html", {'items': items, 'bar_type': bar_type})
+    width = KirppuBarcode.length(items[0].code, PixelWriter) if items else 100
+    return render(request, "app_clerks.html", {
+        'items': items,
+        'bar_type': bar_type,
+        'repeat': range(1),
+        'barcode_width': width,
+    })
 
 
 # Access control by settings.

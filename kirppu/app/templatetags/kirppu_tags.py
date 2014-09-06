@@ -45,6 +45,20 @@ class KirppuBarcode(barcode.Code128):
     def _try_to_optimize(self, encoded):
         return encoded
 
+    @staticmethod
+    def length(text, writer):
+        """
+        Get expected image width for given text when using given writer.
+
+        :param text: Text to be encoded.
+        :type text: str | unicode
+        :param writer: Writer used to write. Expected to be able tell its total quiet zone size.
+        :return: Width of the resulting image.
+        :rtype: int
+        """
+        # Text is actually going to be text+LF. CH=11, (START=11, END=13)=24
+        return (len(text) + 1) * 11 + 24 + writer.quiet_zone()
+
 
 def generate_dataurl(code, ext, expect_width):
     if not code:

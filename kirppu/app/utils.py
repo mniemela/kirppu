@@ -26,6 +26,16 @@ else:
         # to some other sources.
         _quiet_zone = 10
 
+        @classmethod
+        def quiet_zone(cls):
+            """
+            Get total quiet zone added by this writer.
+
+            :return: Quiet zone amount.
+            :rtype: int
+            """
+            return cls._quiet_zone * 2
+
         def __init__(self, format='PNG'):
             BaseWriter.__init__(self, self._init, self._paint_module,
                                 self._paint_text, self._finish)
