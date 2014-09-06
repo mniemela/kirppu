@@ -14,9 +14,7 @@
       return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
     };
 
-    CheckoutMode.prototype.enter = function() {
-      return this.cfg.uiRef.body.empty();
-    };
+    CheckoutMode.prototype.enter = function() {};
 
     CheckoutMode.prototype.exit = function() {};
 

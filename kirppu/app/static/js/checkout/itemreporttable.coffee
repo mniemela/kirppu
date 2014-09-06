@@ -10,3 +10,11 @@ class @ItemReportTable extends ItemReceiptTable
     ]
     row = $('<tr>').append(data.map((t) -> $('<td>').text(t)))
     @body.append(row)
+
+  total: (totalPrice) ->
+    row = $('<tr>').append(
+      $('<th colspan="3">').text('Total:'),
+      $('<th>').text(totalPrice),
+      $('<th>'),
+    )
+    @body.append(row)

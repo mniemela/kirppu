@@ -20,7 +20,7 @@ class @CheckoutMode
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   # Called after switching to this mode.
-  enter: -> @cfg.uiRef.body.empty()
+  enter: ->
 
   # Called after switching out of this mode.
   exit: ->

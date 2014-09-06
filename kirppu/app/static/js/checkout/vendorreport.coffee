@@ -38,5 +38,9 @@ tables = [
           @cfg.uiRef.body.append(table.render())
 
     listItems: (items, table, states) ->
+      sum = 0
       for i in items when states[i.state]?
+        sum += i.price
         table.append(i.code, i.name, displayPrice(i.price), states[i.state])
+      if sum > 0
+        table.total(displayPrice(sum))

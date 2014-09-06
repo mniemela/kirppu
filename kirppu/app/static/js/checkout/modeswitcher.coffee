@@ -47,6 +47,7 @@ class @ModeSwitcher
     @setMenuEnabled(true)
     @_currentMode = new mode(@, @cfg)
 
+    @cfg.uiRef.body.empty()
     @cfg.uiRef.stateText.text(@_currentMode.title())
     @cfg.uiRef.subtitleText.text(@_currentMode.subtitle() or "")
     @_currentMode.enter()

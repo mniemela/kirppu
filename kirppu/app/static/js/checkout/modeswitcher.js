@@ -43,6 +43,7 @@
       }
       this.setMenuEnabled(true);
       this._currentMode = new mode(this, this.cfg);
+      this.cfg.uiRef.body.empty();
       this.cfg.uiRef.stateText.text(this._currentMode.title());
       this.cfg.uiRef.subtitleText.text(this._currentMode.subtitle() || "");
       return this._currentMode.enter();

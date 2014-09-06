@@ -20,6 +20,12 @@
       return this.body.append(row);
     };
 
+    ItemReportTable.prototype.total = function(totalPrice) {
+      var row;
+      row = $('<tr>').append($('<th colspan="3">').text('Total:'), $('<th>').text(totalPrice), $('<th>'));
+      return this.body.append(row);
+    };
+
     return ItemReportTable;
 
   })(ItemReceiptTable);

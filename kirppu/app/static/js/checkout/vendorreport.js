@@ -61,15 +61,19 @@
       };
 
       VendorReport.prototype.listItems = function(items, table, states) {
-        var i, _i, _len, _results;
-        _results = [];
+        var i, sum, _i, _len;
+        sum = 0;
         for (_i = 0, _len = items.length; _i < _len; _i++) {
           i = items[_i];
-          if (states[i.state] != null) {
-            _results.push(table.append(i.code, i.name, displayPrice(i.price), states[i.state]));
+          if (!(states[i.state] != null)) {
+            continue;
           }
+          sum += i.price;
+          table.append(i.code, i.name, displayPrice(i.price), states[i.state]);
         }
-        return _results;
+        if (sum > 0) {
+          return table.total(displayPrice(sum));
+        }
       };
 
       return VendorReport;
