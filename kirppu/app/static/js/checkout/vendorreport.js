@@ -39,6 +39,7 @@
 
       VendorReport.prototype.enter = function() {
         VendorReport.__super__.enter.apply(this, arguments);
+        this.cfg.uiRef.body.append(new VendorInfo(vendor).render());
         return Api.item_list({
           vendor: vendor.id
         }).done(this.onGotItems);

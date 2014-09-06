@@ -26,6 +26,7 @@ tables = [
 
     enter: ->
       super
+      @cfg.uiRef.body.append(new VendorInfo(vendor).render())
       Api.item_list(
         vendor: vendor.id
       ).done(@onGotItems)

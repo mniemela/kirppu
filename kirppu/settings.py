@@ -206,6 +206,7 @@ PIPELINE_JS = {
             "js/checkout/itemreceipttable.coffee",
             "js/checkout/itemreporttable.coffee",
             "js/checkout/vendorlist.coffee",
+            "js/checkout/vendorinfo.coffee",
             "js/checkout/receiptsum.coffee",
 
             "js/checkout/modeswitcher.coffee",
