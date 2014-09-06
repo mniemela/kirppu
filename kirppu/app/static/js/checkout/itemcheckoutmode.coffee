@@ -3,12 +3,13 @@
 # @abstract
 class @ItemCheckoutMode extends CheckoutMode
 
-  columns: -> [
-    '<th class="receipt_index">#</th>',
-    '<th class="receipt_code">code</th>',
-    '<th class="receipt_item">item</th>',
-    '<th class="receipt_price">price</th>',
-  ].map($)
+  constructor: ->
+    super
+    @receipt = new ItemReceiptTable()
+
+  enter: ->
+    super
+    @cfg.uiRef.body.append(@receipt.render())
 
   # Create a row in receipt table.
   # All arguments are used for display-only.

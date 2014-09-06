@@ -12,7 +12,7 @@ class @ItemCheckInMode extends ItemCheckoutMode
 
   onResultSuccess: (data) =>
     row = @createRow("", data.code, data.name, data.price)
-    @cfg.uiRef.receiptResult.prepend(row)
+    @receipt.body.prepend(row)
 
   onResultError: (jqXHR) =>
     if jqXHR.status == 404

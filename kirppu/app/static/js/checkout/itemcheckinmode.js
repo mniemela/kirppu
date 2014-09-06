@@ -36,7 +36,7 @@
     ItemCheckInMode.prototype.onResultSuccess = function(data) {
       var row;
       row = this.createRow("", data.code, data.name, data.price);
-      return this.cfg.uiRef.receiptResult.prepend(row);
+      return this.receipt.body.prepend(row);
     };
 
     ItemCheckInMode.prototype.onResultError = function(jqXHR) {

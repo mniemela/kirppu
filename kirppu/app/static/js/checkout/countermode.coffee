@@ -4,7 +4,7 @@ class @CounterMode extends ItemCheckoutMode
   constructor: (args...) ->
     super(args...)
     @_receipt = null
-
+    @receiptSum = new ReceiptSum()
 
   title: -> "Checkout"
 
@@ -17,7 +17,8 @@ class @CounterMode extends ItemCheckoutMode
   ]
 
   enter: ->
-    super()
+    @cfg.uiRef.body.append(@receiptSum.render())
+    super
     @_setSum()
 
   addRow: (code, item, price, rounded=false) ->
@@ -30,7 +31,7 @@ class @CounterMode extends ItemCheckoutMode
       index = ""
 
     row = @createRow(index, code, item, price, rounded)
-    @cfg.uiRef.receiptResult.prepend(row)
+    @receipt.body.prepend(row)
     if @_receipt?
       @_setSum(@_receipt.total)
     return row
@@ -55,7 +56,7 @@ class @CounterMode extends ItemCheckoutMode
     Api.receipt_start().then(
       (data) =>
         @_receipt.data = data
-        @cfg.uiRef.receiptResult.empty()
+        @receipt.body.empty()
         @_setSum()
         @reserveItem(code)
 
@@ -71,7 +72,7 @@ class @CounterMode extends ItemCheckoutMode
     text = "Total: " + (sum).formatCents() + " €"
     if ret?
       text += " / Return: " + (ret).formatCents() + " €"
-    @cfg.uiRef.receiptSum.text(text)
+    @receiptSum.set(text)
 
   reserveItem: (code) ->
       Api.item_reserve(code: code).then(

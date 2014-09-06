@@ -6,24 +6,20 @@
     function Config() {}
 
     Config.prototype.uiId = {
+      body: null,
       stateText: null,
       subtitleText: null,
       codeInput: null,
       codeForm: null,
-      receiptResult: null,
-      receiptTable: null,
-      receiptSum: null,
       modeMenu: null
     };
 
     Config.prototype.uiRef = {
+      body: null,
       stateText: null,
       subtitleText: null,
       codeInput: null,
       codeForm: null,
-      receiptResult: null,
-      receiptTable: null,
-      receiptSum: null,
       modeMenu: null
     };
 

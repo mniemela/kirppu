@@ -31,7 +31,7 @@
         _results = [];
         for (index = _i = 0, _len = items.length; _i < _len; index = ++_i) {
           item = items[index];
-          _results.push(this.cfg.uiRef.receiptResult.append(this.createRow(index, item.code, item.name, item.price)));
+          _results.push(this.receipt.body.append(this.createRow(index, item.code, item.name, item.price)));
         }
         return _results;
       };

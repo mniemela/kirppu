@@ -7,11 +7,13 @@
     __extends(ItemCheckoutMode, _super);
 
     function ItemCheckoutMode() {
-      return ItemCheckoutMode.__super__.constructor.apply(this, arguments);
+      ItemCheckoutMode.__super__.constructor.apply(this, arguments);
+      this.receipt = new ItemReceiptTable();
     }
 
-    ItemCheckoutMode.prototype.columns = function() {
-      return ['<th class="receipt_index">#</th>', '<th class="receipt_code">code</th>', '<th class="receipt_item">item</th>', '<th class="receipt_price">price</th>'].map($);
+    ItemCheckoutMode.prototype.enter = function() {
+      ItemCheckoutMode.__super__.enter.apply(this, arguments);
+      return this.cfg.uiRef.body.append(this.receipt.render());
     };
 
     ItemCheckoutMode.prototype.createRow = function(index, code, name, price, rounded) {

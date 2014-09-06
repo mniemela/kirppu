@@ -12,7 +12,7 @@ class @ItemFindMode extends ItemCheckoutMode
 
   onResultSuccess: (data) =>
     row = @createRow("?", data.code, data.name, data.price)
-    @cfg.uiRef.receiptResult.append(row)
+    @receipt.body.append(row)
 
   onResultError: (jqXHR) =>
     if jqXHR.status == 404

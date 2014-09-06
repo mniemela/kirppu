@@ -47,11 +47,8 @@
                    placeholder="Barcode" autofocus="true"/>
         </div>
     </form>
-    <p class="lead text-right" id="receipt_sum"></p>
-    <table class="table table-striped table-hover table-condensed" id="receipt_table">
-        <tbody id="receipt">
-        </tbody>
-    </table>
+
+    <div id="receipt_body"></div>
 {% endblock  %}
 
 {% block tail %}
@@ -59,13 +56,11 @@
         src="{% url 'kirppu:checkout_js' %}"
         charset="UTF-8"></script>
 <script type="application/javascript"><!--
+    CheckoutConfig.uiId.body = "receipt_body";
     CheckoutConfig.uiId.stateText = "title_text";
     CheckoutConfig.uiId.subtitleText = "subtitle_text";
     CheckoutConfig.uiId.codeInput = "code_input";
     CheckoutConfig.uiId.codeForm = "code_form";
-    CheckoutConfig.uiId.receiptTable = "receipt_table";
-    CheckoutConfig.uiId.receiptResult = "receipt";
-    CheckoutConfig.uiId.receiptSum = "receipt_sum";
     CheckoutConfig.uiId.modeMenu = "modeMenu";
     CheckoutConfig.settings.abortPrefix = "{{ CounterCommands.ABORT }}";
     CheckoutConfig.settings.logoutPrefix = "{{ CounterCommands.LOGOUT }}";

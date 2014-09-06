@@ -20,6 +20,7 @@
       this.onAddItem = __bind(this.onAddItem, this);
       CounterMode.__super__.constructor.apply(this, args);
       this._receipt = null;
+      this.receiptSum = new ReceiptSum();
     }
 
     CounterMode.prototype.title = function() {
@@ -31,7 +32,8 @@
     };
 
     CounterMode.prototype.enter = function() {
-      CounterMode.__super__.enter.call(this);
+      this.cfg.uiRef.body.append(this.receiptSum.render());
+      CounterMode.__super__.enter.apply(this, arguments);
       return this._setSum();
     };
 
@@ -51,7 +53,7 @@
         index = "";
       }
       row = this.createRow(index, code, item, price, rounded);
-      this.cfg.uiRef.receiptResult.prepend(row);
+      this.receipt.body.prepend(row);
       if (this._receipt != null) {
         this._setSum(this._receipt.total);
       }
@@ -79,7 +81,7 @@
       return Api.receipt_start().then((function(_this) {
         return function(data) {
           _this._receipt.data = data;
-          _this.cfg.uiRef.receiptResult.empty();
+          _this.receipt.body.empty();
           _this._setSum();
           return _this.reserveItem(code);
         };
@@ -105,7 +107,7 @@
       if (ret != null) {
         text += " / Return: " + ret.formatCents() + " €";
       }
-      return this.cfg.uiRef.receiptSum.text(text);
+      return this.receiptSum.set(text);
     };
 
     CounterMode.prototype.reserveItem = function(code) {

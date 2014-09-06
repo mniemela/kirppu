@@ -13,6 +13,6 @@
     onGotItems: (items) =>
       console.log(items)
       for item, index in items
-        @cfg.uiRef.receiptResult.append(
+        @receipt.body.append(
           @createRow(index, item.code, item.name, item.price)
         )

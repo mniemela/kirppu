@@ -1,15 +1,15 @@
 class @VendorFindMode extends CheckoutMode
   ModeSwitcher.registerEntryPoint("vendor_find", @)
 
-  title: -> "Vendor Search"
+  constructor: ->
+    super
+    @vendorList = new VendorList()
 
-  columns: -> [
-    '<th class="receipt_index">#</th>',
-    '<th class="receipt_code">id</th>',
-    '<th class="receipt_item">name</th>',
-    '<th class="receipt_item">email</th>',
-    '<th class="receipt_item">phone</th>',
-  ].map($)
+  enter: ->
+    super
+    @cfg.uiRef.body.append(@vendorList.render())
+
+  title: -> "Vendor Search"
 
   actions: -> [[
     "", (query) =>
@@ -17,9 +17,9 @@ class @VendorFindMode extends CheckoutMode
   ]]
 
   onVendorsFound: (vendors) =>
-    @clearReceipt()
+    @vendorList.body.empty()
     for vendor, index in vendors
-      @cfg.uiRef.receiptResult.append(@createRow(index + 1, vendor))
+      @vendorList.body.append(@createRow(index + 1, vendor))
 
   createRow: (index, vendor) =>
     row = $("<tr>")

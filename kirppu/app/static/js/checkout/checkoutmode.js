@@ -14,23 +14,14 @@
       return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
     };
 
-    CheckoutMode.prototype.columns = function() {
-      return [];
-    };
-
     CheckoutMode.prototype.enter = function() {
-      return this.clearReceipt();
+      return this.cfg.uiRef.body.empty();
     };
 
     CheckoutMode.prototype.exit = function() {};
 
     CheckoutMode.prototype.actions = function() {
       return [["", function() {}]];
-    };
-
-    CheckoutMode.prototype.clearReceipt = function() {
-      this.cfg.uiRef.receiptTable.empty().append($("<thead>").append($("<tr>").append(this.columns())), this.cfg.uiRef.receiptResult.empty());
-      return this.cfg.uiRef.receiptSum.empty();
     };
 
     return CheckoutMode;

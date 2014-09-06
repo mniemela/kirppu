@@ -7,20 +7,22 @@
   this.VendorFindMode = (function(_super) {
     __extends(VendorFindMode, _super);
 
+    ModeSwitcher.registerEntryPoint("vendor_find", VendorFindMode);
+
     function VendorFindMode() {
       this.createRow = __bind(this.createRow, this);
       this.onVendorsFound = __bind(this.onVendorsFound, this);
-      return VendorFindMode.__super__.constructor.apply(this, arguments);
+      VendorFindMode.__super__.constructor.apply(this, arguments);
+      this.vendorList = new VendorList();
     }
 
-    ModeSwitcher.registerEntryPoint("vendor_find", VendorFindMode);
+    VendorFindMode.prototype.enter = function() {
+      VendorFindMode.__super__.enter.apply(this, arguments);
+      return this.cfg.uiRef.body.append(this.vendorList.render());
+    };
 
     VendorFindMode.prototype.title = function() {
       return "Vendor Search";
-    };
-
-    VendorFindMode.prototype.columns = function() {
-      return ['<th class="receipt_index">#</th>', '<th class="receipt_code">id</th>', '<th class="receipt_item">name</th>', '<th class="receipt_item">email</th>', '<th class="receipt_item">phone</th>'].map($);
     };
 
     VendorFindMode.prototype.actions = function() {
@@ -39,11 +41,11 @@
 
     VendorFindMode.prototype.onVendorsFound = function(vendors) {
       var index, vendor, _i, _len, _results;
-      this.clearReceipt();
+      this.vendorList.body.empty();
       _results = [];
       for (index = _i = 0, _len = vendors.length; _i < _len; index = ++_i) {
         vendor = vendors[index];
-        _results.push(this.cfg.uiRef.receiptResult.append(this.createRow(index + 1, vendor)));
+        _results.push(this.vendorList.body.append(this.createRow(index + 1, vendor)));
       }
       return _results;
     };

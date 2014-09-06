@@ -19,11 +19,8 @@ class @CheckoutMode
   # @return [String, null] Subtitle string, if needed.
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
-  # Return a list of <th> elements for the receipt.
-  columns: -> []
-
   # Called after switching to this mode.
-  enter: -> do @clearReceipt
+  enter: -> @cfg.uiRef.body.empty()
 
   # Called after switching out of this mode.
   exit: ->
@@ -37,11 +34,3 @@ class @CheckoutMode
   #
   # @return [Array] Mapping from prefixes to handler functions.
   actions: -> [["", ->]]
-
-  # Empty the receipt and create new headers.
-  clearReceipt: ->
-    @cfg.uiRef.receiptTable.empty().append(
-      $("<thead>").append($("<tr>").append(@columns())),
-      @cfg.uiRef.receiptResult.empty(),
-    )
-    @cfg.uiRef.receiptSum.empty()

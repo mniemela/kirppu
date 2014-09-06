@@ -36,7 +36,7 @@
     ItemFindMode.prototype.onResultSuccess = function(data) {
       var row;
       row = this.createRow("?", data.code, data.name, data.price);
-      return this.cfg.uiRef.receiptResult.append(row);
+      return this.receipt.body.append(row);
     };
 
     ItemFindMode.prototype.onResultError = function(jqXHR) {
