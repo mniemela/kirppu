@@ -32,6 +32,11 @@
         </ul>
     </li>
 {% endblock %}
+{% block navbar_right %}
+    <li>
+        <a href="javascript:void(1)" data-toggle="modal" data-target="#help_dialog"><span class="glyphicon glyphicon-question-sign"></span> Help</a>
+    </li>
+{% endblock %}
 
 {% block body %}
     <h1><span id="title_text">Checkout</span> <small id="subtitle_text"></small></h1>
@@ -70,4 +75,52 @@
         new ModeSwitcher().startDefault();
     });
 //--></script>
+    <div class="modal fade" id="help_dialog" tabindex="-1" role="dialog" aria-labelledby="help_dialog_label"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="help_dialog_label">Counter Help</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Input</th>
+                            <th>Example</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Log out from counter</td>
+                            <td><kbd>{{ CounterCommands.LOGOUT }}</kbd></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Abort current receipt</td>
+                            <td><kbd>{{ CounterCommands.ABORT }}</kbd></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Remove item from receipt</td>
+                            <td><kbd>-ITEM_CODE</kbd></td>
+                            <td><code>-PF72NOZI</code></td>
+                        </tr>
+                        <tr>
+                            <td>Payment</td>
+                            <td><kbd>+CENTS</kbd></td>
+                            <td><code>+1200</code> for 12,00&euro;</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
