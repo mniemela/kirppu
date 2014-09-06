@@ -19,6 +19,16 @@ from ..util import (
 User = settings.AUTH_USER_MODEL
 
 
+class CounterCommands(object):
+    LOGOUT = ":exit"
+    ABORT = ":abrt"
+
+    DICT = {
+        LOGOUT: _(u"Logout"),
+        ABORT: _(u"Abort"),
+    }
+
+
 class Clerk(models.Model):
     PREFIX = "::"
 

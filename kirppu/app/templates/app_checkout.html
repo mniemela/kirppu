@@ -62,6 +62,8 @@
     CheckoutConfig.uiId.receiptResult = "receipt";
     CheckoutConfig.uiId.receiptSum = "receipt_sum";
     CheckoutConfig.uiId.modeMenu = "modeMenu";
+    CheckoutConfig.settings.abortPrefix = "{{ CounterCommands.ABORT }}";
+    CheckoutConfig.settings.logoutPrefix = "{{ CounterCommands.LOGOUT }}";
     $(document).ready(function() {
         setupAjax();
         CheckoutConfig.check();

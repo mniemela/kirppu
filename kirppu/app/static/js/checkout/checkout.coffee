@@ -21,11 +21,10 @@ class Config
     itemPrefix: null
     clerkPrefix: "::"
     counterPrefix: ":*"
-    commandPrefix: ":="
     removeItemPrefix: "-"
     payPrefix: "+"
-    abortPrefix: "**--"
-    logoutPrefix: "----"
+    abortPrefix: null
+    logoutPrefix: null
     counterCode: null
     clerkName: null
 

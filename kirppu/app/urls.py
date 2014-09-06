@@ -4,8 +4,7 @@ __author__ = 'jyrkila'
 
 urlpatterns = patterns('kirppu.app.views',
     url(r'^clerks/?$', 'get_clerk_codes', name='clerks'),
-    url(r'^command/(?P<data>::\w+?)\.(?P<ext>\w+)$',
-        'get_barcode', name='command_barcode'),
+    url(r'^commands/?$', 'get_counter_commands'),
     url(r'^barcode/(?P<data>\w+?)\.(?P<ext>\w+)$',
         'get_barcode', name='barcode'),
     url(r'^checkout/$', 'checkout_view'),

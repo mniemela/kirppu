@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 22:08+0300\n"
-"PO-Revision-Date: 2014-08-31 21:26+0300\n"
+"POT-Creation-Date: 2014-09-06 16:39+0300\n"
+"PO-Revision-Date: 2014-09-06 16:41+0300\n"
 "Last-Translator: Jyrki Launonen\n"
 "Language-Team: Finnish <>\n"
 "MIME-Version: 1.0\n"
@@ -44,11 +44,18 @@ msgstr ""
 "On valittava tasan yksi 'irrallinen' ja yksi 'kiinnitetty' kassatäti tähän "
 "operaatioon."
 
+#, python-brace-format
 msgid "Access code set for '{0}'"
 msgstr "Käyttötunniste asetettu '{0}':lle"
 
 msgid "Move unused access code to existing Clerk."
 msgstr "Siirrä käyttämätön tunniste olemassaolevalle kassatädille"
+
+msgid "Logout"
+msgstr "Kirjaudu ulos"
+
+msgid "Abort"
+msgstr "Keskeytä"
 
 msgid "Access key value"
 msgstr "Käyttötunnisteen arvo"
@@ -150,6 +157,12 @@ msgstr "Etusivu"
 
 msgid "Item list"
 msgstr "Tavaralista"
+
+msgid "Counter commands"
+msgstr "Kassan komennot"
+
+msgid "Clerk codes"
+msgstr "Kassatätien tunnisteet"
 
 msgid "Registered items"
 msgstr "Rekisteröidyt tavarat"

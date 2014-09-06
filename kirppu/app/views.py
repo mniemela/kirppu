@@ -29,6 +29,7 @@ from kirppu.app.models import (
     Item,
     Clerk,
     Vendor,
+    CounterCommands,
 )
 from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open, barcode_view, \
     require_test
@@ -366,6 +367,23 @@ def get_clerk_codes(request, bar_type):
     })
 
 
+@login_required
+@require_test(lambda request: request.user.is_staff or request.user.is_clerk())
+@barcode_view
+def get_counter_commands(request, bar_type):
+    code_item = namedtuple("CodeItem", "name code")
+    width = KirppuBarcode.length(CounterCommands.LOGOUT, PixelWriter)
+
+    return render(request, "app_clerks.html", {
+        'items': [code_item(value, key) for key, value in CounterCommands.DICT.items()],
+        'bar_type': bar_type,
+        'repeat': range(int(request.GET.get("repeat", "1"))),
+        'barcode_width': width,
+        'display_width': width * 2,
+        'title': _(u"Counter commands"),
+    })
+
+
 # Access control by settings.
 # CSRF is not generated if the Checkout-mode is not activated in settings.
 @require_setting("KIRPPU_CHECKOUT_ACTIVE", True)
@@ -379,7 +397,9 @@ def checkout_view(request):
     :return: Response containing the view.
     :rtype: HttpResponse
     """
-    return render(request, "app_checkout.html")
+    return render(request, "app_checkout.html", {
+        'CounterCommands': CounterCommands,
+    })
 
 
 def vendor_view(request):
