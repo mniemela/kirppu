@@ -7,7 +7,6 @@ class @CounterMode extends ItemCheckoutMode
 
 
   title: -> "Checkout"
-  subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   actions: -> [
     [@cfg.settings.abortPrefix,       @onAbortReceipt]

@@ -2,7 +2,6 @@ class @ItemFindMode extends ItemCheckoutMode
   ModeSwitcher.registerEntryPoint("reports", @)
 
   title: -> "Find"
-  subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   actions: -> [[
     '', (code) =>

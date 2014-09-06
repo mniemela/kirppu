@@ -17,7 +17,7 @@ class @CheckoutMode
   # Subtitle to display in this mode.
   #
   # @return [String, null] Subtitle string, if needed.
-  subtitle: -> null
+  subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   # Return a list of <th> elements for the receipt.
   columns: -> []

@@ -233,6 +233,12 @@ def item_find(request, code):
     return _get_item_or_404(code).as_dict()
 
 
+@ajax_func('^item/list$', method='GET')
+def item_list(request, vendor):
+    items = Item.objects.filter(vendor__id=vendor)
+    return map(lambda i: i.as_dict(), items)
+
+
 @ajax_func('^item/checkin$')
 def item_checkin(request, code):
     item = _get_item_or_404(code)
@@ -268,11 +274,11 @@ def vendor_find(request, q):
         clauses.append(clause)
 
     return [{
-        u'id': v.id,
-        u'name': v.first_name  + u' ' + v.last_name,
-        u'email': v.email,
-        u'phone': v.phone,
-    } for v in User.objects.filter(*clauses).all()]
+        u'id': u.vendor.id,
+        u'name': u.first_name  + u' ' + u.last_name,
+        u'email': u.email,
+        u'phone': u.phone,
+    } for u in User.objects.filter(*clauses).all()]
 
 
 @ajax_func('^receipt/start$')

@@ -19,10 +19,6 @@
       return "Vendor Check-In";
     };
 
-    ItemCheckInMode.prototype.subtitle = function() {
-      return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
-    };
-
     ItemCheckInMode.prototype.actions = function() {
       return [
         [

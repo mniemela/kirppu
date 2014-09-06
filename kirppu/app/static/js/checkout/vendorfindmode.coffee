@@ -2,7 +2,6 @@ class @VendorFindMode extends CheckoutMode
   ModeSwitcher.registerEntryPoint("vendor_find", @)
 
   title: -> "Vendor Search"
-  subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
   columns: -> [
     '<th class="receipt_index">#</th>',
@@ -20,14 +19,13 @@ class @VendorFindMode extends CheckoutMode
   onVendorsFound: (vendors) =>
     @clearReceipt()
     for vendor, index in vendors
-      @cfg.uiRef.receiptResult.append(@createRow(
-        index + 1, # In UI, index from one.
-        vendor.id,
-        vendor.name,
-        vendor.email,
-        vendor.phone,
-      ))
+      @cfg.uiRef.receiptResult.append(@createRow(index + 1, vendor))
 
-  createRow: (args...) =>
+  createRow: (index, vendor) =>
     row = $("<tr>")
-    row.append.apply(row, $("<td>").text(a) for a in args)
+    row.append($("<td>").text(index))
+    for a in ['id', 'name', 'email', 'phone']
+      row.append.apply(row, $("<td>").text(vendor[a]))
+
+    switcher = @switcher
+    row.click((event) -> switcher.switchTo(vendorReport(vendor)))

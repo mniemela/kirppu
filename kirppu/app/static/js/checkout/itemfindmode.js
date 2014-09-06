@@ -19,10 +19,6 @@
       return "Find";
     };
 
-    ItemFindMode.prototype.subtitle = function() {
-      return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
-    };
-
     ItemFindMode.prototype.actions = function() {
       return [
         [

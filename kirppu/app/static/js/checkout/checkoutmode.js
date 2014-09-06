@@ -11,7 +11,7 @@
     };
 
     CheckoutMode.prototype.subtitle = function() {
-      return null;
+      return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
     };
 
     CheckoutMode.prototype.columns = function() {

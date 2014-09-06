@@ -26,10 +26,6 @@
       return "Checkout";
     };
 
-    CounterMode.prototype.subtitle = function() {
-      return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
-    };
-
     CounterMode.prototype.actions = function() {
       return [[this.cfg.settings.abortPrefix, this.onAbortReceipt], [this.cfg.settings.logoutPrefix, this.onLogout], [this.cfg.settings.payPrefix, this.onPayReceipt], [this.cfg.settings.removeItemPrefix, this.onRemoveItem], ["", this.onAddItem]];
     };
