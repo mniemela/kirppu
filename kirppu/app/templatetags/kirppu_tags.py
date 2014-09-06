@@ -46,17 +46,19 @@ class KirppuBarcode(barcode.Code128):
         return encoded
 
 
-def generate_dataurl(code, ext):
+def generate_dataurl(code, ext, expect_width):
     if not code:
         return ''
 
     writer = PixelWriter(format=ext)
-    mimetype = 'image/' + ext
+    mime_type = 'image/' + ext
 
     # PIL only writes to
     bar = KirppuBarcode(code, writer=writer)
     memory_file = StringIO()
-    pil_image = bar.render({ 'module_width': 1 })
+    pil_image = bar.render({
+        'module_width': 1
+    })
 
     width, height = pil_image.size
 
@@ -65,19 +67,20 @@ def generate_dataurl(code, ext):
     # to not register on the scanner.
     if settings.DEBUG:
         assert(height == 1)
-        assert(width == 143)
+        assert(width == expect_width)
 
     pil_image.save(memory_file, format=ext)
     data = memory_file.getvalue()
 
-    dataurl_format = 'data:{mimetype};base64,{base64_data}'
+    dataurl_format = 'data:{mime_type};base64,{base64_data}'
     return dataurl_format.format(
-            mimetype=mimetype,
-            base64_data=base64.encodestring(data))
+        mime_type=mime_type,
+        base64_data=base64.encodestring(data)
+    )
 get_dataurl = memoize(generate_dataurl, barcode_dataurl_cache, 2)
 
 
 @register.simple_tag
-def barcode_dataurl(code, ext):
-    return get_dataurl(code, ext)
+def barcode_dataurl(code, ext, expect_width=143):
+    return get_dataurl(code, ext, expect_width)
 

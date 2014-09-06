@@ -348,7 +348,11 @@ def get_barcode(request, data, ext):
 def get_clerk_codes(request):
     if not request.user.is_staff:
         return HttpResponseForbidden(_(u"Forbidden"))
-    bar_type = request.GET.get("format", "svg").lower()
+
+    # Use PNG if we can because SVGs from pyBarcode are huge.
+    default_format = 'png' if PixelWriter else 'svg'
+
+    bar_type = request.GET.get("format", default_format).lower()
 
     if bar_type not in ('svg', 'png'):
         return HttpResponseBadRequest(u"Image extension not supported")
