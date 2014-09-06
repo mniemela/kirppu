@@ -1,6 +1,26 @@
+states =
+  compensable:
+    SO: 'sold'
+
+  returnable:
+    BR: 'on display'
+    ST: 'about to be sold'
+
+  other:
+    MI: 'missing'
+    RE: 'returned to the vendor'
+    CO: 'sold and compensated to the vendor'
+    AD: 'not brought to the event'
+
+tables = [
+  [states.compensable,'Compensable Items']
+  [states.returnable, 'Returnable Items']
+  [states.other,      'Other Items']
+]
+
 # Create a new class for the report mode of the vendor.
 @vendorReport = (vendor) ->
-  class VendorReport extends ItemCheckoutMode
+  class VendorReport extends CheckoutMode
 
     title: -> "Item Report"
 
@@ -11,8 +31,12 @@
       ).done(@onGotItems)
 
     onGotItems: (items) =>
-      console.log(items)
-      for item, index in items
-        @receipt.body.append(
-          @createRow(index, item.code, item.name, item.price)
-        )
+      for [states, name] in tables
+        table = new ItemReportTable(name)
+        @listItems(items, table, states)
+        if table.body.children().length > 0
+          @cfg.uiRef.body.append(table.render())
+
+    listItems: (items, table, states) ->
+      for i in items when states[i.state]?
+        table.append(i.code, i.name, displayPrice(i.price), states[i.state])

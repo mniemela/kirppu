@@ -1,8 +1,9 @@
-class @ReceiptTable
-  constructor: ->
+class @ResultTable
+  constructor: (caption) ->
     @dom = $('<table class="table table-striped table-hover table-condensed">')
-    @head = $('<thead>')
+    if caption? then @dom.append($('<caption class="h3">').text(caption))
+    @head = $('<tr>')
     @body = $('<tbody>')
-    @dom.append(@head, @body)
+    @dom.append($('<thead>').append(@head), @body)
 
   render: -> @dom

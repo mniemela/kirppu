@@ -199,10 +199,12 @@ PIPELINE_JS = {
     },
     'checkout': {
         "source_filenames": (
+            "js/checkout/util.coffee",
             "js/checkout/checkout.coffee",
 
             "js/checkout/resulttable.coffee",
             "js/checkout/itemreceipttable.coffee",
+            "js/checkout/itemreporttable.coffee",
             "js/checkout/vendorlist.coffee",
             "js/checkout/receiptsum.coffee",
 

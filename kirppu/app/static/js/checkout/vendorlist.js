@@ -8,7 +8,7 @@
 
     function VendorList() {
       VendorList.__super__.constructor.apply(this, arguments);
-      this.head.append($('<tr>').append(['<th class="receipt_index">#</th>', '<th class="receipt_code">id</th>', '<th class="receipt_item">name</th>', '<th class="receipt_item">email</th>', '<th class="receipt_item">phone</th>'].map($)));
+      this.head.append(['<th class="receipt_index">#</th>', '<th class="receipt_code">id</th>', '<th class="receipt_item">name</th>', '<th class="receipt_item">email</th>', '<th class="receipt_item">phone</th>'].map($));
     }
 
     return VendorList;
