@@ -3,7 +3,7 @@ class @CounterMode extends ItemCheckoutMode
 
   constructor: (args..., modeArgs) ->
     super(args...)
-    @_receipt = null
+    @_receipt = new ReceiptData()
     @receiptSum = new ReceiptSum()
     if modeArgs?
       @restoreReceipt(modeArgs)
@@ -34,14 +34,14 @@ class @CounterMode extends ItemCheckoutMode
 
     row = @createRow(index, code, item, price, rounded)
     @receipt.body.prepend(row)
-    if @_receipt?
+    if @_receipt.isActive()
       @_setSum(@_receipt.total)
     return row
 
   onAddItem: (code) =>
     if code.trim() == "" then return
 
-    if not @_receipt?
+    if not @_receipt.isActive()
       @startReceipt(code)
     else
       @reserveItem(code)
@@ -50,11 +50,9 @@ class @CounterMode extends ItemCheckoutMode
     @switcher.setMenuEnabled(false)
     Api.receipt_activate(id: receipt.id).then(
       (data) =>
-        # RowCount is set to zero, as addRow will increase this.
-        @_receipt =
-          rowCount: 0
-          total: data.total
-          data: data
+        @_receipt.start(data)
+        @_receipt.total = data.total
+
         @receipt.body.empty()
         for item in data.items
           price = if item.action == "DEL" then -item.price else item.price
@@ -67,10 +65,7 @@ class @CounterMode extends ItemCheckoutMode
     )
 
   startReceipt: (code) ->
-    @_receipt =
-      rowCount: 0
-      total: 0
-      data: null
+    @_receipt.start()
 
     # Changes to other modes now would result in fatal errors.
     @switcher.setMenuEnabled(false)
@@ -85,7 +80,7 @@ class @CounterMode extends ItemCheckoutMode
       (jqHXR) =>
         alert("Could not start receipt!")
         # Rollback.
-        @_receipt = null
+        @_receipt.end()
         @switcher.setMenuEnabled(true)
         return true
     )
@@ -95,7 +90,7 @@ class @CounterMode extends ItemCheckoutMode
     if ret?
       text += " / Return: " + (ret).formatCents() + " €"
     @receiptSum.set(text)
-    @receiptSum.setEnabled(@_receipt?)
+    @receiptSum.setEnabled(@_receipt.isActive())
 
   reserveItem: (code) ->
       Api.item_reserve(code: code).then(
@@ -109,7 +104,7 @@ class @CounterMode extends ItemCheckoutMode
       )
 
   onRemoveItem: (code) =>
-    unless @_receipt? then return
+    unless @_receipt.isActive() then return
 
     Api.item_release(code: code).then(
       (data) =>
@@ -122,7 +117,6 @@ class @CounterMode extends ItemCheckoutMode
     )
 
   onPayReceipt: (input) =>
-    unless @_receipt? then return
     unless Number.isConvertible(input) then return
     input = input - 0
 
@@ -134,8 +128,12 @@ class @CounterMode extends ItemCheckoutMode
       alert("Not accepting THAT much money!")
       return
 
+    # Convert previous payment calculations from success -> info,muted
+    @receipt.body.children(".receipt-ending").removeClass("success").addClass("info text-muted")
+
+    # Add (new) payment calculation rows.
     return_amount = input - @_receipt.total
-    row.addClass("success") for row in [
+    row.addClass("success receipt-ending") for row in [
       @addRow(null, "Subtotal", @_receipt.total, true),
       @addRow(null, "Cash", input),
       @addRow(null, "Return", return_amount, true),
@@ -144,11 +142,13 @@ class @CounterMode extends ItemCheckoutMode
     # Also display the return amount in the top.
     @_setSum(@_receipt.total, return_amount.round5())
 
+    # End receipt only if it has not been ended.
+    unless @_receipt.isActive() then return
     Api.receipt_finish().then(
       (data) =>
-        @_receipt.data = data
+        @_receipt.end(data)
         console.log(@_receipt)
-        @_receipt = null
+
         # Mode switching is safe to use again.
         @switcher.setMenuEnabled(true)
         @receiptSum.setEnabled(false)
@@ -159,13 +159,12 @@ class @CounterMode extends ItemCheckoutMode
     )
 
   onAbortReceipt: =>
-    unless @_receipt? then return
+    unless @_receipt.isActive() then return
 
     Api.receipt_abort().then(
       (data) =>
-        @_receipt.data = data
+        @_receipt.end(data)
         console.log(@_receipt)
-        @_receipt = null
 
         @addRow(null, "Aborted", null).addClass("danger")
         # Mode switching is safe to use again.
@@ -178,7 +177,7 @@ class @CounterMode extends ItemCheckoutMode
     )
 
   onLogout: =>
-    if @_receipt?
+    if @_receipt.isActive()
       alert("Cannot logout while receipt is active!")
       return
 
@@ -192,3 +191,22 @@ class @CounterMode extends ItemCheckoutMode
         alert("Logout failed!")
         return true
     )
+
+
+# Class for holding in some some of receipt information.
+# @private
+class ReceiptData
+  constructor: ->
+    @start(null)
+    @active = false
+
+  isActive: -> @active
+  start: (data=null) ->
+    @active = true
+    @rowCount = 0
+    @total = 0
+    @data = data
+
+  end: (data=null) ->
+    @active = false
+    @data = data
