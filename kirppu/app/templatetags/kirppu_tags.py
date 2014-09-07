@@ -60,7 +60,7 @@ class KirppuBarcode(barcode.Code128):
         return (len(text) + 1) * 11 + 24 + writer.quiet_zone()
 
 
-def generate_dataurl(code, ext, expect_width):
+def generate_dataurl(code, ext, expect_width=143):
     if not code:
         return ''
 
