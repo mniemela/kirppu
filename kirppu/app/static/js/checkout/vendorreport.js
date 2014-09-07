@@ -37,6 +37,18 @@
         return "Item Report";
       };
 
+      VendorReport.prototype.actions = function() {
+        return [
+          [
+            "", (function(_this) {
+              return function(query) {
+                return _this.switcher.switchTo(VendorFindMode, query);
+              };
+            })(this)
+          ]
+        ];
+      };
+
       VendorReport.prototype.enter = function() {
         VendorReport.__super__.enter.apply(this, arguments);
         this.cfg.uiRef.body.append(new VendorInfo(vendor).render());

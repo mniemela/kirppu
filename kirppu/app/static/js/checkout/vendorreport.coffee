@@ -24,6 +24,11 @@ tables = [
 
     title: -> "Item Report"
 
+    actions: -> [[
+      "", (query) =>
+        @switcher.switchTo(VendorFindMode, query)
+    ]]
+
     enter: ->
       super
       @cfg.uiRef.body.append(new VendorInfo(vendor).render())

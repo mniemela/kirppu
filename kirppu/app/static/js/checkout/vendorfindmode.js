@@ -2,7 +2,8 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   this.VendorFindMode = (function(_super) {
     __extends(VendorFindMode, _super);
@@ -10,15 +11,23 @@
     ModeSwitcher.registerEntryPoint("vendor_find", VendorFindMode);
 
     function VendorFindMode() {
+      var args, query, _i;
+      args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), query = arguments[_i++];
       this.createRow = __bind(this.createRow, this);
       this.onVendorsFound = __bind(this.onVendorsFound, this);
       VendorFindMode.__super__.constructor.apply(this, arguments);
       this.vendorList = new VendorList();
+      this.query = query;
     }
 
     VendorFindMode.prototype.enter = function() {
       VendorFindMode.__super__.enter.apply(this, arguments);
-      return this.cfg.uiRef.body.append(this.vendorList.render());
+      this.cfg.uiRef.body.append(this.vendorList.render());
+      if (this.query != null) {
+        return Api.vendor_find({
+          q: this.query
+        }).done(this.onVendorsFound);
+      }
     };
 
     VendorFindMode.prototype.title = function() {

@@ -1,13 +1,17 @@
 class @VendorFindMode extends CheckoutMode
   ModeSwitcher.registerEntryPoint("vendor_find", @)
 
-  constructor: ->
+  constructor: (args..., query) ->
     super
     @vendorList = new VendorList()
+    @query = query
 
   enter: ->
     super
     @cfg.uiRef.body.append(@vendorList.render())
+
+    if @query?
+      Api.vendor_find(q: @query).done(@onVendorsFound)
 
   title: -> "Vendor Search"
 
