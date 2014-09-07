@@ -9,7 +9,7 @@
     price_str = ""
     rounded = false
 
-  if rounded
+  if rounded and price.round5() != price
     rounded_str = price.round5().formatCents() + " €"
     price_str = "#{ rounded_str } (#{ price_str })"
 
