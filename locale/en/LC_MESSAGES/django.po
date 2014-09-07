@@ -160,29 +160,32 @@ msgstr "Item list"
 msgid "Counter commands"
 msgstr "Counter commands"
 
+msgid "Total:"
+msgstr "Total:"
+
+msgid "vendor"
+msgstr "vendor"
+
+msgid "code"
+msgstr "code"
+
+msgid "name"
+msgstr "name"
+
+msgid "price"
+msgstr "price"
+
 msgid "Clerk codes"
 msgstr "Clerk codes"
 
 msgid "Registered items"
 msgstr "Registered items"
 
-msgid "name"
-msgstr "name"
-
-msgid "code"
-msgstr "code"
-
-msgid "price"
-msgstr "price"
-
 msgid "printed"
 msgstr "printed"
 
 msgid "yes,no"
 msgstr "yes,no"
-
-msgid "Total:"
-msgstr "Total:"
 
 #, python-format
 msgid "%(num_printed)s of %(num_total)s"

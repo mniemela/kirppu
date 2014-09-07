@@ -49,7 +49,8 @@ class Clerk(models.Model):
 
     def as_dict(self):
         return {
-            "user": unicode(self.user)
+            "user": unicode(self.user),
+            "print": self.user.print_name,
         }
 
     def get_code(self):
@@ -244,7 +245,7 @@ class Item(models.Model):
     def __unicode__(self):
         return self.name
 
-    as_dict = model_dict_fn("code", "name", "state", price="price_cents")
+    as_dict = model_dict_fn("code", "name", "state", price="price_cents", vendor="vendor_id")
 
     @property
     def price_cents(self):

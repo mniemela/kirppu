@@ -210,6 +210,7 @@ PIPELINE_JS = {
             "js/checkout/vendorlist.coffee",
             "js/checkout/vendorinfo.coffee",
             "js/checkout/receiptsum.coffee",
+            "js/checkout/printreceipttable.coffee",
 
             "js/checkout/modeswitcher.coffee",
             "js/checkout/checkoutmode.coffee",
@@ -219,7 +220,7 @@ PIPELINE_JS = {
             "js/checkout/clerkloginmode.coffee",
             "js/checkout/itemcheckinmode.coffee",
             "js/checkout/countermode.coffee",
-            "js/checkout/itemfindmode.coffee",
+            "js/checkout/receiptprintmode.coffee",
             "js/checkout/vendorreport.coffee",
             "js/checkout/vendorfindmode.coffee",
 

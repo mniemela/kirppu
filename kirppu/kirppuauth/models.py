@@ -8,3 +8,10 @@ class User(AbstractUser):
 
     def is_clerk(self):
         return hasattr(self, 'clerk')
+
+    @property
+    def print_name(self):
+        name = u"{0} {1}.".format(self.first_name, self.last_name[:1]).strip()
+        if len(name) == 0:
+            return self.username
+        return name.title()
