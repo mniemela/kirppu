@@ -70,7 +70,15 @@
         return;
       }
       if (!this._receipt.isActive()) {
-        return this.startReceipt(code);
+        return Api.item_find({
+          code: code
+        }).then((function(_this) {
+          return function() {
+            return _this.startReceipt(code);
+          };
+        })(this), function() {
+          return alert("Could not find item: " + code);
+        });
       } else {
         return this.reserveItem(code);
       }
