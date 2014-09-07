@@ -18,6 +18,7 @@
       this.onAbortReceipt = __bind(this.onAbortReceipt, this);
       this.onPayReceipt = __bind(this.onPayReceipt, this);
       this.onRemoveItem = __bind(this.onRemoveItem, this);
+      this.showError = __bind(this.showError, this);
       this.onAddItem = __bind(this.onAddItem, this);
       CounterMode.__super__.constructor.apply(this, args);
       this._receipt = new ReceiptData();
@@ -77,11 +78,26 @@
           return function() {
             return _this.startReceipt(code);
           };
-        })(this), function() {
-          return alert("Could not find item: " + code);
-        });
+        })(this), (function(_this) {
+          return function(jqXHR) {
+            return _this.showError(jqXHR.status, code);
+          };
+        })(this));
       } else {
         return this.reserveItem(code);
+      }
+    };
+
+    CounterMode.prototype.showError = function(status, code) {
+      switch (status) {
+        case 404:
+          return alert("Item is not registered: " + code);
+        case 409:
+          return alert("Item state is not brought to event: " + code);
+        case 423:
+          return alert("Item state already staged: " + code);
+        default:
+          return alert("Error " + status + ": " + code);
       }
     };
 
@@ -156,8 +172,8 @@
           return _this.addRow(data.code, data.name, data.price);
         };
       })(this), (function(_this) {
-        return function() {
-          alert("Could not find item: " + code);
+        return function(jqXHR) {
+          _this.showError(jqXHR.status, code);
           return true;
         };
       })(this));
