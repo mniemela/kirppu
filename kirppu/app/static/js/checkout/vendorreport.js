@@ -7,16 +7,16 @@
 
   tables = [
     [
-      'Compensable Items', {
+      gettext('Compensable Items'), {
         SO: 0
       }
     ], [
-      'Returnable Items', {
+      gettext('Returnable Items'), {
         BR: 0,
         ST: 0
       }
     ], [
-      'Other Items', {
+      gettext('Other Items'), {
         MI: 0,
         RE: 0,
         CO: 0,
@@ -37,7 +37,7 @@
     }
 
     VendorReport.prototype.title = function() {
-      return "Item Report";
+      return gettext("Item Report");
     };
 
     VendorReport.prototype.actions = function() {
@@ -56,8 +56,8 @@
       var checkoutButton, compensateButton;
       VendorReport.__super__.enter.apply(this, arguments);
       this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
-      compensateButton = $('<input type="button">').addClass('btn btn-primary').attr('value', 'Compensate').click(this.onCompensate);
-      checkoutButton = $('<input type="button">').addClass('btn btn-primary').attr('value', 'Return Items').click(this.onReturn);
+      compensateButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Compensate')).click(this.onCompensate);
+      checkoutButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Return Items')).click(this.onReturn);
       this.cfg.uiRef.body.append($('<form class="hidden-print">').append(compensateButton, checkoutButton));
       return Api.item_list({
         vendor: this.vendor.id

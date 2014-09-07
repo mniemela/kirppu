@@ -1,7 +1,7 @@
 class @ItemReportTable extends ItemReceiptTable
   constructor: ->
     super
-    @head.append($('<th class="receipt_status">status</th>'))
+    @head.append($('<th class="receipt_status">' + gettext('status') + '</th>'))
 
   update: (items) ->
     @body.empty()
@@ -21,7 +21,7 @@ class @ItemReportTable extends ItemReceiptTable
       @body.append(row)
 
     @body.append($('<tr>').append(
-      $('<th colspan="3">').text('Total:')
+      $('<th colspan="3">').text(gettext('Total') + ':')
       $('<th>').text(displayPrice(sum))
       $('<th>')
     ))

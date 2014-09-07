@@ -8,7 +8,7 @@
 
     function ItemReportTable() {
       ItemReportTable.__super__.constructor.apply(this, arguments);
-      this.head.append($('<th class="receipt_status">status</th>'));
+      this.head.append($('<th class="receipt_status">' + gettext('status') + '</th>'));
     }
 
     ItemReportTable.prototype.update = function(items) {
@@ -32,7 +32,7 @@
         row.data('item', item);
         this.body.append(row);
       }
-      return this.body.append($('<tr>').append($('<th colspan="3">').text('Total:'), $('<th>').text(displayPrice(sum)), $('<th>')));
+      return this.body.append($('<tr>').append($('<th colspan="3">').text(gettext('Total') + ':'), $('<th>').text(displayPrice(sum)), $('<th>')));
     };
 
     return ItemReportTable;

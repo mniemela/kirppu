@@ -1,7 +1,7 @@
 tables = [
-  ['Compensable Items', {SO: 0}]
-  ['Returnable Items',  {BR: 0, ST: 0}]
-  ['Other Items',       {MI: 0, RE: 0, CO: 0, AD: 0}]
+  [gettext('Compensable Items'), {SO: 0}]
+  [gettext('Returnable Items'),  {BR: 0, ST: 0}]
+  [gettext('Other Items'),       {MI: 0, RE: 0, CO: 0, AD: 0}]
 ]
 
 class @VendorReport extends CheckoutMode
@@ -9,7 +9,7 @@ class @VendorReport extends CheckoutMode
     super(cfg, switcher)
     @vendor = vendor
 
-  title: -> "Item Report"
+  title: -> gettext("Item Report")
 
   actions: -> [[
     "", (query) => @switcher.switchTo(VendorFindMode, query)
@@ -20,11 +20,11 @@ class @VendorReport extends CheckoutMode
     @cfg.uiRef.body.append(new VendorInfo(@vendor).render())
     compensateButton = $('<input type="button">')
       .addClass('btn btn-primary')
-      .attr('value', 'Compensate')
+      .attr('value', gettext('Compensate'))
       .click(@onCompensate)
     checkoutButton = $('<input type="button">')
       .addClass('btn btn-primary')
-      .attr('value', 'Return Items')
+      .attr('value', gettext('Return Items'))
       .click(@onReturn)
     @cfg.uiRef.body.append(
       $('<form class="hidden-print">').append(

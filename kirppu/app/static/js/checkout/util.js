@@ -25,13 +25,13 @@
 
   this.displayState = function(state) {
     return {
-      SO: 'sold',
-      BR: 'on display',
-      ST: 'about to be sold',
-      MI: 'missing',
-      RE: 'returned to the vendor',
-      CO: 'sold and compensated to the vendor',
-      AD: 'not brought to the event'
+      SO: gettext('sold'),
+      BR: gettext('on display'),
+      ST: gettext('about to be sold'),
+      MI: gettext('missing'),
+      RE: gettext('returned to the vendor'),
+      CO: gettext('sold and compensated to the vendor'),
+      AD: gettext('not brought to the event')
     }[state];
   };
 
