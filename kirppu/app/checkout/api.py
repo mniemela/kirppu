@@ -197,10 +197,22 @@ def clerk_login(request, code, counter):
     if clerk is None:
         raise AjaxError(RET_AUTH_FAILED, _i(u"Unauthorized."))
 
+    clerk_data = clerk.as_dict()
+
+    active_receipts = Receipt.objects.filter(clerk=clerk, status=Receipt.PENDING)
+    if active_receipts:
+        if len(active_receipts) > 1:
+            clerk_data["receipts"] = [receipt.as_dict() for receipt in active_receipts]
+            clerk_data["receipt"] = "MULTIPLE"
+        else:
+            receipt = active_receipts[0]
+            request.session["receipt"] = receipt.pk
+            clerk_data["receipt"] = receipt.as_dict()
+
     request.session["clerk"] = clerk.pk
     request.session["clerk_token"] = clerk.access_key
     request.session["counter"] = counter_obj.pk
-    return clerk.as_dict()
+    return clerk_data
 
 
 @ajax_func('^clerk/logout$', clerk=False, counter=False)
@@ -399,3 +411,39 @@ def receipt_abort(request):
 
     del request.session["receipt"]
     return receipt.as_dict()
+
+
+def _get_receipt_data_with_items(**kwargs):
+    receipt = get_object_or_404(Receipt, **kwargs)
+    receipt_items = ReceiptItem.objects.filter(receipt_id=receipt.pk).order_by("add_time")
+
+    data = receipt.as_dict()
+    data["items"] = [item.as_dict() for item in receipt_items]
+    return data
+
+
+@ajax_func('^receipt$', method='GET')
+def receipt_get(request):
+    """
+    Find receipt by receipt id or one item in the receipt.
+    """
+    if "id" in request.GET:
+        receipt_id = int(request.GET.get("id"))
+    elif "item" in request.GET:
+        item_code = request.GET.get("item")
+        receipt_id = get_object_or_404(ReceiptItem, item__code=item_code, action=ReceiptItem.ADD).receipt_id
+    else:
+        raise AjaxError(RET_BAD_REQUEST)
+    return _get_receipt_data_with_items(pk=receipt_id)
+
+
+@ajax_func('^receipt/activate$')
+def receipt_activate(request):
+    """
+    Activate previously started pending receipt.
+    """
+    clerk = request.session["clerk"]
+    receipt_id = int(request.POST.get("id"))
+    data = _get_receipt_data_with_items(pk=receipt_id, clerk__id=clerk, status=Receipt.PENDING)
+    request.session["receipt"] = receipt_id
+    return data

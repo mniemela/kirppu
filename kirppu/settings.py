@@ -201,6 +201,8 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/checkout/util.coffee",
             "js/checkout/checkout.coffee",
+            "js/checkout/datetime_formatter.coffee",
+            "js/checkout/dialog.coffee",
 
             "js/checkout/resulttable.coffee",
             "js/checkout/itemreceipttable.coffee",

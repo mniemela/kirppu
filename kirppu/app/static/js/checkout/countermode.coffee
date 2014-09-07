@@ -1,10 +1,12 @@
 class @CounterMode extends ItemCheckoutMode
   ModeSwitcher.registerEntryPoint("customer_checkout", @)
 
-  constructor: (args...) ->
+  constructor: (args..., modeArgs) ->
     super(args...)
     @_receipt = null
     @receiptSum = new ReceiptSum()
+    if modeArgs?
+      @restoreReceipt(modeArgs)
 
   title: -> "Checkout"
 
@@ -43,6 +45,26 @@ class @CounterMode extends ItemCheckoutMode
       @startReceipt(code)
     else
       @reserveItem(code)
+
+  restoreReceipt: (receipt) ->
+    @switcher.setMenuEnabled(false)
+    Api.receipt_activate(id: receipt.id).then(
+      (data) =>
+        # RowCount is set to zero, as addRow will increase this.
+        @_receipt =
+          rowCount: 0
+          total: data.total
+          data: data
+        @receipt.body.empty()
+        for item in data.items
+          price = if item.action == "DEL" then -item.price else item.price
+          @addRow(item.code, item.name, price)
+        @_setSum(@_receipt.total)
+
+      () =>
+        alert("Could not restore receipt!")
+        @switcher.setMenuEnabled(true)
+    )
 
   startReceipt: (code) ->
     @_receipt =

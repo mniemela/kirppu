@@ -36,12 +36,15 @@
       return this.switchTo(ModeSwitcher.entryPoints["counter_validation"]);
     };
 
-    ModeSwitcher.prototype.switchTo = function(mode) {
+    ModeSwitcher.prototype.switchTo = function(mode, modeArgs) {
+      if (modeArgs == null) {
+        modeArgs = void 0;
+      }
       if (this._currentMode != null) {
         this._currentMode.exit();
       }
       this.setMenuEnabled(true);
-      this._currentMode = new mode(this, this.cfg);
+      this._currentMode = new mode(this, this.cfg, modeArgs);
       this.cfg.uiRef.body.empty();
       this.cfg.uiRef.stateText.text(this._currentMode.title());
       this.cfg.uiRef.subtitleText.text(this._currentMode.subtitle() || "");

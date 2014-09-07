@@ -11,8 +11,8 @@
     ModeSwitcher.registerEntryPoint("customer_checkout", CounterMode);
 
     function CounterMode() {
-      var args;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      var args, modeArgs, _i;
+      args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), modeArgs = arguments[_i++];
       this.onLogout = __bind(this.onLogout, this);
       this.onAbortReceipt = __bind(this.onAbortReceipt, this);
       this.onPayReceipt = __bind(this.onPayReceipt, this);
@@ -21,6 +21,9 @@
       CounterMode.__super__.constructor.apply(this, args);
       this._receipt = null;
       this.receiptSum = new ReceiptSum();
+      if (modeArgs != null) {
+        this.restoreReceipt(modeArgs);
+      }
     }
 
     CounterMode.prototype.title = function() {
@@ -69,6 +72,35 @@
       } else {
         return this.reserveItem(code);
       }
+    };
+
+    CounterMode.prototype.restoreReceipt = function(receipt) {
+      this.switcher.setMenuEnabled(false);
+      return Api.receipt_activate({
+        id: receipt.id
+      }).then((function(_this) {
+        return function(data) {
+          var item, price, _i, _len, _ref;
+          _this._receipt = {
+            rowCount: 0,
+            total: data.total,
+            data: data
+          };
+          _this.receipt.body.empty();
+          _ref = data.items;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            item = _ref[_i];
+            price = item.action === "DEL" ? -item.price : item.price;
+            _this.addRow(item.code, item.name, price);
+          }
+          return _this._setSum(_this._receipt.total);
+        };
+      })(this), (function(_this) {
+        return function() {
+          alert("Could not restore receipt!");
+          return _this.switcher.setMenuEnabled(true);
+        };
+      })(this));
     };
 
     CounterMode.prototype.startReceipt = function(code) {

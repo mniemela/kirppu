@@ -48,15 +48,71 @@
       username = data["user"];
       this.cfg.settings.clerkName = username;
       console.log("Logged in as " + username + ".");
-      return this.switcher.switchTo(CounterMode);
+      if (data["receipts"] != null) {
+        return this.multipleReceipts(data["receipts"]);
+      } else if (data["receipt"] != null) {
+        return this.activateReceipt(data["receipt"]);
+      } else {
+        return this.switcher.switchTo(CounterMode);
+      }
     };
 
     ClerkLoginMode.prototype.onResultError = function(jqXHR) {
       if (jqXHR.status === 419) {
-        console.log("Login failed: " + jqXHR.responseJSON["message"]);
+        console.log("Login failed: " + jqXHR.responseText);
         return;
       }
       return true;
+    };
+
+    ClerkLoginMode.prototype.activateReceipt = function(receipt) {
+      return this.switcher.switchTo(CounterMode, receipt);
+    };
+
+    ClerkLoginMode.prototype.multipleReceipts = function(receipts) {
+      var dialog, info, table, table_body;
+      dialog = new Dialog();
+      dialog.title.html('<span class="glyphicon glyphicon-warning-sign text-warning"></span> Multiple receipts active');
+      info = $("<div>").text("Please select receipt, which you want to continue.");
+      table_body = $("<tbody>");
+      this._createReceiptTable(receipts, dialog, table_body);
+      table = $('<table class="table table-striped table-hover table-condensed">').append(table_body);
+      dialog.body.append(info, table);
+      dialog.addPositive().text("Select").click((function(_this) {
+        return function() {
+          var index;
+          index = table_body.find(".success").data("index");
+          if (index != null) {
+            console.log(("Selected " + (1 + index) + ": ") + receipts[index].start_time);
+            return _this.switcher.switchTo(CounterMode, receipts[index]);
+          }
+        };
+      })(this));
+      dialog.setEnabled(dialog.btnPositive, false);
+      dialog.addNegative().text("Cancel").click(function() {
+        return console.log("Cancelled receipt selection");
+      });
+      return dialog.show({
+        keyboard: false,
+        backdrop: "static"
+      });
+    };
+
+    ClerkLoginMode.prototype._createReceiptTable = function(receipts, dialog, table_body) {
+      var i, receipt, row, _i, _len;
+      for (i = _i = 0, _len = receipts.length; _i < _len; i = ++_i) {
+        receipt = receipts[i];
+        row = $("<tr>");
+        row.append($("<td>").text(i + 1), $("<td>").text(DateTimeFormatter.datetime(receipt.start_time)), $("<td>").text(receipt.total.formatCents()), $("<td>").text(receipt.counter));
+        row.click(function() {
+          table_body.find(".success").removeClass("success");
+          $(this).addClass("success");
+          return dialog.setEnabled(dialog.btnPositive);
+        });
+        row.data("index", i);
+        table_body.append(row);
+      }
+      return table_body;
     };
 
     return ClerkLoginMode;

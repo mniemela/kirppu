@@ -401,6 +401,7 @@ class Receipt(models.Model):
 
     as_dict = model_dict_fn(
         "status",
+        id="pk",
         total="total_cents",
         start_time=lambda self: format_datetime(self.start_time),
         sell_time=lambda self: format_datetime(self.sell_time) if self.sell_time is not None else None,
