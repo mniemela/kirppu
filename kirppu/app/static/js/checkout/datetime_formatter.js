@@ -11,7 +11,7 @@
 
     DateTimeFormatter._createDateOptions = function() {
       return {
-        timeZone: DateTimeFormatter.timeZone
+        timeZone: this.constructor.timeZone
       };
     };
 
@@ -21,9 +21,21 @@
         new Date()[fn]("i");
       } catch (_error) {
         e = _error;
-        return e.name === "RangeError";
+        if (e.name === "RangeError") {
+          try {
+            new Date()[fn](this.locales, {
+              timeZone: this.timeZone
+            });
+          } catch (_error) {
+            e = _error;
+            if (e.name === "RangeError") {
+              return 1;
+            }
+          }
+          return 2;
+        }
       }
-      return false;
+      return 0;
     };
 
     DateTimeFormatter._buildSupport = function() {
@@ -37,13 +49,30 @@
       return r;
     };
 
-    DateTimeFormatter._dateSupport = DateTimeFormatter._buildSupport("toLocaleDateString", "toLocaleTimeString", "toLocaleString");
+    DateTimeFormatter.init = function(locales, timeZone) {
+      if (locales == null) {
+        locales = void 0;
+      }
+      if (timeZone == null) {
+        timeZone = void 0;
+      }
+      if ((locales != null) && (timeZone != null)) {
+        this.locales = locales;
+        this.timeZone = timeZone;
+      }
+      return this._dateSupport = this._buildSupport("toLocaleDateString", "toLocaleTimeString", "toLocaleString");
+    };
+
+    DateTimeFormatter._dateSupport = null;
 
     DateTimeFormatter._callDateLocale = function(dateStr, fn) {
-      var dateObj;
+      var dateObj, supported;
       dateObj = new Date(dateStr);
-      if (this._dateSupport[fn]) {
+      supported = this._dateSupport[fn];
+      if (supported === 2) {
         return dateObj[fn](this.locales, this._createDateOptions());
+      } else if (supported === 1) {
+        return dateObj[fn](this.locales);
       } else {
         return dateObj[fn]();
       }
