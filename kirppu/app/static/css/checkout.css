@@ -5,5 +5,9 @@
     width: 10em;
 }
 .receipt_price {
-    width: 8em;
+    width: 11em;
+}
+#counter_receipt > tr:first-child td {
+    font-size: larger;
+    font-weight: bold;
 }

@@ -7,6 +7,7 @@ class @CounterMode extends ItemCheckoutMode
     @receiptSum = new ReceiptSum()
     if modeArgs?
       @restoreReceipt(modeArgs)
+    @receipt.body.attr("id", "counter_receipt")
 
   title: -> "Checkout"
 
