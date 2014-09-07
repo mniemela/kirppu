@@ -25,78 +25,82 @@
     ]
   ];
 
-  this.vendorReport = function(vendor) {
-    var VendorReport;
-    return VendorReport = (function(_super) {
-      __extends(VendorReport, _super);
+  this.VendorReport = (function(_super) {
+    __extends(VendorReport, _super);
 
-      function VendorReport() {
-        this.onCompensate = __bind(this.onCompensate, this);
-        this.onGotItems = __bind(this.onGotItems, this);
-        return VendorReport.__super__.constructor.apply(this, arguments);
-      }
+    function VendorReport(cfg, switcher, vendor) {
+      this.onReturn = __bind(this.onReturn, this);
+      this.onCompensate = __bind(this.onCompensate, this);
+      this.onGotItems = __bind(this.onGotItems, this);
+      VendorReport.__super__.constructor.call(this, cfg, switcher);
+      this.vendor = vendor;
+    }
 
-      VendorReport.prototype.title = function() {
-        return "Item Report";
-      };
+    VendorReport.prototype.title = function() {
+      return "Item Report";
+    };
 
-      VendorReport.prototype.actions = function() {
-        return [
-          [
-            "", (function(_this) {
-              return function(query) {
-                return _this.switcher.switchTo(VendorFindMode, query);
-              };
-            })(this)
-          ]
-        ];
-      };
+    VendorReport.prototype.actions = function() {
+      return [
+        [
+          "", (function(_this) {
+            return function(query) {
+              return _this.switcher.switchTo(VendorFindMode, query);
+            };
+          })(this)
+        ]
+      ];
+    };
 
-      VendorReport.prototype.enter = function() {
-        var compensateButton;
-        VendorReport.__super__.enter.apply(this, arguments);
-        this.cfg.uiRef.body.append(new VendorInfo(vendor).render());
-        compensateButton = $('<input type="button">').addClass('btn btn-primary').attr('value', 'Compensate').click(this.onCompensate);
-        this.cfg.uiRef.body.append($('<form>').append(compensateButton));
-        return Api.item_list({
-          vendor: vendor.id
-        }).done(this.onGotItems);
-      };
+    VendorReport.prototype.enter = function() {
+      var checkoutButton, compensateButton;
+      VendorReport.__super__.enter.apply(this, arguments);
+      this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
+      compensateButton = $('<input type="button">').addClass('btn btn-primary').attr('value', 'Compensate').click(this.onCompensate);
+      checkoutButton = $('<input type="button">').addClass('btn btn-primary').attr('value', 'Return Items').click(this.onReturn);
+      this.cfg.uiRef.body.append($('<form class="hidden-print">').append(compensateButton, checkoutButton));
+      return Api.item_list({
+        vendor: this.vendor.id
+      }).done(this.onGotItems);
+    };
 
-      VendorReport.prototype.onGotItems = function(items) {
-        var i, matchingItems, name, states, table, _i, _len, _ref, _results;
-        _results = [];
-        for (_i = 0, _len = tables.length; _i < _len; _i++) {
-          _ref = tables[_i], name = _ref[0], states = _ref[1];
-          matchingItems = (function() {
-            var _j, _len1, _results1;
-            _results1 = [];
-            for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
-              i = items[_j];
-              if (states[i.state] != null) {
-                _results1.push(i);
-              }
+    VendorReport.prototype.onGotItems = function(items) {
+      var i, matchingItems, name, states, table, _i, _len, _ref, _results;
+      _results = [];
+      for (_i = 0, _len = tables.length; _i < _len; _i++) {
+        _ref = tables[_i], name = _ref[0], states = _ref[1];
+        matchingItems = (function() {
+          var _j, _len1, _results1;
+          _results1 = [];
+          for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
+            i = items[_j];
+            if (states[i.state] != null) {
+              _results1.push(i);
             }
-            return _results1;
-          })();
-          if (matchingItems.length > 0) {
-            table = new ItemReportTable(name);
-            table.update(matchingItems);
-            _results.push(this.cfg.uiRef.body.append(table.render()));
-          } else {
-            _results.push(void 0);
           }
+          return _results1;
+        })();
+        if (matchingItems.length > 0) {
+          table = new ItemReportTable(name);
+          table.update(matchingItems);
+          _results.push(this.cfg.uiRef.body.append(table.render()));
+        } else {
+          _results.push(void 0);
         }
-        return _results;
-      };
+      }
+      return _results;
+    };
 
-      VendorReport.prototype.onCompensate = function() {
-        return this.switcher.switchTo(vendorCompensation(vendor));
-      };
+    VendorReport.prototype.onCompensate = function() {
+      return this.switcher.switchTo(VendorCompensation, this.vendor);
+    };
 
-      return VendorReport;
+    VendorReport.prototype.onReturn = function() {
+      return this.switcher.switchTo(VendorCheckoutMode, this.vendor);
+    };
 
-    })(CheckoutMode);
-  };
+    return VendorReport;
+
+  })(CheckoutMode);
 
 }).call(this);

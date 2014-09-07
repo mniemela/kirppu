@@ -31,5 +31,4 @@ class @VendorFindMode extends CheckoutMode
     for a in ['id', 'name', 'email', 'phone']
       row.append.apply(row, $("<td>").text(vendor[a]))
 
-    switcher = @switcher
-    row.click((event) -> switcher.switchTo(vendorReport(vendor)))
+    row.click(=> @switcher.switchTo(VendorReport, vendor))

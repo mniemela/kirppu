@@ -60,7 +60,7 @@
     };
 
     VendorFindMode.prototype.createRow = function(index, vendor) {
-      var a, row, switcher, _i, _len, _ref;
+      var a, row, _i, _len, _ref;
       row = $("<tr>");
       row.append($("<td>").text(index));
       _ref = ['id', 'name', 'email', 'phone'];
@@ -68,10 +68,11 @@
         a = _ref[_i];
         row.append.apply(row, $("<td>").text(vendor[a]));
       }
-      switcher = this.switcher;
-      return row.click(function(event) {
-        return switcher.switchTo(vendorReport(vendor));
-      });
+      return row.click((function(_this) {
+        return function() {
+          return _this.switcher.switchTo(VendorReport, vendor);
+        };
+      })(this));
     };
 
     return VendorFindMode;

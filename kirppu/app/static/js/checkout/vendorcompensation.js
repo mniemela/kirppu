@@ -4,101 +4,99 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  this.vendorCompensation = function(vendor) {
-    var VendorCompensation;
-    return VendorCompensation = (function(_super) {
-      __extends(VendorCompensation, _super);
+  this.VendorCompensation = (function(_super) {
+    __extends(VendorCompensation, _super);
 
-      function VendorCompensation() {
-        this.onConfirm = __bind(this.onConfirm, this);
-        this.onCancel = __bind(this.onCancel, this);
-        this.onGotItems = __bind(this.onGotItems, this);
-        return VendorCompensation.__super__.constructor.apply(this, arguments);
-      }
+    function VendorCompensation(cfg, switcher, vendor) {
+      this.onConfirm = __bind(this.onConfirm, this);
+      this.onCancel = __bind(this.onCancel, this);
+      this.onGotItems = __bind(this.onGotItems, this);
+      VendorCompensation.__super__.constructor.call(this, cfg, switcher);
+      this.vendor = vendor;
+    }
 
-      VendorCompensation.prototype.title = function() {
-        return "Vendor Compensation";
-      };
+    VendorCompensation.prototype.title = function() {
+      return "Vendor Compensation";
+    };
 
-      VendorCompensation.prototype.enter = function() {
-        VendorCompensation.__super__.enter.apply(this, arguments);
-        this.cfg.uiRef.body.append(new VendorInfo(vendor).render());
-        this.itemDiv = $('<div>');
-        this.cfg.uiRef.body.append(this.itemDiv);
-        this.abortButton = $('<input type="button">').addClass('btn').attr('value', 'Cancel').click(this.onCancel);
-        this.confirmButton = $('<input type="button">').addClass('btn btn-success').attr('value', 'Confirm').prop('disabled', true).click(this.onConfirm);
-        this.cfg.uiRef.body.append($('<form>').append(this.confirmButton, this.abortButton));
-        return Api.item_list({
-          vendor: vendor.id
-        }).done(this.onGotItems);
-      };
+    VendorCompensation.prototype.enter = function() {
+      VendorCompensation.__super__.enter.apply(this, arguments);
+      this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
+      this.itemDiv = $('<div>');
+      this.cfg.uiRef.body.append(this.itemDiv);
+      this.abortButton = $('<input type="button">').addClass('btn').attr('value', 'Cancel').click(this.onCancel);
+      this.confirmButton = $('<input type="button">').addClass('btn btn-success').attr('value', 'Confirm').prop('disabled', true).click(this.onConfirm);
+      this.cfg.uiRef.body.append($('<form class="hidden-print">').append(this.confirmButton, this.abortButton));
+      return Api.item_list({
+        vendor: this.vendor.id
+      }).done(this.onGotItems);
+    };
 
-      VendorCompensation.prototype.onGotItems = function(items) {
-        var i, table;
-        this.compensableItems = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = items.length; _i < _len; _i++) {
-            i = items[_i];
-            if (i.state === 'SO') {
-              _results.push(i);
-            }
-          }
-          return _results;
-        })();
-        if (this.compensableItems.length > 0) {
-          table = new ItemReportTable('Sold Items');
-          table.update(this.compensableItems);
-          this.itemDiv.empty().append(table.render());
-          return this.confirmButton.prop('disabled', false);
-        } else {
-          this.itemDiv.empty().append($('<em>').text('No compensable items'));
-          return this.confirmButton.prop('disabled', true);
-        }
-      };
-
-      VendorCompensation.prototype.onCancel = function() {
-        return this.switcher.switchTo(vendorReport(vendor));
-      };
-
-      VendorCompensation.prototype.onConfirm = function() {
-        var i, nItems, _i, _len, _ref, _results;
-        this.confirmButton.prop('disabled', true);
-        nItems = this.compensableItems.length;
-        _ref = this.compensableItems;
+    VendorCompensation.prototype.onGotItems = function(items) {
+      var i, table;
+      this.compensableItems = (function() {
+        var _i, _len, _results;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          i = _ref[_i];
-          _results.push(Api.item_compensate({
-            code: i.code
-          }).done((function(_this) {
-            return function() {
-              nItems -= 1;
-              if (nItems <= 0) {
-                return _this.onCompensated();
-              }
-            };
-          })(this)));
-        }
-        return _results;
-      };
-
-      VendorCompensation.prototype.onCompensated = function() {
-        var i, items, table, _i, _len;
-        items = this.compensableItems;
-        this.compensableItems = [];
         for (_i = 0, _len = items.length; _i < _len; _i++) {
           i = items[_i];
-          i.state = 'CO';
+          if (i.state === 'SO') {
+            _results.push(i);
+          }
         }
-        table = new ItemReportTable('Compensated Items');
-        table.update(items);
-        return this.itemDiv.empty().append(table.render());
-      };
+        return _results;
+      })();
+      if (this.compensableItems.length > 0) {
+        table = new ItemReportTable('Sold Items');
+        table.update(this.compensableItems);
+        this.itemDiv.empty().append(table.render());
+        return this.confirmButton.prop('disabled', false);
+      } else {
+        this.itemDiv.empty().append($('<em>').text('No compensable items'));
+        return this.confirmButton.prop('disabled', true);
+      }
+    };
 
-      return VendorCompensation;
+    VendorCompensation.prototype.onCancel = function() {
+      return this.switcher.switchTo(VendorReport, this.vendor);
+    };
 
-    })(CheckoutMode);
-  };
+    VendorCompensation.prototype.onConfirm = function() {
+      var i, nItems, _i, _len, _ref, _results;
+      this.confirmButton.prop('disabled', true);
+      nItems = this.compensableItems.length;
+      _ref = this.compensableItems;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        _results.push(Api.item_compensate({
+          code: i.code
+        }).done((function(_this) {
+          return function() {
+            nItems -= 1;
+            if (nItems <= 0) {
+              return _this.onCompensated();
+            }
+          };
+        })(this)));
+      }
+      return _results;
+    };
+
+    VendorCompensation.prototype.onCompensated = function() {
+      var i, items, table, _i, _len;
+      items = this.compensableItems;
+      this.compensableItems = [];
+      for (_i = 0, _len = items.length; _i < _len; _i++) {
+        i = items[_i];
+        i.state = 'CO';
+      }
+      table = new ItemReportTable('Compensated Items');
+      table.update(items);
+      return this.itemDiv.empty().append(table.render());
+    };
+
+    return VendorCompensation;
+
+  })(CheckoutMode);
 
 }).call(this);

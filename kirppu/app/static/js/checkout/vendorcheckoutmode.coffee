@@ -1,16 +1,28 @@
 class @VendorCheckoutMode extends ItemCheckoutMode
   ModeSwitcher.registerEntryPoint("vendor_check_out", @)
 
-  constructor: ->
+  constructor: (cfg, switcher, vendor) ->
+    super(cfg, switcher)
+    @vendorId = if vendor? then vendor.id else null
+
+  enter: ->
     super
-    @vendorId = null
+    if @vendorId? then do @addVendorInfo
 
   title: -> "Vendor Check-Out"
 
   actions: -> [['', @returnItem]]
 
   addVendorInfo: ->
-    @cfg.uiRef.body.prepend(VendorInfo.byId(@vendorId).render())
+    Api.vendor_get(id: @vendorId).done((vendor) =>
+      @cfg.uiRef.body.prepend(
+        $('<input type="button">')
+          .addClass('btn btn-primary')
+          .attr('value', 'Open Report')
+          .click(=> @switcher.switchTo(VendorReport, vendor))
+      )
+      @cfg.uiRef.body.prepend(new VendorInfo(vendor).render())
+    )
 
   returnItem: (code) =>
     Api.item_find(code: code).done(@onItemFound)

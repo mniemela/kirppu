@@ -9,13 +9,20 @@
 
     ModeSwitcher.registerEntryPoint("vendor_check_out", VendorCheckoutMode);
 
-    function VendorCheckoutMode() {
+    function VendorCheckoutMode(cfg, switcher, vendor) {
       this.onCheckedOut = __bind(this.onCheckedOut, this);
       this.onItemFound = __bind(this.onItemFound, this);
       this.returnItem = __bind(this.returnItem, this);
-      VendorCheckoutMode.__super__.constructor.apply(this, arguments);
-      this.vendorId = null;
+      VendorCheckoutMode.__super__.constructor.call(this, cfg, switcher);
+      this.vendorId = vendor != null ? vendor.id : null;
     }
+
+    VendorCheckoutMode.prototype.enter = function() {
+      VendorCheckoutMode.__super__.enter.apply(this, arguments);
+      if (this.vendorId != null) {
+        return this.addVendorInfo();
+      }
+    };
 
     VendorCheckoutMode.prototype.title = function() {
       return "Vendor Check-Out";
@@ -26,7 +33,16 @@
     };
 
     VendorCheckoutMode.prototype.addVendorInfo = function() {
-      return this.cfg.uiRef.body.prepend(VendorInfo.byId(this.vendorId).render());
+      return Api.vendor_get({
+        id: this.vendorId
+      }).done((function(_this) {
+        return function(vendor) {
+          _this.cfg.uiRef.body.prepend($('<input type="button">').addClass('btn btn-primary').attr('value', 'Open Report').click(function() {
+            return _this.switcher.switchTo(VendorReport, vendor);
+          }));
+          return _this.cfg.uiRef.body.prepend(new VendorInfo(vendor).render());
+        };
+      })(this));
     };
 
     VendorCheckoutMode.prototype.returnItem = function(code) {

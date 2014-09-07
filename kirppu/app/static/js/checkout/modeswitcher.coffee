@@ -42,11 +42,11 @@ class @ModeSwitcher
   # Switch to new mode. This is called by modes.
   #
   # @param mode [CheckoutMode, class] Class of new mode.
-  # @param modeArgs [optional] Optional arguments for the Mode constructor.
-  switchTo: (mode, modeArgs=undefined) ->
+  # @param args... [] Arguments for the mode constructor.
+  switchTo: (mode, params=null) ->
     if @_currentMode? then @_currentMode.exit()
     @setMenuEnabled(true)
-    @_currentMode = new mode(@, @cfg, modeArgs)
+    @_currentMode = new mode(@, @cfg, params)
 
     @cfg.uiRef.body.empty()
     @cfg.uiRef.stateText.text(@_currentMode.title())
