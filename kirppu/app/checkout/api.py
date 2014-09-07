@@ -242,7 +242,10 @@ def counter_validate(request, code):
 
 @ajax_func('^item/find$', method='GET')
 def item_find(request, code):
-    return _get_item_or_404(code).as_dict()
+    item = _get_item_or_404(code)
+    if "available" in request.GET and item.state != Item.BROUGHT:
+        raise AjaxError(RET_LOCKED if item.state == Item.STAGED else RET_CONFLICT)
+    return item.as_dict()
 
 
 @ajax_func('^item/list$', method='GET')

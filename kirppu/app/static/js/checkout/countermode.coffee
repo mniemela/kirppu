@@ -43,7 +43,7 @@ class @CounterMode extends ItemCheckoutMode
     if code.trim() == "" then return
 
     if not @_receipt.isActive()
-      Api.item_find(code: code).then(
+      Api.item_find(code: code, available: true).then(
         () => @startReceipt(code)
         () -> alert("Could not find item: " + code)
       )

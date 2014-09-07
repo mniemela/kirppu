@@ -71,7 +71,8 @@
       }
       if (!this._receipt.isActive()) {
         return Api.item_find({
-          code: code
+          code: code,
+          available: true
         }).then((function(_this) {
           return function() {
             return _this.startReceipt(code);
