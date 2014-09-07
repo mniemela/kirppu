@@ -16,7 +16,14 @@ from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _i
 from django.utils.timezone import now
 
-from kirppu.app.models import Item, Receipt, Clerk, Counter, ReceiptItem
+from kirppu.app.models import (
+    Item,
+    Receipt,
+    Clerk,
+    Counter,
+    ReceiptItem,
+    Vendor,
+)
 from kirppu.kirppuauth.models import User
 
 
@@ -182,6 +189,21 @@ def ajax_func(url, method='POST', counter=True, clerk=True):
     return decorator
 
 
+def item_mode_change(code, from_, to):
+    item = _get_item_or_404(code)
+    if item.state == from_:
+        item.state = to
+        item.save()
+        return item.as_dict()
+
+    else:
+        # Item not in expected state.
+        raise AjaxError(
+            RET_CONFLICT,
+            _i(u"Unexpected item state: {state}").format(state=item.state),
+        )
+
+
 @ajax_func('^clerk/login$', clerk=False, counter=False)
 def clerk_login(request, code, counter):
     try:
@@ -256,34 +278,27 @@ def item_list(request, vendor):
 
 @ajax_func('^item/checkin$')
 def item_checkin(request, code):
-    item = _get_item_or_404(code)
-    if item.state == Item.ADVERTISED:
-        item.state = Item.BROUGHT
-        item.save()
-        return item.as_dict()
+    return item_mode_change(code, Item.ADVERTISED, Item.BROUGHT)
 
-    else:
-        # Item not in expected state.
-        raise AjaxError(
-            RET_CONFLICT,
-            _i(u"Unexpected item state: {state}").format(state=item.state),
-        )
+
+@ajax_func('^item/checkout$')
+def item_checkout(request, code):
+    return item_mode_change(code, Item.BROUGHT, Item.RETURNED)
 
 
 @ajax_func('^item/compensate$')
 def item_compensate(request, code):
-    item = _get_item_or_404(code)
-    if item.state == Item.SOLD:
-        item.state = Item.COMPENSATED
-        item.save()
-        return item.as_dict()
+    return item_mode_change(code, Item.SOLD, Item.COMPENSATED)
 
+
+@ajax_func('^vendor/get$', method='GET')
+def vendor_get(request, id):
+    try:
+        vendor = Vendor.objects.get(pk=int(id))
+    except (ValueError, Vendor.DoesNotExist):
+        raise AjaxError(RET_BAD_REQUEST, _i(u"Invalid vendor id"))
     else:
-        # Item not in expected state.
-        raise AjaxError(
-            RET_CONFLICT,
-            _i(u"Unexpected item state: {state}").format(state=item.state),
-        )
+        return vendor.as_dict()
 
 
 @ajax_func('^vendor/find$', method='GET')
@@ -304,12 +319,10 @@ def vendor_find(request, q):
 
         clauses.append(clause)
 
-    return [{
-        u'id': u.vendor.id,
-        u'name': u.first_name  + u' ' + u.last_name,
-        u'email': u.email,
-        u'phone': u.phone,
-    } for u in User.objects.filter(*clauses).all()]
+    return [
+        u.vendor.as_dict()
+        for u in User.objects.filter(*clauses).all()
+    ]
 
 
 @ajax_func('^receipt/start$')

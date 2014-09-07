@@ -172,6 +172,12 @@ class Vendor(models.Model):
             vendor.save()
         return user.vendor
 
+    as_dict = model_dict_fn(
+        'id',
+        name=lambda self: self.user.first_name  + u' ' + self.user.last_name,
+        email=lambda self: self.user.email,
+        phone=lambda self: self.user.phone,
+    )
 
 def validate_positive(value):
     if value < 0.0:

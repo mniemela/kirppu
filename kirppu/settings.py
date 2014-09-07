@@ -219,6 +219,7 @@ PIPELINE_JS = {
             "js/checkout/countervalidationmode.coffee",
             "js/checkout/clerkloginmode.coffee",
             "js/checkout/itemcheckinmode.coffee",
+            "js/checkout/vendorcheckoutmode.coffee",
             "js/checkout/countermode.coffee",
             "js/checkout/receiptprintmode.coffee",
             "js/checkout/vendorcompensation.coffee",
