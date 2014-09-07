@@ -3,18 +3,25 @@ class @ItemReportTable extends ItemReceiptTable
     super
     @head.append($('<th class="receipt_status">status</th>'))
 
-  append: (code, name, price, state) ->
-    data = [
-      @body.children().length + 1,
-      code, name, price, state,
-    ]
-    row = $('<tr>').append(data.map((t) -> $('<td>').text(t)))
-    @body.append(row)
+  update: (items) ->
+    @body.empty()
+    sum = 0
+    for item, index in items
+      sum += item.price
+      data = [
+        index + 1
+        item.code
+        item.name
+        displayPrice(item.price)
+        displayState(item.state)
+      ]
+      row = $('<tr>')
+      row.append($('<td>').text(td) for td in data)
+      row.data('item', item)
+      @body.append(row)
 
-  total: (totalPrice) ->
-    row = $('<tr>').append(
-      $('<th colspan="3">').text('Total:'),
-      $('<th>').text(totalPrice),
-      $('<th>'),
-    )
-    @body.append(row)
+    @body.append($('<tr>').append(
+      $('<th colspan="3">').text('Total:')
+      $('<th>').text(displayPrice(sum))
+      $('<th>')
+    ))

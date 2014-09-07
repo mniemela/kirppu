@@ -11,19 +11,28 @@
       this.head.append($('<th class="receipt_status">status</th>'));
     }
 
-    ItemReportTable.prototype.append = function(code, name, price, state) {
-      var data, row;
-      data = [this.body.children().length + 1, code, name, price, state];
-      row = $('<tr>').append(data.map(function(t) {
-        return $('<td>').text(t);
-      }));
-      return this.body.append(row);
-    };
-
-    ItemReportTable.prototype.total = function(totalPrice) {
-      var row;
-      row = $('<tr>').append($('<th colspan="3">').text('Total:'), $('<th>').text(totalPrice), $('<th>'));
-      return this.body.append(row);
+    ItemReportTable.prototype.update = function(items) {
+      var data, index, item, row, sum, td, _i, _len;
+      this.body.empty();
+      sum = 0;
+      for (index = _i = 0, _len = items.length; _i < _len; index = ++_i) {
+        item = items[index];
+        sum += item.price;
+        data = [index + 1, item.code, item.name, displayPrice(item.price), displayState(item.state)];
+        row = $('<tr>');
+        row.append((function() {
+          var _j, _len1, _results;
+          _results = [];
+          for (_j = 0, _len1 = data.length; _j < _len1; _j++) {
+            td = data[_j];
+            _results.push($('<td>').text(td));
+          }
+          return _results;
+        })());
+        row.data('item', item);
+        this.body.append(row);
+      }
+      return this.body.append($('<tr>').append($('<th colspan="3">').text('Total:'), $('<th>').text(displayPrice(sum)), $('<th>')));
     };
 
     return ItemReportTable;

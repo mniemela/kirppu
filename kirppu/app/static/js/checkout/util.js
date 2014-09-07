@@ -23,6 +23,18 @@
     return price_str;
   };
 
+  this.displayState = function(state) {
+    return {
+      SO: 'sold',
+      BR: 'on display',
+      ST: 'about to be sold',
+      MI: 'missing',
+      RE: 'returned to the vendor',
+      CO: 'sold and compensated to the vendor',
+      AD: 'not brought to the event'
+    }[state];
+  };
+
   Number.prototype.round5 = function() {
     var modulo;
     modulo = this % 5;

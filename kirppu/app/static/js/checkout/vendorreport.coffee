@@ -1,21 +1,7 @@
-states =
-  compensable:
-    SO: 'sold'
-
-  returnable:
-    BR: 'on display'
-    ST: 'about to be sold'
-
-  other:
-    MI: 'missing'
-    RE: 'returned to the vendor'
-    CO: 'sold and compensated to the vendor'
-    AD: 'not brought to the event'
-
 tables = [
-  [states.compensable,'Compensable Items']
-  [states.returnable, 'Returnable Items']
-  [states.other,      'Other Items']
+  ['Compensable Items', {SO: 0}]
+  ['Returnable Items',  {BR: 0, ST: 0}]
+  ['Other Items',       {MI: 0, RE: 0, CO: 0, AD: 0}]
 ]
 
 # Create a new class for the report mode of the vendor.
@@ -32,21 +18,23 @@ tables = [
     enter: ->
       super
       @cfg.uiRef.body.append(new VendorInfo(vendor).render())
+
+      compensateButton = $('<input type="button">')
+        .addClass('btn btn-primary')
+        .attr('value', 'Compensate')
+        .click(@onCompensate)
+      @cfg.uiRef.body.append($('<form>').append(compensateButton))
+
       Api.item_list(
         vendor: vendor.id
       ).done(@onGotItems)
 
     onGotItems: (items) =>
-      for [states, name] in tables
-        table = new ItemReportTable(name)
-        @listItems(items, table, states)
-        if table.body.children().length > 0
+      for [name, states] in tables
+        matchingItems = (i for i in items when states[i.state]?)
+        if matchingItems.length > 0
+          table = new ItemReportTable(name)
+          table.update(matchingItems)
           @cfg.uiRef.body.append(table.render())
 
-    listItems: (items, table, states) ->
-      sum = 0
-      for i in items when states[i.state]?
-        sum += i.price
-        table.append(i.code, i.name, displayPrice(i.price), states[i.state])
-      if sum > 0
-        table.total(displayPrice(sum))
+    onCompensate: => @switcher.switchTo(vendorCompensation(vendor))

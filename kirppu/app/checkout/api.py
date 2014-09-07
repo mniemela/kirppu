@@ -270,6 +270,22 @@ def item_checkin(request, code):
         )
 
 
+@ajax_func('^item/compensate$')
+def item_compensate(request, code):
+    item = _get_item_or_404(code)
+    if item.state == Item.SOLD:
+        item.state = Item.COMPENSATED
+        item.save()
+        return item.as_dict()
+
+    else:
+        # Item not in expected state.
+        raise AjaxError(
+            RET_CONFLICT,
+            _i(u"Unexpected item state: {state}").format(state=item.state),
+        )
+
+
 @ajax_func('^vendor/find$', method='GET')
 def vendor_find(request, q):
     clauses = [Q(vendor__isnull=False)]

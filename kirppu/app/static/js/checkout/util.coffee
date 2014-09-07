@@ -15,6 +15,17 @@
 
   return price_str
 
+@displayState = (state) ->
+  {
+    SO: 'sold'
+    BR: 'on display'
+    ST: 'about to be sold'
+    MI: 'missing'
+    RE: 'returned to the vendor'
+    CO: 'sold and compensated to the vendor'
+    AD: 'not brought to the event'
+  }[state]
+
 # Round the number to closest modulo 5.
 #
 # @return Integer rounded to closest 5.
