@@ -22,11 +22,11 @@
     VendorCompensation.prototype.enter = function() {
       VendorCompensation.__super__.enter.apply(this, arguments);
       this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
-      this.itemDiv = $('<div>');
-      this.cfg.uiRef.body.append(this.itemDiv);
       this.abortButton = $('<input type="button">').addClass('btn btn-default').attr('value', 'Cancel').click(this.onCancel);
       this.confirmButton = $('<input type="button">').addClass('btn btn-success').attr('value', 'Confirm').prop('disabled', true).click(this.onConfirm);
       this.cfg.uiRef.body.append($('<form class="hidden-print">').append(this.confirmButton, this.abortButton));
+      this.itemDiv = $('<div>');
+      this.cfg.uiRef.body.append(this.itemDiv);
       return Api.item_list({
         vendor: this.vendor.id
       }).done(this.onGotItems);

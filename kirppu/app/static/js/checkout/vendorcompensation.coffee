@@ -10,9 +10,6 @@ class @VendorCompensation extends CheckoutMode
     super
     @cfg.uiRef.body.append(new VendorInfo(@vendor).render())
 
-    @itemDiv = $('<div>')
-    @cfg.uiRef.body.append(@itemDiv)
-
     @abortButton = $('<input type="button">')
       .addClass('btn btn-default')
       .attr('value', 'Cancel')
@@ -26,6 +23,9 @@ class @VendorCompensation extends CheckoutMode
       $('<form class="hidden-print">')
         .append(@confirmButton, @abortButton)
     )
+
+    @itemDiv = $('<div>')
+    @cfg.uiRef.body.append(@itemDiv)
 
     Api.item_list(vendor: @vendor.id).done(@onGotItems)
 
