@@ -12,10 +12,18 @@
 .receipt_code {
     width:     8em;
     max-width: 8em;
+    text-align: center;
+}
+td.receipt_code {
+    font-family: monospace;
 }
 .receipt_price {
     width:     5em;
     max-width: 5em;
+    white-space: nowrap;
+}
+.receipt_status {
+    width: 0;
     white-space: nowrap;
 }
 #counter_receipt > tr:first-child td {
