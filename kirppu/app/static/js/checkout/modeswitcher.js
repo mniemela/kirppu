@@ -48,6 +48,7 @@
       this.cfg.uiRef.body.empty();
       this.cfg.uiRef.stateText.text(this._currentMode.title());
       this.cfg.uiRef.subtitleText.text(this._currentMode.subtitle() || "");
+      this.cfg.uiRef.codeInput.attr("placeholder", this._currentMode.inputPlaceholder());
       return this._currentMode.enter();
     };
 

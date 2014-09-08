@@ -14,6 +14,7 @@ class @VendorFindMode extends CheckoutMode
       Api.vendor_find(q: @query).done(@onVendorsFound)
 
   title: -> "Vendor Search"
+  inputPlaceholder: -> "Search"
 
   actions: -> [[
     "", (query) =>

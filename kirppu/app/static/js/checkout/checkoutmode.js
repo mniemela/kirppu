@@ -14,6 +14,10 @@
       return "" + this.cfg.settings.clerkName + " @ " + this.cfg.settings.counterName;
     };
 
+    CheckoutMode.prototype.inputPlaceholder = function() {
+      return "Barcode";
+    };
+
     CheckoutMode.prototype.enter = function() {};
 
     CheckoutMode.prototype.exit = function() {};

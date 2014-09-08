@@ -51,6 +51,7 @@ class @ModeSwitcher
     @cfg.uiRef.body.empty()
     @cfg.uiRef.stateText.text(@_currentMode.title())
     @cfg.uiRef.subtitleText.text(@_currentMode.subtitle() or "")
+    @cfg.uiRef.codeInput.attr("placeholder", @_currentMode.inputPlaceholder())
     @_currentMode.enter()
 
   # Bind functions to HTML elements.

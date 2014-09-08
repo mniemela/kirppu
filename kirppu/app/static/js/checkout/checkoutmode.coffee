@@ -19,6 +19,8 @@ class @CheckoutMode
   # @return [String, null] Subtitle string, if needed.
   subtitle: -> "#{@cfg.settings.clerkName} @ #{@cfg.settings.counterName}"
 
+  inputPlaceholder: -> "Barcode"
+
   # Called after switching to this mode.
   enter: ->
 

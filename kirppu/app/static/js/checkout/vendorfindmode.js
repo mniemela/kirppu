@@ -34,6 +34,10 @@
       return "Vendor Search";
     };
 
+    VendorFindMode.prototype.inputPlaceholder = function() {
+      return "Search";
+    };
+
     VendorFindMode.prototype.actions = function() {
       return [
         [
