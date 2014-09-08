@@ -14,7 +14,7 @@ class @VendorCompensation extends CheckoutMode
     @cfg.uiRef.body.append(@itemDiv)
 
     @abortButton = $('<input type="button">')
-      .addClass('btn')
+      .addClass('btn btn-default')
       .attr('value', 'Cancel')
       .click(@onCancel)
     @confirmButton = $('<input type="button">')
