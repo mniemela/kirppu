@@ -10,24 +10,28 @@ class @VendorCompensation extends CheckoutMode
     super
     @cfg.uiRef.body.append(new VendorInfo(@vendor).render())
 
-    @abortButton = $('<input type="button">')
-      .addClass('btn btn-default')
-      .attr('value', 'Cancel')
-      .click(@onCancel)
-    @confirmButton = $('<input type="button">')
-      .addClass('btn btn-success')
-      .attr('value', 'Confirm')
-      .prop('disabled', true)
-      .click(@onConfirm)
-    @cfg.uiRef.body.append(
-      $('<form class="hidden-print">')
-        .append(@confirmButton, @abortButton)
-    )
+    @buttonForm = $('<form class="hidden-print">').append(@abortButton())
+    @cfg.uiRef.body.append(@buttonForm)
 
     @itemDiv = $('<div>')
     @cfg.uiRef.body.append(@itemDiv)
 
     Api.item_list(vendor: @vendor.id).done(@onGotItems)
+
+  confirmButton: ->
+    $('<input type="button" class="btn btn-success">')
+      .attr('value', 'Confirm')
+      .click(@onConfirm)
+
+  abortButton: ->
+    $('<input type="button" class="btn btn-default">')
+      .attr('value', 'Cancel')
+      .click(@onCancel)
+
+  continueButton: ->
+    $('<input type="button" class="btn btn-primary">')
+      .attr('value', 'Continue')
+      .click(@onCancel)
 
   onGotItems: (items) =>
     @compensableItems = (i for i in items when i.state == 'SO')
@@ -36,16 +40,16 @@ class @VendorCompensation extends CheckoutMode
       table = new ItemReportTable('Sold Items')
       table.update(@compensableItems)
       @itemDiv.empty().append(table.render())
-      @confirmButton.prop('disabled', false)
+      @buttonForm.empty().append(@confirmButton(), @abortButton())
 
     else
       @itemDiv.empty().append($('<em>').text('No compensable items'))
-      @confirmButton.prop('disabled', true)
+      @buttonForm.empty().append(@continueButton())
 
   onCancel: => @switcher.switchTo(VendorReport, @vendor)
 
   onConfirm: =>
-    @confirmButton.prop('disabled', true)
+    @buttonForm.empty()
     nItems = @compensableItems.length
     for i in @compensableItems
       Api.item_compensate(code: i.code).done(=>
@@ -61,3 +65,4 @@ class @VendorCompensation extends CheckoutMode
     table = new ItemReportTable('Compensated Items')
     table.update(items)
     @itemDiv.empty().append(table.render())
+    @buttonForm.empty().append(@continueButton())
