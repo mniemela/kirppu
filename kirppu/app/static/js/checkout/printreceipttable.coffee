@@ -7,7 +7,7 @@ class @PrintReceiptTable extends ResultTable
   constructor: (args...)->
     super(args...)
     @head.append([
-      "<th class=\"receipt_index\">#{ @constructor.strVendor }</th>"
+      "<th class=\"receipt_vendor_id\">#{ @constructor.strVendor }</th>"
       "<th class=\"receipt_code\">#{ @constructor.strCode }</th>"
       "<th class=\"receipt_item\">#{ @constructor.strItem }</th>"
       "<th class=\"receipt_price\">#{ @constructor.strPrice }</th>"

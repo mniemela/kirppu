@@ -6,7 +6,7 @@
       this.dom = $('<div class="vendor-info-box">');
       this.dom.append($('<h3>').text(gettext('Vendor')));
       list = $('<dl class="dl-horizontal">');
-      _ref = ['id', 'name', 'email', 'phone'];
+      _ref = ['name', 'email', 'phone', 'id'];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         attr = _ref[_i];
         list.append($('<dt>').text(attr));

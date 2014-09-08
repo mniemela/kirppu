@@ -1,13 +1,41 @@
 .receipt_index {
-    width: 3em;
+    width:     2em;
+    max-width: 2em;
+}
+.receipt_vendor_id {
+    width:     5em;
+    max-width: 5em;
+}
+.receipt_item {
+    width: auto;
 }
 .receipt_code {
-    width: 10em;
+    width:     8em;
+    max-width: 8em;
 }
 .receipt_price {
-    width: 11em;
+    width:     5em;
+    max-width: 5em;
+    white-space: nowrap;
 }
 #counter_receipt > tr:first-child td {
     font-size: larger;
     font-weight: bold;
+}
+
+@media print {
+
+    @page
+    {
+        /* this affects the margin in the printer settings */
+        margin: 1cm 1cm;
+    }
+
+    body
+    {
+        /* this affects the margin on the content before sending to printer */
+        margin: 0px;
+        padding: 0px;
+    }
+
 }

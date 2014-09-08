@@ -19,7 +19,7 @@
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       PrintReceiptTable.__super__.constructor.apply(this, args);
-      this.head.append(["<th class=\"receipt_index\">" + this.constructor.strVendor + "</th>", "<th class=\"receipt_code\">" + this.constructor.strCode + "</th>", "<th class=\"receipt_item\">" + this.constructor.strItem + "</th>", "<th class=\"receipt_price\">" + this.constructor.strPrice + "</th>"].map($));
+      this.head.append(["<th class=\"receipt_vendor_id\">" + this.constructor.strVendor + "</th>", "<th class=\"receipt_code\">" + this.constructor.strCode + "</th>", "<th class=\"receipt_item\">" + this.constructor.strItem + "</th>", "<th class=\"receipt_price\">" + this.constructor.strPrice + "</th>"].map($));
     }
 
     PrintReceiptTable.joinedLine = function(text, html) {
