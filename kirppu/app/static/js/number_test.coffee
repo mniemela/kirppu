@@ -1,5 +1,5 @@
 # Allow  -2  -2.0  -2,0  2  2.0  2,0  and likes.
-NUM_PAT = /^-?\d+([,\.]\d+)?$/
+NUM_PAT = /^-?\d+([,\.]\d*)?$/
 
 # Test if given string is a number, or convertible to one.
 #

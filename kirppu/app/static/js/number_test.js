@@ -2,7 +2,7 @@
 (function() {
   var NUM_PAT;
 
-  NUM_PAT = /^-?\d+([,\.]\d+)?$/;
+  NUM_PAT = /^-?\d+([,\.]\d*)?$/;
 
   Number.isConvertible = function(str) {
     return NUM_PAT.test(str);

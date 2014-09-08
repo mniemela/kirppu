@@ -203,7 +203,12 @@
       if (!Number.isConvertible(input)) {
         return;
       }
-      input = input - 0;
+      input = input.replace(",", ".");
+      if (input.indexOf(".")) {
+        input = (input - 0) * 100;
+      } else {
+        input = input - 0;
+      }
       if (input < this._receipt.total) {
         alert("Not enough given money!");
         return;

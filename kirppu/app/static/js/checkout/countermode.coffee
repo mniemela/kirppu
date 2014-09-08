@@ -128,7 +128,15 @@ class @CounterMode extends ItemCheckoutMode
 
   onPayReceipt: (input) =>
     unless Number.isConvertible(input) then return
-    input = input - 0
+
+    # If decimal separator is supplied, ensure dot and expect euros.
+    input = input.replace(",", ".")
+    if input.indexOf(".")
+      # Euros.
+      input = (input - 0) * 100
+    else
+      # Cents.
+      input = input - 0
 
     if input < @_receipt.total
       alert("Not enough given money!")
