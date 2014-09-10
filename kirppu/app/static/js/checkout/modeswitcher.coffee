@@ -35,6 +35,16 @@ class @ModeSwitcher
     @_bindMenu(ModeSwitcher.entryPoints)
     @_bindForm()
 
+    # Function for regaining focus after dialog closing.
+    regainFocus = () =>
+      timeoutFocus = () => @cfg.uiRef.codeInput.focus()
+      # The actual focusing needs to be done after the event has been processed so that the focus can actually be set.
+      setTimeout(timeoutFocus, 0)
+
+    # Regain focus with both, template and help dialog.
+    @cfg.uiRef.dialog.on("hidden.bs.modal", regainFocus)
+    $("#help_dialog").on("hidden.bs.modal", regainFocus)
+
   # Start default mode operation.
   startDefault: ->
     @switchTo(ModeSwitcher.entryPoints["counter_validation"])
@@ -53,6 +63,9 @@ class @ModeSwitcher
     @cfg.uiRef.subtitleText.text(@_currentMode.subtitle() or "")
     @cfg.uiRef.codeInput.attr("placeholder", @_currentMode.inputPlaceholder())
     @_currentMode.enter()
+
+    # Restore focus to the input field after mode change.
+    @cfg.uiRef.codeInput.focus()
 
   # Bind functions to HTML elements.
   _bindForm: ->

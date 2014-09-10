@@ -11,7 +11,8 @@
       subtitleText: null,
       codeInput: null,
       codeForm: null,
-      modeMenu: null
+      modeMenu: null,
+      dialog: null
     };
 
     Config.prototype.uiRef = {
@@ -20,7 +21,8 @@
       subtitleText: null,
       codeInput: null,
       codeForm: null,
-      modeMenu: null
+      modeMenu: null,
+      dialog: null
     };
 
     Config.prototype.settings = {

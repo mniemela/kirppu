@@ -6,6 +6,7 @@ class Config
     codeInput: null
     codeForm: null
     modeMenu: null
+    dialog: null
   uiRef:
     body: null
     stateText: null
@@ -13,6 +14,7 @@ class Config
     codeInput: null
     codeForm: null
     modeMenu: null
+    dialog: null
   settings:
     itemPrefix: null
     clerkPrefix: "::"

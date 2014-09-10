@@ -26,10 +26,22 @@
 
     function ModeSwitcher(config) {
       this._onFormSubmit = __bind(this._onFormSubmit, this);
+      var regainFocus;
       this.cfg = config ? config : CheckoutConfig;
       this._currentMode = null;
       this._bindMenu(ModeSwitcher.entryPoints);
       this._bindForm();
+      regainFocus = (function(_this) {
+        return function() {
+          var timeoutFocus;
+          timeoutFocus = function() {
+            return _this.cfg.uiRef.codeInput.focus();
+          };
+          return setTimeout(timeoutFocus, 0);
+        };
+      })(this);
+      this.cfg.uiRef.dialog.on("hidden.bs.modal", regainFocus);
+      $("#help_dialog").on("hidden.bs.modal", regainFocus);
     }
 
     ModeSwitcher.prototype.startDefault = function() {
@@ -49,7 +61,8 @@
       this.cfg.uiRef.stateText.text(this._currentMode.title());
       this.cfg.uiRef.subtitleText.text(this._currentMode.subtitle() || "");
       this.cfg.uiRef.codeInput.attr("placeholder", this._currentMode.inputPlaceholder());
-      return this._currentMode.enter();
+      this._currentMode.enter();
+      return this.cfg.uiRef.codeInput.focus();
     };
 
     ModeSwitcher.prototype._bindForm = function() {
