@@ -31,19 +31,19 @@ td.receipt_code {
     font-weight: bold;
 }
 .color-CounterMode {
-    background-color: #eeeeff;
+    background-color: #ccccff;
 }
 .color-ItemCheckInMode {
-    background-color: #eeffee;
+    background-color: #ccffcc;
 }
 .color-VendorCheckoutMode {
-    background-color: #ffeeee;
+    background-color: #ffcccc;
 }
 .color-VendorFindMode {
-    background-color: #ffffee;
+    background-color: #ffffcc;
 }
 .color-ReceiptPrintMode {
-    background-color: #ffeeff;
+    background-color: #ffccff;
 }
 
 @media print {
