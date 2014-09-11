@@ -2,16 +2,11 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   this.ItemCheckInMode = (function(_super) {
     __extends(ItemCheckInMode, _super);
-
-    function ItemCheckInMode() {
-      this.onResultError = __bind(this.onResultError, this);
-      this.onResultSuccess = __bind(this.onResultSuccess, this);
-      return ItemCheckInMode.__super__.constructor.apply(this, arguments);
-    }
 
     ModeSwitcher.registerEntryPoint("vendor_check_in", ItemCheckInMode);
 
@@ -22,6 +17,15 @@
     ItemCheckInMode.prototype.title = function() {
       return "Vendor Check-In";
     };
+
+    function ItemCheckInMode() {
+      var args, query, _i;
+      args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), query = arguments[_i++];
+      this.onResultError = __bind(this.onResultError, this);
+      this.onResultSuccess = __bind(this.onResultSuccess, this);
+      ItemCheckInMode.__super__.constructor.apply(this, arguments);
+      this.currentVendor = null;
+    }
 
     ItemCheckInMode.prototype.actions = function() {
       return [
@@ -39,8 +43,22 @@
 
     ItemCheckInMode.prototype.onResultSuccess = function(data) {
       var row;
-      row = this.createRow("", data.code, data.name, data.price);
-      return this.receipt.body.prepend(row);
+      if (data.vendor !== this.currentVendor) {
+        this.currentVendor = data.vendor;
+        return Api.vendor_get({
+          id: this.currentVendor
+        }).done((function(_this) {
+          return function(vendor) {
+            var row;
+            _this.receipt.body.prepend(new VendorInfo(vendor).render());
+            row = _this.createRow("", data.code, data.name, data.price);
+            return _this.receipt.body.prepend(row);
+          };
+        })(this));
+      } else {
+        row = this.createRow("", data.code, data.name, data.price);
+        return this.receipt.body.prepend(row);
+      }
     };
 
     ItemCheckInMode.prototype.onResultError = function(jqXHR) {

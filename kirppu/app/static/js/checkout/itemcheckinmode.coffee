@@ -4,6 +4,10 @@ class @ItemCheckInMode extends ItemCheckoutMode
   glyph: -> "import"
   title: -> "Vendor Check-In"
 
+  constructor: (args..., query) ->
+    super
+    @currentVendor = null
+
   actions: -> [[
     '', (code) =>
       Api.item_checkin(
@@ -12,8 +16,17 @@ class @ItemCheckInMode extends ItemCheckoutMode
   ]]
 
   onResultSuccess: (data) =>
-    row = @createRow("", data.code, data.name, data.price)
-    @receipt.body.prepend(row)
+    if data.vendor != @currentVendor
+      @currentVendor = data.vendor
+      Api.vendor_get(id: @currentVendor).done((vendor) =>
+        @receipt.body.prepend(new VendorInfo(vendor).render())
+
+        row = @createRow("", data.code, data.name, data.price)
+        @receipt.body.prepend(row)
+      )
+    else
+      row = @createRow("", data.code, data.name, data.price)
+      @receipt.body.prepend(row)
 
   onResultError: (jqXHR) =>
     if jqXHR.status == 404
