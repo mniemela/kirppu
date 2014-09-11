@@ -33,7 +33,7 @@
     };
 
     VendorCheckoutMode.prototype.actions = function() {
-      return [['', this.returnItem]];
+      return [['', this.returnItem], [this.cfg.settings.logoutPrefix, this.onLogout]];
     };
 
     VendorCheckoutMode.prototype.addVendorInfo = function() {

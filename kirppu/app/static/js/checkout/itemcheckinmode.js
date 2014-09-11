@@ -37,7 +37,7 @@
               }).then(_this.onResultSuccess, _this.onResultError);
             };
           })(this)
-        ]
+        ], [this.cfg.settings.logoutPrefix, this.onLogout]
       ];
     };
 

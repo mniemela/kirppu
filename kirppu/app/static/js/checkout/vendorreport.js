@@ -51,7 +51,7 @@
               return _this.switcher.switchTo(VendorFindMode, query);
             };
           })(this)
-        ]
+        ], [this.cfg.settings.logoutPrefix, this.onLogout]
       ];
     };
 

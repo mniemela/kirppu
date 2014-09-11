@@ -8,12 +8,14 @@ class @ItemCheckInMode extends ItemCheckoutMode
     super
     @currentVendor = null
 
-  actions: -> [[
-    '', (code) =>
+  actions: -> [
+    ['', (code) =>
       Api.item_checkin(
         code: code
       ).then(@onResultSuccess, @onResultError)
-  ]]
+    ]
+    [@cfg.settings.logoutPrefix,      @onLogout]
+  ]
 
   onResultSuccess: (data) =>
     if data.vendor != @currentVendor

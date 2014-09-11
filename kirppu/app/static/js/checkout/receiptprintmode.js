@@ -39,7 +39,7 @@
     };
 
     ReceiptPrintMode.prototype.actions = function() {
-      return [["", this.findReceipt]];
+      return [["", this.findReceipt], [this.cfg.settings.logoutPrefix, this.onLogout]];
     };
 
     ReceiptPrintMode.prototype.findReceipt = function(code) {

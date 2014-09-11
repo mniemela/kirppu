@@ -17,10 +17,10 @@ class @VendorFindMode extends CheckoutMode
   title: -> "Vendor Search"
   inputPlaceholder: -> "Search"
 
-  actions: -> [[
-    "", (query) =>
-      Api.vendor_find(q: query).done(@onVendorsFound)
-  ]]
+  actions: -> [
+    ["", (query) => Api.vendor_find(q: query).done(@onVendorsFound)]
+    [@cfg.settings.logoutPrefix,      @onLogout]
+  ]
 
   onVendorsFound: (vendors) =>
     @vendorList.body.empty()

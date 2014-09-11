@@ -41,3 +41,15 @@ class @CheckoutMode
   #
   # @return [Array] Mapping from prefixes to handler functions.
   actions: -> [["", ->]]
+
+  onLogout: =>
+    Api.clerk_logout().then(
+      () =>
+        console.log("Logged out #{ @cfg.settings.clerkName }.")
+        @cfg.settings.clerkName = null
+        @switcher.switchTo(ClerkLoginMode)
+
+      () =>
+        alert("Logout failed!")
+        return true
+    )

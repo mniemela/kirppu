@@ -12,7 +12,10 @@ class @VendorCheckoutMode extends ItemCheckoutMode
   glyph: -> "export"
   title: -> "Vendor Check-Out"
 
-  actions: -> [['', @returnItem]]
+  actions: -> [
+    ['', @returnItem]
+    [@cfg.settings.logoutPrefix,      @onLogout]
+  ]
 
   addVendorInfo: ->
     Api.vendor_get(id: @vendorId).done((vendor) =>

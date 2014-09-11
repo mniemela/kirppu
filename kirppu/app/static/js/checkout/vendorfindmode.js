@@ -52,7 +52,7 @@
               }).done(_this.onVendorsFound);
             };
           })(this)
-        ]
+        ], [this.cfg.settings.logoutPrefix, this.onLogout]
       ];
     };
 

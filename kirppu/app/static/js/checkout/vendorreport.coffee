@@ -13,9 +13,10 @@ class @VendorReport extends CheckoutMode
 
   title: -> gettext("Item Report")
 
-  actions: -> [[
-    "", (query) => @switcher.switchTo(VendorFindMode, query)
-  ]]
+  actions: -> [
+    ["", (query) => @switcher.switchTo(VendorFindMode, query)]
+    [@cfg.settings.logoutPrefix,      @onLogout]
+  ]
 
   enter: ->
     super

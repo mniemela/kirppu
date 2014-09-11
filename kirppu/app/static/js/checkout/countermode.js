@@ -277,18 +277,7 @@
         alert("Cannot logout while receipt is active!");
         return;
       }
-      return Api.clerk_logout().then((function(_this) {
-        return function() {
-          console.log("Logged out " + _this.cfg.settings.clerkName + ".");
-          _this.cfg.settings.clerkName = null;
-          return _this.switcher.switchTo(ClerkLoginMode);
-        };
-      })(this), (function(_this) {
-        return function() {
-          alert("Logout failed!");
-          return true;
-        };
-      })(this));
+      return CounterMode.__super__.onLogout.apply(this, arguments);
     };
 
     return CounterMode;

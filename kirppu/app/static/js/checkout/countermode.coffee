@@ -202,16 +202,7 @@ class @CounterMode extends ItemCheckoutMode
       alert("Cannot logout while receipt is active!")
       return
 
-    Api.clerk_logout().then(
-      () =>
-        console.log("Logged out #{ @cfg.settings.clerkName }.")
-        @cfg.settings.clerkName = null
-        @switcher.switchTo(ClerkLoginMode)
-
-      () =>
-        alert("Logout failed!")
-        return true
-    )
+    super
 
 
 # Class for holding in some some of receipt information.
