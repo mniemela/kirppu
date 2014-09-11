@@ -21,6 +21,7 @@
 
     VendorCompensation.prototype.enter = function() {
       VendorCompensation.__super__.enter.apply(this, arguments);
+      this.cfg.uiRef.codeForm.hide();
       this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
       this.buttonForm = $('<form class="hidden-print">').append(this.abortButton());
       this.cfg.uiRef.body.append(this.buttonForm);
@@ -29,6 +30,11 @@
       return Api.item_list({
         vendor: this.vendor.id
       }).done(this.onGotItems);
+    };
+
+    VendorCompensation.prototype.exit = function() {
+      this.cfg.uiRef.codeForm.show();
+      return VendorCompensation.__super__.exit.apply(this, arguments);
     };
 
     VendorCompensation.prototype.confirmButton = function() {

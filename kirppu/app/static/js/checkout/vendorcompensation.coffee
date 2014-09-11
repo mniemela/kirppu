@@ -8,6 +8,7 @@ class @VendorCompensation extends CheckoutMode
 
   enter: ->
     super
+    @cfg.uiRef.codeForm.hide()
     @cfg.uiRef.body.append(new VendorInfo(@vendor).render())
 
     @buttonForm = $('<form class="hidden-print">').append(@abortButton())
@@ -17,6 +18,10 @@ class @VendorCompensation extends CheckoutMode
     @cfg.uiRef.body.append(@itemDiv)
 
     Api.item_list(vendor: @vendor.id).done(@onGotItems)
+
+  exit: ->
+    @cfg.uiRef.codeForm.show()
+    super
 
   confirmButton: ->
     $('<input type="button" class="btn btn-success">')
