@@ -25,12 +25,8 @@ class @VendorFindMode extends CheckoutMode
   onVendorsFound: (vendors) =>
     @vendorList.body.empty()
     for vendor, index in vendors
-      @vendorList.body.append(@createRow(index + 1, vendor))
-
-  createRow: (index, vendor) =>
-    row = $("<tr>")
-    row.append($("<td>").text(index))
-    for a in ['id', 'name', 'email', 'phone']
-      row.append.apply(row, $("<td>").text(vendor[a]))
-
-    row.click(=> @switcher.switchTo(VendorReport, vendor))
+      @vendorList.append(
+        vendor,
+        index + 1,
+        (=> @switcher.switchTo(VendorReport, vendor)),
+      )

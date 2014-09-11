@@ -322,6 +322,7 @@ def vendor_find(request, q):
     for part in q.split():
         clause = (
               Q(phone=part)
+            | Q(username__icontains=part)
             | Q(first_name__icontains=part)
             | Q(last_name__icontains=part)
             | Q(email__icontains=part)

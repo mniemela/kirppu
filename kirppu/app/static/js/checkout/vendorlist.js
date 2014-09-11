@@ -8,8 +8,26 @@
 
     function VendorList() {
       VendorList.__super__.constructor.apply(this, arguments);
-      this.head.append(['<th class="receipt_index">#</th>', '<th class="receipt_code">id</th>', '<th class="receipt_item">name</th>', '<th class="receipt_item">email</th>', '<th class="receipt_item">phone</th>'].map($));
+      this.head.append(['<th class="receipt_index">#</th>', '<th class="receipt_username">username</th>', '<th class="receipt_vendor_id">id</th>', '<th class="receipt_name">name</th>', '<th class="receipt_email">email</th>', '<th class="receipt_phone">phone</th>'].map($));
     }
+
+    VendorList.prototype.append = function(vendor, index, action) {
+      var a, row;
+      row = $("<tr>");
+      row.append($("<td>").text(index));
+      row.append((function() {
+        var _i, _len, _ref, _results;
+        _ref = ['username', 'id', 'name', 'email', 'phone'];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          _results.push($("<td>").text(vendor[a]));
+        }
+        return _results;
+      })());
+      row.click(action);
+      return this.body.append(row);
+    };
 
     return VendorList;
 

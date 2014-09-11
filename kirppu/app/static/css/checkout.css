@@ -22,6 +22,10 @@ td.receipt_code {
     max-width: 5em;
     white-space: nowrap;
 }
+.receipt_vendor_id {
+    width:     4em;
+    max-width: 4em;
+}
 .receipt_status {
     width: 0;
     white-space: nowrap;

@@ -13,7 +13,6 @@
     function VendorFindMode() {
       var args, query, _i;
       args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), query = arguments[_i++];
-      this.createRow = __bind(this.createRow, this);
       this.onVendorsFound = __bind(this.onVendorsFound, this);
       VendorFindMode.__super__.constructor.apply(this, arguments);
       this.vendorList = new VendorList();
@@ -62,25 +61,13 @@
       _results = [];
       for (index = _i = 0, _len = vendors.length; _i < _len; index = ++_i) {
         vendor = vendors[index];
-        _results.push(this.vendorList.body.append(this.createRow(index + 1, vendor)));
+        _results.push(this.vendorList.append(vendor, index + 1, ((function(_this) {
+          return function() {
+            return _this.switcher.switchTo(VendorReport, vendor);
+          };
+        })(this))));
       }
       return _results;
-    };
-
-    VendorFindMode.prototype.createRow = function(index, vendor) {
-      var a, row, _i, _len, _ref;
-      row = $("<tr>");
-      row.append($("<td>").text(index));
-      _ref = ['id', 'name', 'email', 'phone'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        a = _ref[_i];
-        row.append.apply(row, $("<td>").text(vendor[a]));
-      }
-      return row.click((function(_this) {
-        return function() {
-          return _this.switcher.switchTo(VendorReport, vendor);
-        };
-      })(this));
     };
 
     return VendorFindMode;

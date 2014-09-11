@@ -174,6 +174,7 @@ class Vendor(models.Model):
 
     as_dict = model_dict_fn(
         'id',
+        username=lambda self: self.user.username,
         name=lambda self: self.user.first_name  + u' ' + self.user.last_name,
         email=lambda self: self.user.email,
         phone=lambda self: self.user.phone,
