@@ -30,6 +30,10 @@
       }
     };
 
+    VendorFindMode.prototype.glyph = function() {
+      return "user";
+    };
+
     VendorFindMode.prototype.title = function() {
       return "Vendor Search";
     };

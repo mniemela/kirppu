@@ -58,6 +58,10 @@
       this.setMenuEnabled(true);
       this._currentMode = new mode(this, this.cfg, params);
       this.cfg.uiRef.body.empty();
+      this.cfg.uiRef.glyph.removeClass().addClass('glyphicon');
+      if (this._currentMode.glyph()) {
+        this.cfg.uiRef.glyph.addClass("glyphicon-" + this._currentMode.glyph());
+      }
       this.cfg.uiRef.stateText.text(this._currentMode.title());
       this.cfg.uiRef.subtitleText.text(this._currentMode.subtitle() || "");
       this.cfg.uiRef.codeInput.attr("placeholder", this._currentMode.inputPlaceholder());

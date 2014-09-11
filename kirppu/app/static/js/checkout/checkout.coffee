@@ -1,6 +1,7 @@
 class Config
   uiId:
     body: null
+    glyph: null
     stateText: null
     subtitleText: null
     codeInput: null
@@ -9,6 +10,7 @@ class Config
     dialog: null
   uiRef:
     body: null
+    glyph: null
     stateText: null
     subtitleText: null
     codeInput: null

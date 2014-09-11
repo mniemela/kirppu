@@ -7,6 +7,7 @@
 
     Config.prototype.uiId = {
       body: null,
+      glyph: null,
       stateText: null,
       subtitleText: null,
       codeInput: null,
@@ -17,6 +18,7 @@
 
     Config.prototype.uiRef = {
       body: null,
+      glyph: null,
       stateText: null,
       subtitleText: null,
       codeInput: null,

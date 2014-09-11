@@ -26,6 +26,10 @@
       return this.cfg.uiRef.body.append(this.receipt.render());
     };
 
+    ReceiptPrintMode.prototype.glyph = function() {
+      return "list-alt";
+    };
+
     ReceiptPrintMode.prototype.title = function() {
       return this.constructor.strTitle;
     };

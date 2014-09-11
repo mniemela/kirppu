@@ -6,6 +6,10 @@
       this.cfg = config ? config : CheckoutConfig;
     }
 
+    CheckoutMode.prototype.glyph = function() {
+      return "";
+    };
+
     CheckoutMode.prototype.title = function() {
       return "[unknown mode]";
     };

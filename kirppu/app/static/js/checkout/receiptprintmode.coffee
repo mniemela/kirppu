@@ -13,6 +13,7 @@ class @ReceiptPrintMode extends CheckoutMode
     super
     @cfg.uiRef.body.append(@receipt.render())
 
+  glyph: -> "list-alt"
   title: -> @constructor.strTitle
   subtitle: -> ""
 

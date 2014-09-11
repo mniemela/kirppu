@@ -9,6 +9,11 @@ class @CheckoutMode
     @switcher = switcher
     @cfg = if config then config else CheckoutConfig
 
+  # Glyph to display along the title.
+  #
+  # @return [String] Name of glyphicon without glyphicon- prefix.
+  glyph: -> ""
+
   # Title to display in this mode.
   #
   # @return [String] Title string.

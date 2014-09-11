@@ -15,6 +15,10 @@
 
     ModeSwitcher.registerEntryPoint("vendor_check_in", ItemCheckInMode);
 
+    ItemCheckInMode.prototype.glyph = function() {
+      return "import";
+    };
+
     ItemCheckInMode.prototype.title = function() {
       return "Vendor Check-In";
     };

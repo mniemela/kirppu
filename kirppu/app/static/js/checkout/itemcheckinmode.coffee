@@ -1,6 +1,7 @@
 class @ItemCheckInMode extends ItemCheckoutMode
   ModeSwitcher.registerEntryPoint("vendor_check_in", @)
 
+  glyph: -> "import"
   title: -> "Vendor Check-In"
 
   actions: -> [[

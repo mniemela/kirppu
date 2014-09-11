@@ -24,6 +24,10 @@
       }
     };
 
+    VendorCheckoutMode.prototype.glyph = function() {
+      return "export";
+    };
+
     VendorCheckoutMode.prototype.title = function() {
       return "Vendor Check-Out";
     };

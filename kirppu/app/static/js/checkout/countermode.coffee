@@ -9,6 +9,7 @@ class @CounterMode extends ItemCheckoutMode
       @restoreReceipt(modeArgs)
     @receipt.body.attr("id", "counter_receipt")
 
+  glyph: -> "euro"
   title: -> "Checkout"
 
   actions: -> [

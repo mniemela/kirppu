@@ -9,6 +9,7 @@ class @VendorCheckoutMode extends ItemCheckoutMode
     super
     if @vendorId? then do @addVendorInfo
 
+  glyph: -> "export"
   title: -> "Vendor Check-Out"
 
   actions: -> [['', @returnItem]]

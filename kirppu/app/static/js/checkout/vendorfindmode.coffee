@@ -13,6 +13,7 @@ class @VendorFindMode extends CheckoutMode
     if @query?
       Api.vendor_find(q: @query).done(@onVendorsFound)
 
+  glyph: -> "user"
   title: -> "Vendor Search"
   inputPlaceholder: -> "Search"
 

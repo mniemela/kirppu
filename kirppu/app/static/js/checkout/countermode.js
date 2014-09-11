@@ -29,6 +29,10 @@
       this.receipt.body.attr("id", "counter_receipt");
     }
 
+    CounterMode.prototype.glyph = function() {
+      return "euro";
+    };
+
     CounterMode.prototype.title = function() {
       return "Checkout";
     };
