@@ -14,6 +14,7 @@
     VendorList.prototype.append = function(vendor, index, action) {
       var a, row;
       row = $("<tr>");
+      row.addClass('receipt_tr_clickable');
       row.append($("<td>").text(index));
       row.append((function() {
         var _i, _len, _ref, _results;

@@ -12,6 +12,7 @@ class @VendorList extends ResultTable
 
   append: (vendor, index, action) ->
     row = $("<tr>")
+    row.addClass('receipt_tr_clickable')
     row.append($("<td>").text(index))
     row.append(
       for a in ['username', 'id', 'name', 'email', 'phone']

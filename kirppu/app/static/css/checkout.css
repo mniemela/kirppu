@@ -30,6 +30,10 @@ td.receipt_code {
     width: 0;
     white-space: nowrap;
 }
+tr.receipt_tr_clickable:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
 #counter_receipt > tr:first-child td {
     font-size: larger;
     font-weight: bold;
