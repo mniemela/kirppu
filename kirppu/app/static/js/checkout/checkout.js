@@ -6,6 +6,7 @@
     function Config() {}
 
     Config.prototype.uiId = {
+      container: null,
       body: null,
       glyph: null,
       stateText: null,
@@ -17,6 +18,7 @@
     };
 
     Config.prototype.uiRef = {
+      container: null,
       body: null,
       glyph: null,
       stateText: null,

@@ -30,6 +30,21 @@ td.receipt_code {
     font-size: larger;
     font-weight: bold;
 }
+.color-CounterMode {
+    background-color: #eeeeff;
+}
+.color-ItemCheckInMode {
+    background-color: #eeffee;
+}
+.color-VendorCheckoutMode {
+    background-color: #ffeeee;
+}
+.color-VendorFindMode {
+    background-color: #ffffee;
+}
+.color-ReceiptPrintMode {
+    background-color: #ffeeff;
+}
 
 @media print {
 

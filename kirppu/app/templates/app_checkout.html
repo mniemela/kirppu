@@ -16,19 +16,19 @@
     <li class="dropdown" id="modeMenu"><a href="javascript:void(1)" class="dropdown-toggle" data-toggle="dropdown">Counter mode <b class="caret"></b></a>
         <ul class="dropdown-menu">
         <li>
-            <a href="javascript:void(1)" data-entrypoint="customer_checkout"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
+            <a href="javascript:void(1)" data-entrypoint="customer_checkout" class="color-CounterMode"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
         </li>
         <li>
-            <a href="javascript:void(1)" data-entrypoint="vendor_check_in"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
+            <a href="javascript:void(1)" data-entrypoint="vendor_check_in" class="color-ItemCheckInMode"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
         </li>
         <li>
-            <a href="javascript:void(1)" data-entrypoint="reports"><span class="glyphicon glyphicon-list-alt"></span> Receipt Search</a>
+            <a href="javascript:void(1)" data-entrypoint="reports" class="color-ReceiptPrintMode"><span class="glyphicon glyphicon-list-alt"></span> Receipt Search</a>
         </li>
         <li>
-            <a href="javascript:void(1)" data-entrypoint="vendor_check_out"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
+            <a href="javascript:void(1)" data-entrypoint="vendor_check_out" class="color-VendorCheckoutMode"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
         </li>
         <li>
-            <a href="javascript:void(1)" data-entrypoint="vendor_find"><span class="glyphicon glyphicon-user"></span> Vendor Search</a>
+            <a href="javascript:void(1)" data-entrypoint="vendor_find" class="color-VendorFindMode"><span class="glyphicon glyphicon-user"></span> Vendor Search</a>
         </li>
         </ul>
     </li>
@@ -61,6 +61,7 @@
         src="{% url 'kirppu:checkout_js' %}"
         charset="UTF-8"></script>
 <script type="application/javascript"><!--
+    CheckoutConfig.uiId.container = "body";
     CheckoutConfig.uiId.body = "receipt_body";
     CheckoutConfig.uiId.glyph = "mode_glyph"
     CheckoutConfig.uiId.stateText = "title_text";

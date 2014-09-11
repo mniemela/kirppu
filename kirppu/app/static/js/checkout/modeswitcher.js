@@ -57,6 +57,8 @@
       }
       this.setMenuEnabled(true);
       this._currentMode = new mode(this, this.cfg, params);
+      this.cfg.uiRef.container.removeClass().addClass('container').addClass('color-mode');
+      this.cfg.uiRef.container.addClass('color-' + this._currentMode.constructor.name);
       this.cfg.uiRef.body.empty();
       this.cfg.uiRef.glyph.removeClass().addClass('glyphicon');
       if (this._currentMode.glyph()) {

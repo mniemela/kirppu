@@ -1,5 +1,6 @@
 class Config
   uiId:
+    container: null
     body: null
     glyph: null
     stateText: null
@@ -9,6 +10,7 @@ class Config
     modeMenu: null
     dialog: null
   uiRef:
+    container: null
     body: null
     glyph: null
     stateText: null

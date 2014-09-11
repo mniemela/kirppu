@@ -58,6 +58,8 @@ class @ModeSwitcher
     @setMenuEnabled(true)
     @_currentMode = new mode(@, @cfg, params)
 
+    @cfg.uiRef.container.removeClass().addClass('container').addClass('color-mode')
+    @cfg.uiRef.container.addClass('color-' + @_currentMode.constructor.name)
     @cfg.uiRef.body.empty()
     @cfg.uiRef.glyph.removeClass().addClass('glyphicon')
     if @_currentMode.glyph()
