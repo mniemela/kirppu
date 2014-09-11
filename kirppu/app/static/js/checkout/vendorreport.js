@@ -9,19 +9,22 @@
     [
       gettext('Compensable Items'), {
         SO: 0
-      }
+      }, false
     ], [
       gettext('Returnable Items'), {
         BR: 0,
         ST: 0
-      }
+      }, false
     ], [
       gettext('Other Items'), {
         MI: 0,
         RE: 0,
-        CO: 0,
+        CO: 0
+      }, false
+    ], [
+      gettext('Not brought to event'), {
         AD: 0
-      }
+      }, true
     ]
   ];
 
@@ -65,10 +68,10 @@
     };
 
     VendorReport.prototype.onGotItems = function(items) {
-      var i, matchingItems, name, states, table, _i, _len, _ref, _results;
+      var hidePrint, i, matchingItems, name, rendered_table, states, table, _i, _len, _ref, _results;
       _results = [];
       for (_i = 0, _len = tables.length; _i < _len; _i++) {
-        _ref = tables[_i], name = _ref[0], states = _ref[1];
+        _ref = tables[_i], name = _ref[0], states = _ref[1], hidePrint = _ref[2];
         matchingItems = (function() {
           var _j, _len1, _results1;
           _results1 = [];
@@ -80,13 +83,13 @@
           }
           return _results1;
         })();
-        if (matchingItems.length > 0) {
-          table = new ItemReportTable(name);
-          table.update(matchingItems);
-          _results.push(this.cfg.uiRef.body.append(table.render()));
-        } else {
-          _results.push(void 0);
+        table = new ItemReportTable(name);
+        table.update(matchingItems);
+        rendered_table = table.render();
+        if (hidePrint) {
+          rendered_table.addClass('hidden-print');
         }
+        _results.push(this.cfg.uiRef.body.append(rendered_table));
       }
       return _results;
     };

@@ -1,7 +1,9 @@
 tables = [
-  [gettext('Compensable Items'), {SO: 0}]
-  [gettext('Returnable Items'),  {BR: 0, ST: 0}]
-  [gettext('Other Items'),       {MI: 0, RE: 0, CO: 0, AD: 0}]
+  # title, included modes, hideInPrint
+  [gettext('Compensable Items'), {SO: 0}, false]
+  [gettext('Returnable Items'),  {BR: 0, ST: 0}, false]
+  [gettext('Other Items'),       {MI: 0, RE: 0, CO: 0}, false]
+  [gettext('Not brought to event'), {AD: 0}, true]
 ]
 
 class @VendorReport extends CheckoutMode
@@ -38,12 +40,13 @@ class @VendorReport extends CheckoutMode
     ).done(@onGotItems)
 
   onGotItems: (items) =>
-    for [name, states] in tables
+    for [name, states, hidePrint] in tables
       matchingItems = (i for i in items when states[i.state]?)
-      if matchingItems.length > 0
-        table = new ItemReportTable(name)
-        table.update(matchingItems)
-        @cfg.uiRef.body.append(table.render())
+      table = new ItemReportTable(name)
+      table.update(matchingItems)
+      rendered_table = table.render()
+      if hidePrint then rendered_table.addClass('hidden-print')
+      @cfg.uiRef.body.append(rendered_table)
 
   onCompensate: => @switcher.switchTo(VendorCompensation, @vendor)
   onReturn: =>     @switcher.switchTo(VendorCheckoutMode, @vendor)
