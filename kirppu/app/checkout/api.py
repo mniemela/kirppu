@@ -48,6 +48,20 @@ RET_AUTH_FAILED = 419  # Authentication timeout
 RET_LOCKED = 423  # Locked resource
 RET_OK = 200  # OK
 
+
+def raise_if_item_not_available(item):
+    """Raise appropriate AjaxError if item is not in buyable state."""
+    if item.state == Item.STAGED:
+        # Staged somewhere other?
+        raise AjaxError(RET_LOCKED, 'Item is already staged to be sold.')
+    elif item.state == Item.ADVERTISED:
+        raise AjaxError(RET_CONFLICT, 'Item has not been brought to event.')
+    elif item.state in (Item.SOLD, Item.COMPENSATED):
+        raise AjaxError(RET_CONFLICT, 'Item has already been sold.')
+    elif item.state == Item.RETURNED:
+        raise AjaxError(RET_CONFLICT, 'Item has already been returned to owner.')
+
+
 class AjaxFunc(object):
     def __init__(self, func, url, method):
         self.name = func.func_name              # name of the view function
@@ -265,8 +279,8 @@ def counter_validate(request, code):
 @ajax_func('^item/find$', method='GET')
 def item_find(request, code):
     item = _get_item_or_404(code)
-    if "available" in request.GET and item.state != Item.BROUGHT:
-        raise AjaxError(RET_LOCKED if item.state == Item.STAGED else RET_CONFLICT)
+    if "available" in request.GET:
+        raise_if_item_not_available(item)
     return item.as_dict()
 
 
@@ -343,7 +357,9 @@ def item_reserve(request, code):
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
-    if item.state == Item.BROUGHT:
+    raise_if_item_not_available(item)
+
+    if item.state in (Item.BROUGHT, Item.MISSING):
         item.state = Item.STAGED
         item.save()
 
@@ -355,10 +371,6 @@ def item_reserve(request, code):
         ret = item.as_dict()
         ret.update(total=receipt.total_cents)
         return ret
-
-    elif item.state == Item.STAGED:
-        # Staged somewhere other?
-        raise AjaxError(RET_LOCKED)
     else:
         # Not in expected state.
         raise AjaxError(RET_CONFLICT)

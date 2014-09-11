@@ -84,7 +84,7 @@
           };
         })(this), (function(_this) {
           return function(jqXHR) {
-            return _this.showError(jqXHR.status, code);
+            return _this.showError(jqXHR.status, jqXHR.responseText, code);
           };
         })(this));
       } else {
@@ -92,17 +92,22 @@
       }
     };
 
-    CounterMode.prototype.showError = function(status, code) {
+    CounterMode.prototype.showError = function(status, text, code) {
+      var errorMsg;
       switch (status) {
         case 404:
-          return alert("Item is not registered: " + code);
+          errorMsg = "Item is not registered.";
+          break;
         case 409:
-          return alert("Item state is not brought to event: " + code);
+          errorMsg = text;
+          break;
         case 423:
-          return alert("Item state already staged: " + code);
+          errorMsg = text;
+          break;
         default:
-          return alert("Error " + status + ": " + code);
+          errorMsg = "Error " + status + ".";
       }
+      return alert(errorMsg + ' ' + code);
     };
 
     CounterMode.prototype.restoreReceipt = function(receipt) {
@@ -177,7 +182,7 @@
         };
       })(this), (function(_this) {
         return function(jqXHR) {
-          _this.showError(jqXHR.status, code);
+          _this.showError(jqXHR.status, jqXHR.responseText, code);
           return true;
         };
       })(this));

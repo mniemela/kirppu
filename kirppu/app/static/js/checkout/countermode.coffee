@@ -46,17 +46,19 @@ class @CounterMode extends ItemCheckoutMode
     if not @_receipt.isActive()
       Api.item_find(code: code, available: true).then(
         () => @startReceipt(code)
-        (jqXHR) => @showError(jqXHR.status, code)
+        (jqXHR) => @showError(jqXHR.status, jqXHR.responseText, code)
       )
     else
       @reserveItem(code)
 
-  showError: (status, code) =>
+  showError: (status, text, code) =>
     switch status
-      when 404 then alert("Item is not registered: " + code)
-      when 409 then alert("Item state is not brought to event: " + code)
-      when 423 then alert("Item state already staged: " + code)
-      else alert("Error " + status + ": " + code)
+      when 404 then errorMsg = "Item is not registered."
+      when 409 then errorMsg = text
+      when 423 then errorMsg = text
+      else errorMsg = "Error " + status + "."
+
+    alert(errorMsg + ' ' + code)
 
   restoreReceipt: (receipt) ->
     @switcher.setMenuEnabled(false)
@@ -110,7 +112,7 @@ class @CounterMode extends ItemCheckoutMode
           @_receipt.total += data.price
           @addRow(data.code, data.name, data.price)
         (jqXHR) =>
-          @showError(jqXHR.status, code)
+          @showError(jqXHR.status, jqXHR.responseText, code)
           return true
       )
 
