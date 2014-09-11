@@ -24,7 +24,7 @@
       if (rounded == null) {
         rounded = false;
       }
-      row = $("<tr>");
+      row = $('<tr id="' + code + '">');
       _ref = [index, code, name, displayPrice(price, rounded)];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         x = _ref[_i];

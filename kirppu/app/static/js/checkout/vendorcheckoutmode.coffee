@@ -3,10 +3,18 @@ class @VendorCheckoutMode extends ItemCheckoutMode
 
   constructor: (cfg, switcher, vendor) ->
     super(cfg, switcher)
+
     @vendorId = if vendor? then vendor.id else null
+
+    @receipt = new ItemReceiptTable('Returned items')
+    @lastItem = new ItemReceiptTable()
+    @remainingItems = new ItemReceiptTable('Remaining items')
 
   enter: ->
     super
+
+    @cfg.uiRef.body.prepend(@remainingItems.render())
+    @cfg.uiRef.body.prepend(@lastItem.render())
     if @vendorId? then do @addVendorInfo
 
   glyph: -> "export"
@@ -28,6 +36,21 @@ class @VendorCheckoutMode extends ItemCheckoutMode
       @cfg.uiRef.body.prepend(new VendorInfo(vendor).render())
     )
 
+    Api.item_list(
+      vendor: @vendorId
+    ).done(@onGotItems)
+
+  onGotItems: (items) =>
+    remaining = {BR: 0, ST: 0, MI: 0}
+    for item in items when remaining[item.state]?
+      row = @createRow("", item.code, item.name, item.price)
+      @remainingItems.body.prepend(row)
+
+    returned = {RE: 0, CO: 0}
+    for item in items when returned[item.state]?
+      row = @createRow("", item.code, item.name, item.price)
+      @receipt.body.prepend(row)
+
   returnItem: (code) =>
     Api.item_find(code: code).done(@onItemFound)
 
@@ -43,5 +66,6 @@ class @VendorCheckoutMode extends ItemCheckoutMode
     Api.item_checkout(code: item.code).done(@onCheckedOut)
 
   onCheckedOut: (item) =>
-    row = @createRow("", item.code, item.name, item.price)
-    @receipt.body.prepend(row)
+    @receipt.body.prepend($('tr', @lastItem.body))
+
+    @lastItem.body.prepend($('#' + item.code, @remainingItems.body))
