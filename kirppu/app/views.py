@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 import decimal
 import json
 from django.core.exceptions import PermissionDenied
+from kirppu.app.checkout.api import clerk_logout_fn
 from kirppu.app.forms import ItemRemoveForm
 from kirppu.util import get_form
 import re
@@ -400,6 +401,7 @@ def checkout_view(request):
     :return: Response containing the view.
     :rtype: HttpResponse
     """
+    clerk_logout_fn(request)
     return render(request, "app_checkout.html", {
         'CounterCommands': CounterCommands,
     })

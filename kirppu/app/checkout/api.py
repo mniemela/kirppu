@@ -256,9 +256,18 @@ def clerk_logout(request):
     """
     Logout currently logged in clerk.
     """
+    clerk_logout_fn(request)
+    return HttpResponse()
+
+
+def clerk_logout_fn(request):
+    """
+    The actual logout procedure that can be used from elsewhere too.
+
+    :param request: Active request, for session access.
+    """
     for key in ["clerk", "clerk_token", "counter"]:
         request.session.pop(key, None)
-    return HttpResponse()
 
 
 @ajax_func('^counter/validate$', clerk=False, counter=False)
