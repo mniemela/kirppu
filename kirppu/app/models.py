@@ -259,7 +259,7 @@ class Item(models.Model):
     hidden = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.name
+        return u"{name} ({code})".format(name=self.name, code=self.code)
 
     as_dict = model_dict_fn("code", "name", "state", price="price_cents", vendor="vendor_id")
 
