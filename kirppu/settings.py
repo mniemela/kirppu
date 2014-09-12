@@ -245,7 +245,7 @@ PIPELINE_COMPILERS = (
 )
 PIPELINE_CSS_COMPRESSOR = None
 PIPELINE_JS_COMPRESSOR = None
-
+STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
