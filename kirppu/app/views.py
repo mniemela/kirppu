@@ -25,7 +25,7 @@ import django.core.urlresolvers as url
 from django.utils.http import is_safe_url
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth import logout
+from django.contrib.auth import logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 
@@ -283,11 +283,14 @@ def get_items(request, bar_type):
     :return: HttpResponse or HttpResponseBadRequest
     """
 
+    user = request.user
+    if user.is_staff and "user" in request.GET:
+        user = get_object_or_404(get_user_model(), username=request.GET["user"])
     tag_type = request.GET.get("tag", "short").lower()
     if tag_type not in ('short', 'long'):
         return HttpResponseBadRequest(u"Tag type not supported")
 
-    vendor = Vendor.get_vendor(request.user)
+    vendor = Vendor.get_vendor(user)
     items = Item.objects.filter(vendor=vendor).filter(printed=False)
     printed_items = Item.objects.filter(vendor=vendor).filter(printed=True)
     printed_items = printed_items.filter(hidden=False)
