@@ -43,6 +43,10 @@
       return gettext("Item Report");
     };
 
+    VendorReport.prototype.inputPlaceholder = function() {
+      return "Search";
+    };
+
     VendorReport.prototype.actions = function() {
       return [
         [

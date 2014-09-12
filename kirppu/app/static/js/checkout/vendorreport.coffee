@@ -12,6 +12,7 @@ class @VendorReport extends CheckoutMode
     @vendor = vendor
 
   title: -> gettext("Item Report")
+  inputPlaceholder: -> "Search"
 
   actions: -> [
     ["", (query) => @switcher.switchTo(VendorFindMode, query)]
