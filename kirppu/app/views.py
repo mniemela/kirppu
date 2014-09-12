@@ -2,6 +2,9 @@ from collections import namedtuple
 from decimal import Decimal, InvalidOperation
 import decimal
 import json
+from django.core.exceptions import PermissionDenied
+from kirppu.app.forms import ItemRemoveForm
+from kirppu.util import get_form
 import re
 import urllib
 
@@ -10,7 +13,7 @@ import barcode
 from django.http.response import (
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseForbidden)
+    HttpResponseForbidden, HttpResponseRedirect)
 from django.shortcuts import (
     render,
     redirect,
@@ -457,3 +460,19 @@ def logout_view(request):
         urllib.urlencode({'next': destination}),
     )
     return redirect(logout_url)
+
+
+@login_required
+def remove_item_from_receipt(request):
+    if not request.user.is_staff:
+        raise PermissionDenied()
+
+    form = get_form(ItemRemoveForm, request)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return HttpResponseRedirect(url.reverse('kirppu:remove_item_from_receipt'))
+
+    return render(request, "app_item_receipt_remove.html", {
+        'form': form,
+    })

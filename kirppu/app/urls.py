@@ -25,4 +25,6 @@ urlpatterns = patterns('kirppu.app.views',
     url(r'^logout/?$', 'logout_view', name='logout_view'),
 
     url(r'^api/', include('kirppu.app.checkout.urls')),
+
+    url(r'^remove_item', 'remove_item_from_receipt', name='remove_item_from_receipt'),
 )
