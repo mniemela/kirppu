@@ -32,10 +32,10 @@ class CounterCommands(object):
 class Clerk(models.Model):
     PREFIX = "::"
 
-    user = models.OneToOneField(User, null=True)    
+    user = models.OneToOneField(User, null=True)
     access_key = models.CharField(
         max_length=128,
-        unique=True,
+        unique=True,  # TODO: Replace unique restraint with db_index.
         null=True,
         blank=True,
         verbose_name=_(u"Access key value"),
@@ -112,6 +112,10 @@ class Clerk(models.Model):
         if zeros != 0:
             raise ValueError("Not a Clerk code")
 
+        if access_key < 100000:
+            # "Valid" key, but disabled.
+            raise ValueError("Not a Clerk")
+
         access_key_hex = number_to_hex(access_key, 56)
         try:
             clerk = cls.objects.get(access_key=access_key_hex)
@@ -121,16 +125,21 @@ class Clerk(models.Model):
             return None
         return clerk
 
-    def generate_access_key(self):
+    def generate_access_key(self, disabled=False):
         """
         Generate new access token for this Clerk. This will automatically overwrite old value.
 
         :return: The newly generated token.
         """
         key = None
-        i_max = 2 ** 56 - 1
+        if not disabled:
+            i_min = 100000
+            i_max = 2 ** 56 - 1
+        else:
+            i_min = 1
+            i_max = 100000 - 1
         while key is None or Clerk.objects.filter(access_key=key).exists():
-            key = random.randint(1, i_max)
+            key = random.randint(i_min, i_max)
         self.access_key = number_to_hex(key, 56)
         return key
 

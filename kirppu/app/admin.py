@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import IntegrityError
 from django.utils.translation import ugettext
 from django.contrib import messages
 from kirppu.app.forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm
@@ -56,7 +57,15 @@ class ClerkAdmin(admin.ModelAdmin):
     _gen_clerk_code.short_description = ugettext(u"Generate missing Clerk access codes")
 
     def _del_clerk_code(self, request, queryset):
-        queryset.update(access_key=None)
+        for clerk in queryset:
+            while True:
+                clerk.generate_access_key(disabled=True)
+                try:
+                    clerk.save(update_fields=["access_key"])
+                except IntegrityError:
+                    continue
+                else:
+                    break
     _del_clerk_code.short_description = ugettext(u"Delete Clerk access codes")
 
     def _move_error(self, request):
