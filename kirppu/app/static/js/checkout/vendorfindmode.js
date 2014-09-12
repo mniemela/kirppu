@@ -56,16 +56,18 @@
     };
 
     VendorFindMode.prototype.onVendorsFound = function(vendors) {
-      var index, vendor, _i, _len, _results;
+      var index_, vendor_, _i, _len, _results;
       this.vendorList.body.empty();
       _results = [];
-      for (index = _i = 0, _len = vendors.length; _i < _len; index = ++_i) {
-        vendor = vendors[index];
-        _results.push(this.vendorList.append(vendor, index + 1, ((function(_this) {
-          return function() {
-            return _this.switcher.switchTo(VendorReport, vendor);
+      for (index_ = _i = 0, _len = vendors.length; _i < _len; index_ = ++_i) {
+        vendor_ = vendors[index_];
+        _results.push(((function(_this) {
+          return function(vendor, index) {
+            return _this.vendorList.append(vendor, index + 1, (function() {
+              return _this.switcher.switchTo(VendorReport, vendor);
+            }));
           };
-        })(this))));
+        })(this))(vendor_, index_));
       }
       return _results;
     };

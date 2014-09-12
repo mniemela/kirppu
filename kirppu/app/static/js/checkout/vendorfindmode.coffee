@@ -24,9 +24,12 @@ class @VendorFindMode extends CheckoutMode
 
   onVendorsFound: (vendors) =>
     @vendorList.body.empty()
-    for vendor, index in vendors
-      @vendorList.append(
-        vendor,
-        index + 1,
-        (=> @switcher.switchTo(VendorReport, vendor)),
-      )
+    for vendor_, index_ in vendors
+      ((vendor, index) =>
+        @vendorList.append(
+          vendor,
+          index + 1,
+          (=> @switcher.switchTo(VendorReport, vendor)),
+        )
+      )(vendor_, index_)
+
