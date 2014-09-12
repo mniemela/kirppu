@@ -73,7 +73,7 @@
         }).call(this));
         this.body.append(row);
       }
-      return this.body.append($('<tr>').append($('<th colspan="3">').text(gettext('Total:')), $('<th class="receipt_price numeric">').text(displayPrice(sum))));
+      return this.body.append($('<tr>').append($('<th colspan="3">').text(gettext('Total:')), $('<th class="receipt_price numeric">').text(displayPrice(sum)), $('<th>')));
     };
 
     return ItemReportTable;

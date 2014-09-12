@@ -44,4 +44,5 @@ class @ItemReportTable extends ResultTable
     @body.append($('<tr>').append(
       $('<th colspan="3">').text(gettext('Total:'))
       $('<th class="receipt_price numeric">').text(displayPrice(sum))
+      $('<th>')
     ))
