@@ -337,7 +337,7 @@ def vendor_find(request, q):
             | Q(email__icontains=part)
         )
         try:
-            clause = clause | Q(id=int(part))
+            clause = clause | Q(vendor__id=int(part))
         except ValueError:
             pass
 
