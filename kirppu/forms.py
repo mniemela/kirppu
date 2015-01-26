@@ -78,6 +78,7 @@ class ReceiptItemAdminForm(forms.ModelForm):
 
     class Meta:
         model = ReceiptItem
+        fields = ("item", "receipt", "action")
 
 
 class ReceiptAdminForm(forms.ModelForm):

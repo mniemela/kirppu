@@ -8,12 +8,6 @@ _path = lambda path: os.path.normpath(os.path.join(BASE, '..', path))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
@@ -48,8 +42,6 @@ LANGUAGES = (
 LOCALE_PATHS = (
     _path("locale"),
 )
-
-SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -138,7 +130,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
