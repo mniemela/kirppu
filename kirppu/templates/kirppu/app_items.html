@@ -1,15 +1,14 @@
 {% extends "kirppu/app_vendor.html" %}{% load i18n %}
 
-{% load compressed %}
-{% load staticfiles %}
+{% load static %}
 
 {% block head %}
-    {% compressed_css 'general' %}
-    {% compressed_css 'price_tags' %}
-    {% compressed_js 'general' %}
-    {% compressed_js 'jeditable' %}
-    {% compressed_js 'price_tags' %}
-    <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
+
+    <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+    <link href="{% static "kirppu/css/price_tags.css" %}" rel="stylesheet">
+    <script src="{% static "kirppu/js/general.js" %}"></script>
+    <script src="{% static "kirppu/js/jeditable.js" %}"></script>
+    <script src="{% static "kirppu/js/price_tags.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -98,18 +97,18 @@
     </form>
 
     {# Output a single item_container as a template for javascript. #}
-    {% include 'app_items_item.html' with tag_type="template" name="" price="0" code="" vendor_id="" locked=False %}
+    {% include 'kirppu/app_items_item.html' with tag_type="template" name="" price="0" code="" vendor_id="" locked=False %}
 
     <div id="items">
         {# Output a template container for every non-printed item user has. #}
         {% for i in items %}
-            {% include 'app_items_item.html' with name=i.name price=i.price_fmt code=i.code vendor_id=i.vendor_id tag_type=i.type locked=i.is_locked %}
+            {% include 'kirppu/app_items_item.html' with name=i.name price=i.price_fmt code=i.code vendor_id=i.vendor_id tag_type=i.type locked=i.is_locked %}
         {% endfor %}
     </div>
     <div style="margin-top: 1cm" id="printed_items">
         {# Output a template container for every printed item user has. #}
         {% for i in printed_items %}
-            {% include 'app_items_item.html' with name=i.name price=i.price_fmt code=i.code vendor_id=i.vendor_id tag_type="list" locked=True %}
+            {% include 'kirppu/app_items_item.html' with name=i.name price=i.price_fmt code=i.code vendor_id=i.vendor_id tag_type="list" locked=True %}
         {% endfor %}
     </div>
 {% endblock %}

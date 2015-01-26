@@ -1,11 +1,11 @@
-{% load compressed %}{% load i18n %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}Kirppu{% endblock %}</title>
     {% block head %}
-        {% compressed_css "general" %}
-        {% compressed_js "general" %}
+        <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+        <script src="{% static "kirppu/js/general.js" %}"></script>
     {% endblock %}
 </head>
 <body>
@@ -28,7 +28,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {% block navbar_right %}{% endblock %}
                 {% get_language_info_list for LANGUAGES as languages %}
-
+                {% if languages|length > 1 %}
                 <li>
                     <form class="navbar-form" id="language-form" method="post" action="{% url 'set_language' %}">
                         {% csrf_token %}
@@ -42,6 +42,7 @@
                         </div>
                     </form>
                 </li>
+                {% endif %}
 
             </ul>
         </div>

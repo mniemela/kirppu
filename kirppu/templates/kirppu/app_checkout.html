@@ -1,15 +1,14 @@
 {% extends "kirppu/common.html" %}{% load i18n %}
 
-{% load compressed %}
+{% load static %}
 
 {% block title %}Kirppu - Checkout{% endblock %}
 
 {% block head %}
-    <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
-    {% compressed_css "general" %}
-    {% compressed_css "checkout" %}
-    {% compressed_js "general" %}
-    {% compressed_js "checkout" %}
+    <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+    <link href="{% static "kirppu/css/checkout.css" %}" rel="stylesheet">
+    <script src="{% static "kirppu/js/general.js" %}"></script>
+    <script src="{% static "kirppu/js/checkout.js" %}"></script>
 {% endblock %}
 
 {% block navbar_left %}

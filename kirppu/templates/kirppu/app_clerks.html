@@ -1,12 +1,12 @@
-{% load compressed %}{% load kirppu_tags %}{% load i18n %}
+{% load kirppu_tags i18n static %}
 {% with display_width=display_width|default:barcode_width %}
 <!doctype html>
 <html>
 <head>
     <title>{{ title|default:_("Clerk codes") }}</title>
-    {% compressed_css 'general' %}
-    {% compressed_css 'price_tags' %}
-    {% compressed_js 'general' %}
+    <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+    <link href="{% static "kirppu/css/price_tags.css" %}" rel="stylesheet">
+    <script src="{% static "kirppu/js/general.js" %}"></script>
     <style type="text/css">
         .item_container {
             height: 2.7cm;
