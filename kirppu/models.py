@@ -1,6 +1,7 @@
 import random
 from decimal import Decimal
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
@@ -39,7 +40,9 @@ class Clerk(models.Model):
         null=True,
         blank=True,
         verbose_name=_(u"Access key value"),
-        help_text=_(u"Access code assigned to the clerk."))
+        help_text=_(u"Access code assigned to the clerk. 14 hexlets."),
+        validators=[RegexValidator("^[0-9a-f]{14}$", message="Must be 14 hex chars.")]
+    )
 
     def __unicode__(self):
         if self.user is not None:
@@ -50,7 +53,7 @@ class Clerk(models.Model):
     def as_dict(self):
         return {
             "user": unicode(self.user),
-            "print": self.user.print_name,
+            "print": getattr(self.user, "print_name", unicode(self.user)),
         }
 
     def get_code(self):
@@ -114,8 +117,7 @@ class Clerk(models.Model):
 
         if access_key < 100000:
             # "Valid" key, but disabled.
-            raise ValueError("Not a Clerk")
-
+            raise ValueError("Clerk disabled")
         access_key_hex = number_to_hex(access_key, 56)
         try:
             clerk = cls.objects.get(access_key=access_key_hex)
@@ -184,10 +186,16 @@ class Vendor(models.Model):
     as_dict = model_dict_fn(
         'id',
         username=lambda self: self.user.username,
-        name=lambda self: self.user.first_name  + u' ' + self.user.last_name,
+        name=lambda self: "%s %s" % (self.user.first_name, self.user.last_name),
         email=lambda self: self.user.email,
-        phone=lambda self: self.user.phone,
+        phone=lambda self: get_phone(self.user),
     )
+
+def get_phone(user):
+    try:
+        return user.desuprofile.phone
+    except ObjectDoesNotExist:
+        return getattr(user, "phone", "---")
 
 def validate_positive(value):
     if value < 0.0:

@@ -17,7 +17,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _i
 from django.utils.timezone import now
 
-from ..models import (
+from .models import (
     Item,
     Receipt,
     Clerk,
@@ -80,8 +80,9 @@ def checkout_js(request):
     """
     return render(
         request,
-        "app_checkout_api.js",
+        "kirppu/app_checkout_api.js",
         {'funcs': AJAX_FUNCTIONS},
+        content_type="application/javascript"
     )
 
 
@@ -227,11 +228,11 @@ def clerk_login(request, code, counter):
 
     try:
         clerk = Clerk.by_code(code)
-    except ValueError:
-        clerk = None
+    except ValueError as ve:
+        raise AjaxError(RET_AUTH_FAILED, repr(ve))
 
     if clerk is None:
-        raise AjaxError(RET_AUTH_FAILED, _i(u"Unauthorized."))
+        raise AjaxError(RET_AUTH_FAILED, _i(u"No such clerk."))
 
     clerk_data = clerk.as_dict()
 
@@ -330,7 +331,7 @@ def vendor_find(request, q):
 
     for part in q.split():
         clause = (
-              Q(phone=part)
+              Q(desuprofile__phone=part)
             | Q(username__icontains=part)
             | Q(first_name__icontains=part)
             | Q(last_name__icontains=part)

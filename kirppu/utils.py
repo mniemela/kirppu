@@ -208,7 +208,11 @@ def is_now_after(date_str):
     cached_instant = MEM_TIMES.get(date_str)
     if cached_instant is None:
         naive = timezone.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-        MEM_TIMES[date_str] = cached_instant = pytz.timezone(settings.TIME_ZONE).localize(naive)
+        if settings.USE_TZ:
+            cached_instant = pytz.timezone(settings.TIME_ZONE).localize(naive)
+        else:
+            cached_instant = naive
+        MEM_TIMES[date_str] = cached_instant
 
     return timezone.now() > cached_instant
 
