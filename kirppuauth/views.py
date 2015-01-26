@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
-from kirppu.kirppuauth.forms import ClerkAddForm
+from .forms import ClerkAddForm
 from kirppu.util import get_form
 
 __author__ = 'jyrkila'

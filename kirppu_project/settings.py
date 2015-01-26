@@ -126,10 +126,10 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-ROOT_URLCONF = 'kirppu.urls'
+ROOT_URLCONF = 'kirppu_project.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'kirppu.wsgi.application'
+WSGI_APPLICATION = 'kirppu_project.wsgi.application'
 
 import os
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), '..', 'templates').replace('\\','/'),)
@@ -145,8 +145,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'kirppu.kirppuauth',
-    'kirppu.app',
+    'kirppuauth',
+    'kirppu',
     'pipeline',
 )
 

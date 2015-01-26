@@ -3,8 +3,8 @@ from decimal import Decimal, InvalidOperation
 import decimal
 import json
 from django.core.exceptions import PermissionDenied
-from kirppu.app.checkout.api import clerk_logout_fn
-from kirppu.app.forms import ItemRemoveForm
+from .checkout.api import clerk_logout_fn
+from .forms import ItemRemoveForm
 from kirppu.util import get_form
 import re
 import urllib
@@ -29,13 +29,13 @@ from django.contrib.auth import logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 
-from kirppu.app.models import (
+from .models import (
     Item,
     Clerk,
     Vendor,
     CounterCommands,
 )
-from kirppu.app.utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open, barcode_view, \
+from .utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open, barcode_view, \
     require_test
 from templatetags.kirppu_tags import get_dataurl, KirppuBarcode
 

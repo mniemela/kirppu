@@ -1,4 +1,4 @@
-from kirppu.app.utils import PixelWriter
+from ..utils import PixelWriter
 import barcode
 from barcode.charsets import code128
 from django import template

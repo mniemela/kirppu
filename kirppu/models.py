@@ -5,9 +5,9 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from kirppu.app.utils import model_dict_fn, format_datetime
+from .utils import model_dict_fn, format_datetime
 
-from ..util import (
+from .util import (
     number_to_hex,
     hex_to_number,
     b32_encode,

@@ -2,9 +2,8 @@ from django.contrib import admin
 from django.db import IntegrityError
 from django.utils.translation import ugettext
 from django.contrib import messages
-from kirppu.app.forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm
-
-from kirppu.app.models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem
+from .forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm
+from .models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem
 
 __author__ = 'jyrkila'
 

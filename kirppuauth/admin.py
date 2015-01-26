@@ -6,7 +6,7 @@ from django.contrib.auth.forms import (
 from django.forms import forms
 from django.contrib import admin
 
-from kirppu.kirppuauth.models import User
+from .models import User
 
 __author__ = 'codez'
 

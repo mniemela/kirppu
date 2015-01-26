@@ -1,7 +1,7 @@
 from django import forms
 
-from kirppu.app.models import Clerk, ReceiptItem, Receipt, Item
-from kirppu.app.utils import StaticText
+from .models import Clerk, ReceiptItem, Receipt, Item
+from .utils import StaticText
 
 
 class ClerkGenerationForm(forms.ModelForm):

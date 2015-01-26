@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core import validators
 from django.conf import settings
-from kirppu.app.models import Clerk
+from kirppu.models import Clerk
 from kompassi_crowd.kompassi_client import kompassi_get, KompassiError, user_defaults_from_kompassi
 import re
 

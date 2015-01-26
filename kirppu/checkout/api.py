@@ -1,6 +1,7 @@
 from functools import wraps
 import json
 import inspect
+from django.contrib.auth import get_user_model
 
 from django.db.models import Q
 from django.http import Http404
@@ -16,7 +17,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _i
 from django.utils.timezone import now
 
-from kirppu.app.models import (
+from ..models import (
     Item,
     Receipt,
     Clerk,
@@ -24,7 +25,6 @@ from kirppu.app.models import (
     ReceiptItem,
     Vendor,
 )
-from kirppu.kirppuauth.models import User
 
 
 class AjaxError(Exception):
@@ -345,7 +345,7 @@ def vendor_find(request, q):
 
     return [
         u.vendor.as_dict()
-        for u in User.objects.filter(*clauses).all()
+        for u in get_user_model().objects.filter(*clauses).all()
     ]
 
 

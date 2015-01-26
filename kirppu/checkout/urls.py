@@ -16,4 +16,4 @@ if settings.KIRPPU_CHECKOUT_ACTIVE:
 else:
     _urls = []
 
-urlpatterns = patterns('kirppu.app.checkout.api', *_urls)
+urlpatterns = patterns('kirppu.checkout.api', *_urls)
