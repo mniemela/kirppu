@@ -2,3 +2,4 @@
 *.mo
 /static/
 kirppu/local_settings.py
+node_modules

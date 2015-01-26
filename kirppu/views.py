@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 import decimal
 import json
 from django.core.exceptions import PermissionDenied
-from .checkout.api import clerk_logout_fn
+from .checkout_api import clerk_logout_fn
 from .forms import ItemRemoveForm
 from kirppu.util import get_form
 import re

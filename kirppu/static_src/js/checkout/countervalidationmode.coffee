@@ -56,6 +56,7 @@ class @CounterValidationMode extends CheckoutMode
     if jqXHR.status == 419
       console.log("Invalid counter code supplied.")
       return
+    alert("Error:" + jqXHR.responseText)
     return true
 
   @clearStore: ->

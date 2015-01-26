@@ -34,4 +34,5 @@ class @ItemCheckInMode extends ItemCheckoutMode
     if jqXHR.status == 404
       alert("No such item")
       return
+    alert("Error:" + jqXHR.responseText)
     return true
