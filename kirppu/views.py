@@ -312,7 +312,7 @@ def get_items(request, bar_type):
         'menu': _vendor_menu_contents(request),
     }
 
-    return render(request, "app_items.html", render_params)
+    return render(request, "kirppu/app_items.html", render_params)
 
 
 def get_barcode(request, data, ext):
@@ -366,7 +366,7 @@ def get_clerk_codes(request, bar_type):
         items.append(code_item(name=name, code=code))
 
     width = KirppuBarcode.length(items[0].code, PixelWriter) if items else 100
-    return render(request, "app_clerks.html", {
+    return render(request, "kirppu/app_clerks.html", {
         'items': items,
         'bar_type': bar_type,
         'repeat': range(1),
@@ -381,7 +381,7 @@ def get_counter_commands(request, bar_type):
     code_item = namedtuple("CodeItem", "name code")
     width = KirppuBarcode.length(CounterCommands.LOGOUT, PixelWriter)
 
-    return render(request, "app_clerks.html", {
+    return render(request, "kirppu/app_clerks.html", {
         'items': [code_item(value, key) for key, value in CounterCommands.DICT.items()],
         'bar_type': bar_type,
         'repeat': range(int(request.GET.get("repeat", "1"))),
@@ -405,7 +405,7 @@ def checkout_view(request):
     :rtype: HttpResponse
     """
     clerk_logout_fn(request)
-    return render(request, "app_checkout.html", {
+    return render(request, "kirppu/app_checkout.html", {
         'CounterCommands': CounterCommands,
     })
 
@@ -435,7 +435,7 @@ def vendor_view(request):
         'profile_url': settings.PROFILE_URL,
         'menu': _vendor_menu_contents(request),
     }
-    return render(request, "app_frontpage.html", context)
+    return render(request, "kirppu/app_frontpage.html", context)
 
 
 def login_view(request):
@@ -478,6 +478,6 @@ def remove_item_from_receipt(request):
         form.save()
         return HttpResponseRedirect(url.reverse('kirppu:remove_item_from_receipt'))
 
-    return render(request, "app_item_receipt_remove.html", {
+    return render(request, "kirppu/app_item_receipt_remove.html", {
         'form': form,
     })
