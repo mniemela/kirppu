@@ -105,5 +105,13 @@
         },
         "model": "app.clerk",
         "pk": 1
+    },
+    {
+        "pk": 1,
+        "model": "app.counter",
+        "fields": {
+            "identifier": "dev_counter",
+            "name": "Dev Counter"
+        }
     }
 ]
