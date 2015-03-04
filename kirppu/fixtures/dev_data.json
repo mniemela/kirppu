@@ -7,7 +7,7 @@
             "state": "AD",
             "vendor": 2
         },
-        "model": "app.item",
+        "model": "kirppu.item",
         "pk": 1
     },
     {
@@ -18,7 +18,7 @@
             "state": "AD",
             "vendor": 2
         },
-        "model": "app.item",
+        "model": "kirppu.item",
         "pk": 2
     },
     {
@@ -29,7 +29,7 @@
             "state": "AD",
             "vendor": 1
         },
-        "model": "app.item",
+        "model": "kirppu.item",
         "pk": 3
     },
     {
@@ -40,7 +40,7 @@
             "state": "AD",
             "vendor": 1
         },
-        "model": "app.item",
+        "model": "kirppu.item",
         "pk": 4
     },
     {
@@ -51,7 +51,7 @@
             "state": "AD",
             "vendor": 1
         },
-        "model": "app.item",
+        "model": "kirppu.item",
         "pk": 5
     },
     {
@@ -62,7 +62,7 @@
             "state": "AD",
             "vendor": 1
         },
-        "model": "app.item",
+        "model": "kirppu.item",
         "pk": 6
     },
     {
@@ -89,26 +89,26 @@
         "fields": {
             "user": 1
         },
-        "model": "app.vendor",
+        "model": "kirppu.vendor",
         "pk": 1
     },
     {
         "fields": {
             "user": 2
         },
-        "model": "app.vendor",
+        "model": "kirppu.vendor",
         "pk": 2
     },
     {
         "fields": {
             "user": 1
         },
-        "model": "app.clerk",
+        "model": "kirppu.clerk",
         "pk": 1
     },
     {
         "pk": 1,
-        "model": "app.counter",
+        "model": "kirppu.counter",
         "fields": {
             "identifier": "dev_counter",
             "name": "Dev Counter"

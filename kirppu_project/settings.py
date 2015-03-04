@@ -141,6 +141,7 @@ INSTALLED_APPS = (
 )
 
 AUTH_USER_MODEL = 'kirppuauth.User'
+KIRPPU_USER_ADAPTER = 'kirppu.models.UserAdapterBase'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -212,10 +213,12 @@ KOMPASSI_API_URL = 'https://kompassidev.tracon.fi/api/v1'
 KOMPASSI_API_APPLICATION_NAME = KOMPASSI_CROWD_APPLICATION_NAME
 KOMPASSI_API_APPLICATION_PASSWORD = KOMPASSI_CROWD_APPLICATION_PASSWORD
 
-LOGIN_URL = 'https://kompassidev.tracon.fi/crowd'
-LOGOUT_URL = 'https://kompassidev.tracon.fi/logout'
+# LOGIN_URL = 'https://kompassidev.tracon.fi/crowd'
+# LOGOUT_URL = 'https://kompassidev.tracon.fi/logout'
 PROFILE_URL = 'https://kompassidev.tracon.fi/profile'
 
+# Whether to use Login/Logout-URLs directly (False), or via "wrapper" for SSO use (True).
+KIRPPU_USE_SSO = False
 KIRPPU_CHECKOUT_ACTIVE = False
 
 KIRPPU_COPY_ITEM_WHEN_UNPRINTED = False

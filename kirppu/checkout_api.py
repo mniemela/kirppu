@@ -24,6 +24,7 @@ from .models import (
     Counter,
     ReceiptItem,
     Vendor,
+    UserAdapter,
 )
 
 
@@ -331,7 +332,7 @@ def vendor_find(request, q):
 
     for part in q.split():
         clause = (
-              Q(desuprofile__phone=part)
+              Q(**UserAdapter.phone_query(part))
             | Q(username__icontains=part)
             | Q(first_name__icontains=part)
             | Q(last_name__icontains=part)

@@ -1,10 +1,11 @@
 import random
 from decimal import Decimal
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
+from django.utils.module_loading import import_by_path
 from django.conf import settings
 from .utils import model_dict_fn, format_datetime
 
@@ -18,6 +19,24 @@ from .util import (
 )
 
 User = settings.AUTH_USER_MODEL
+
+
+class UserAdapterBase(object):
+    """
+    Base version of UserAdapter. This can be (optionally) subclassed somewhere else which can then be set
+    to be used by system via `settings.KIRPPU_USER_ADAPTER`.
+    """
+    @classmethod
+    def phone(cls, user):
+        return user.phone
+
+    @classmethod
+    def phone_query(cls, rhs, fn=None):
+        fn = "" if fn is None else ("__" + fn)
+        return {"phone" + fn: rhs}
+
+# The actual class is found by string in settings.
+UserAdapter = import_by_path(settings.KIRPPU_USER_ADAPTER)
 
 
 class CounterCommands(object):
@@ -41,7 +60,7 @@ class Clerk(models.Model):
         blank=True,
         verbose_name=_(u"Access key value"),
         help_text=_(u"Access code assigned to the clerk. 14 hexlets."),
-        validators=[RegexValidator("^[0-9a-f]{14}$", message="Must be 14 hex chars.")]
+        validators=[RegexValidator("^[0-9a-fA-F]{14}$", message="Must be 14 hex chars.")]
     )
 
     def __unicode__(self):
@@ -188,14 +207,9 @@ class Vendor(models.Model):
         username=lambda self: self.user.username,
         name=lambda self: "%s %s" % (self.user.first_name, self.user.last_name),
         email=lambda self: self.user.email,
-        phone=lambda self: get_phone(self.user),
+        phone=lambda self: UserAdapter.phone(self.user),
     )
 
-def get_phone(user):
-    try:
-        return user.desuprofile.phone
-    except ObjectDoesNotExist:
-        return getattr(user, "phone", "---")
 
 def validate_positive(value):
     if value < 0.0:
