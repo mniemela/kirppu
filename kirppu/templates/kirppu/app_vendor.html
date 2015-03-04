@@ -1,0 +1,30 @@
+{% extends "kirppu/common.html" %}{% load i18n %}
+
+{% block title %}Kirppu{% endblock %}
+
+{% block frontpage_url %}
+    {% url 'kirppu:vendor_view' %}
+{% endblock %}
+
+{% block navbar_left %}
+    {% for item in menu %}
+        <li{% if item.active %} class="active"{% endif %}><a href="{{ item.url }}">{{ item.name }}</a></li>
+    {% endfor %}
+{% endblock %}
+
+{% block navbar_right %}
+    {% if user.is_authenticated %}
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                {{ user.first_name }} {{ user.last_name }}
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ profile_url }}" target="_blank">{% trans "Profile" %}</a></li>
+                <li><a href="{{ settings.LOGOUT_URL }}">{% trans "Log out" %}</a></li>
+            </ul>
+        </li>
+    {% else %}
+        <li><a href="{{ settings.LOGIN_URL }}">{% trans "Log in" %}</a></li>
+    {% endif %}
+{% endblock %}

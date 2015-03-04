@@ -1,0 +1,58 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Kirppu{% endblock %}</title>
+    {% block head %}
+        <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+        <script src="{% static "kirppu/js/general.js" %}"></script>
+    {% endblock %}
+</head>
+<body>
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+                    data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% block frontpage_url %}javascript:void(0);{% endblock %}">Kirppu</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" id="navigation">
+                {% block navbar_left %}{% endblock %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% block navbar_right %}{% endblock %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% if languages|length > 1 %}
+                <li>
+                    <form class="navbar-form" id="language-form" method="post" action="{% url 'set_language' %}">
+                        {% csrf_token %}
+                        <label class="form-control-static" for="language-selector"><span class="glyphicon glyphicon-flag"></span></label>
+                        <div class="form-group">
+                            <select class="form-control" name="language" id="language-selector" onchange="document.getElementById('language-form').submit();">
+                                {% for lang in languages %}
+                                    <option{% if lang.code == LANGUAGE_CODE %} selected="selected"{% endif %} value="{{ lang.code }}">{{ lang.name_local }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="body" class="container">
+    {% block body %}{% endblock  %}
+</div>
+
+{% block tail %}{% endblock %}
+</body>
+</html>
