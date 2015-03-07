@@ -36,6 +36,7 @@ module.exports.js = {
             "js/csrf.coffee",
         ],
         "output_filename": "general.js",
+        "compress": true,
     },
     'price_tags': {
         "source_filenames": [
@@ -43,6 +44,7 @@ module.exports.js = {
             "js/price_tags.coffee",
         ],
         "output_filename": "price_tags.js",
+        "compress": true,
     },
     'checkout': {
         "source_filenames": [
@@ -82,6 +84,7 @@ module.exports.js = {
         "source_filenames": [
             "js/jquery.jeditable.js",
         ],
-        "output_filename": "jeditable.js"
+        "output_filename": "jeditable.js",
+        "compress": true,
     }
 };
