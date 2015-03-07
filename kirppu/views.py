@@ -54,6 +54,11 @@ def item_add(request):
     price = request.POST.get("price", "")
     tag_type = request.POST.get("type", "short")
     suffix_str = request.POST.get("range", u"")
+    itemtype = request.POST.get("itemtype", u"")
+    adult = request.POST.get("adult", "no")
+
+    if not itemtype:
+        return HttpResponseBadRequest(_(u"Item must have a type."))
 
     if not price:
         return HttpResponseBadRequest(_(u"Item must have a price."))
@@ -116,7 +121,7 @@ def item_add(request):
         item_cnt += 1
 
         suffixed_name = (name + u" " + suffix).strip()
-        item = Item.new(name=suffixed_name, price=str(price), vendor=vendor, type=tag_type, state=Item.ADVERTISED)
+        item = Item.new(name=suffixed_name, price=str(price), vendor=vendor, type=tag_type, state=Item.ADVERTISED, itemtype=itemtype, adult=adult)
         item_dict = {
             'vendor_id': vendor.id,
             'code': item.code,
@@ -124,6 +129,7 @@ def item_add(request):
             'name': item.name,
             'price': str(item.price_fmt).replace('.', ','),
             'type': item.type,
+            'adult': item.adult
         }
         response.append(item_dict)
 

@@ -47,7 +47,7 @@ class PriceTagsConfig
 C = new PriceTagsConfig
 
 
-createTag = (name, price, vendor_id, code, dataurl, type) ->
+createTag = (name, price, vendor_id, code, dataurl, type, adult) ->
   # Find the hidden template element, clone it and replace the contents.
   tag = $(".item_template").clone();
   tag.removeClass("item_template");
@@ -58,7 +58,19 @@ createTag = (name, price, vendor_id, code, dataurl, type) ->
   $('.item_name', tag).text(name)
   $('.item_price', tag).text(price)
   $('.item_head_price', tag).text(price)
-  $('.item_vendor_id', tag).text(vendor_id)
+
+  ##TEMPORARY LOCATION FOR THE ADULT MARKER BELOW
+  ##
+  ##TODO: CREATE A TAG FOR ADULT IN app_items_item.html,
+  ##EDIT AWAY THE UGLY IF-ELSE ON THE ADULT VARIABLE,
+  ##ADD THE NECESSARY CSS TO price_tags.css AND EDIT CODE BELOW
+  ##
+  ##POSSIBLY ADD EDITING FUNCTIONS LATER
+  if adult == "no"
+    $('.item_vendor_id', tag).text(vendor_id)
+  else
+    $('.item_vendor_id', tag).text(vendor_id + " | K-18!")
+
   $(tag).attr('id', code)
   $('.item_extra_code', tag).text(code)
 
@@ -76,7 +88,7 @@ addItem = ->
   onSuccess = (items) ->
     $('#form-errors').empty()
     for item in items
-      tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type)
+      tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type, item.adult)
       $('#items').prepend(tag)
       bindTagEvents($(tag))
 
@@ -90,6 +102,8 @@ addItem = ->
     price: $("#item-add-price").val()
     range: $("#item-add-suffixes").val()
     type: $("input[name=item-add-type]:checked").val()
+    itemtype: $("#item-add-itemtype").val()
+    adult: $("input[name=item-add-adult]:checked").val()
 
   $.ajax(
     url: C.urls.item_add

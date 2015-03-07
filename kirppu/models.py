@@ -249,6 +249,36 @@ class Item(models.Model):
         (TYPE_LONG, _(u"Long price tag")),
     )
 
+    ITEMTYPE_MANGA_FINNISH = "manga-finnish"
+    ITEMTYPE_MANGA_ENGLISH = "manga-english"
+    ITEMTYPE_MANGA_OTHER = "manga-other"
+    ITEMTYPE_BOOK = "book"
+    ITEMTYPE_MAGAZINE = "magazine"
+    ITEMTYPE_MOVIE_TV = "movie-tv"
+    ITEMTYPE_GAME = "game"
+    ITEMTYPE_FIGURINE_PLUSHIE = "figurine-plushie"
+    ITEMTYPE_CLOTHING = "clothing"
+    ITEMTYPE_OTHER = "other"
+    ITEMTYPE = (
+        (ITEMTYPE_MANGA_FINNISH, _(u"Finnish manga book")),
+        (ITEMTYPE_MANGA_ENGLISH, _(u"English manga book")),
+        (ITEMTYPE_MANGA_OTHER, _(u"Manga book in another language")),
+        (ITEMTYPE_BOOK, _(u"Non-manga book")),
+        (ITEMTYPE_MAGAZINE, _(u"Magazine")),
+        (ITEMTYPE_MOVIE_TV, _(u"Movie or TV-series")),
+        (ITEMTYPE_GAME, _(u"Game")),
+        (ITEMTYPE_FIGURINE_PLUSHIE, _(u"Figurine or a stuffed toy")),
+        (ITEMTYPE_CLOTHING, _(u"Clothing")),
+        (ITEMTYPE_OTHER, _(u"Other item")),
+    )
+
+    ADULT_YES = "yes"
+    ADULT_NO = "no"
+    ADULT = (
+        (ADULT_YES, _(u"Item allowed only to adult shoppers, contains porn etc.")),
+        (ADULT_NO, _(u"Item allowed to all shoppers")),
+    )
+
     # Count of digits after decimal separator.
     FRACTION_LEN = 2
 
@@ -278,6 +308,16 @@ class Item(models.Model):
         choices=TYPE,
         max_length=8,
         default=TYPE_SHORT
+    )
+    itemtype = models.CharField(
+        choices=ITEMTYPE,
+        max_length=24,
+        default=ITEMTYPE_OTHER
+    )
+    adult = models.CharField(
+        choices=ADULT,
+        max_length=8,
+        default=ADULT_NO
     )
     # Has the user marked this item as printed?
     # Affects whether the item is shown in print view or not.

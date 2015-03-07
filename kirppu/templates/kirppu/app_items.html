@@ -36,7 +36,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Lisää uusi</h3>
+                <h3 class="panel-title">{% trans "Add new item" %}</h3>
             </div>
             <div class="panel-body">
 
@@ -73,6 +73,34 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-sm-1 control-label">{% trans "Type:" %}</label>
+            <div class="col-sm-6">
+                <select id="item-add-itemtype" name="item-add-itemtype" class="form-control">
+                    <option></option>
+                    <option value="manga-finnish">{% trans "Manga (Finnish)" %}</option>
+                    <option value="manga-english">{% trans "Manga (English)" %}</option>
+                    <option value="manga-other">{% trans "Manga (other language)" %}</option>
+                    <option value="book">{% trans "Book" %}</option>
+                    <option value="magazine">{% trans "Magazine" %}</option>
+                    <option value="movie-tv">{% trans "Movie/TV-series" %}</option>
+                    <option value="game">{% trans "Game" %}</option>
+                    <option value="figurine-plushie">{% trans "Figurine/Plushie" %}</option>
+                    <option value="clothing">{% trans "Clothing" %}</option>
+                    <option value="other">{% trans "Other" %}</option>
+                </select>
+            </div>
+
+            <label class="col-sm-1 control-label">{% trans "Adult:" %}</label>
+            <div class="col-sm-3">
+                <label class="radio-inline">
+                    <input name="item-add-adult" value="yes" type="radio" />{% trans "Yes" %}
+                </label>
+                <label class="radio-inline">
+                    <input name="item-add-adult" value="no" type="radio" checked="checked" />{% trans "No" %}
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-sm-offset-1 col-sm-11">
                 <div id="form-errors" class="text-danger"></div>
                 <button id="add_short_item" type="submit" class="btn btn-primary">{% trans "Add item" %}</button>
@@ -97,7 +125,7 @@
     <div id="items">
         {# Output a template container for every non-printed item user has. #}
         {% for i in items %}
-            {% include 'kirppu/app_items_item.html' with name=i.name price=i.price_fmt code=i.code vendor_id=i.vendor_id tag_type=i.type locked=i.is_locked %}
+            {% include 'kirppu/app_items_item.html' with name=i.name price=i.price_fmt code=i.code vendor_id=i.vendor_id tag_type=i.type adult=i.adult locked=i.is_locked %}
         {% endfor %}
     </div>
     <div style="margin-top: 1cm" id="printed_items">
