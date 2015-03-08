@@ -712,10 +712,10 @@
           safeAlertOff();
         }
         handler(input.slice(prefix.length), prefix);
-        return this.cfg.uiRef.codeInput.val("");
       } else {
-        return console.error("Input not accepted: '" + input + "'.");
+        console.error("Input not accepted: '" + input + "'.");
       }
+      this.cfg.uiRef.codeInput.val("");
     };
 
     ModeSwitcher.prototype._bindMenu = function(entryPoints) {

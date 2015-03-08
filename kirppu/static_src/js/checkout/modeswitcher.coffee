@@ -95,9 +95,10 @@ class @ModeSwitcher
       if input.trim().length > 0
         safeAlertOff()
       handler(input.slice(prefix.length), prefix)
-      @cfg.uiRef.codeInput.val("")
     else
       console.error("Input not accepted: '#{input}'.")
+    @cfg.uiRef.codeInput.val("")
+    return
 
   # Bind mode switching menu items.
   _bindMenu: (entryPoints) ->
