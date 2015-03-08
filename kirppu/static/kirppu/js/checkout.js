@@ -1876,7 +1876,7 @@
     };
 
     VendorReport.prototype.inputPlaceholder = function() {
-      return "Search";
+      return "Search vendor";
     };
 
     VendorReport.prototype.actions = function() {
@@ -1985,7 +1985,7 @@
     };
 
     VendorFindMode.prototype.inputPlaceholder = function() {
-      return "Search";
+      return "Search vendor";
     };
 
     VendorFindMode.prototype.actions = function() {
