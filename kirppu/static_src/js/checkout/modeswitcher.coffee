@@ -57,6 +57,7 @@ class @ModeSwitcher
     if @_currentMode? then @_currentMode.exit()
     @setMenuEnabled(true)
     @_currentMode = new mode(@, @cfg, params)
+    safeAlertOff()
 
     @cfg.uiRef.container.removeClass().addClass('container').addClass('color-mode')
     @cfg.uiRef.container.addClass('color-' + @_currentMode.constructor.name)
@@ -91,6 +92,8 @@ class @ModeSwitcher
 
     if matching[0]?
       [prefix, handler] = matching[0]
+      if input.trim().length > 0
+        safeAlertOff()
       handler(input.slice(prefix.length), prefix)
       @cfg.uiRef.codeInput.val("")
     else

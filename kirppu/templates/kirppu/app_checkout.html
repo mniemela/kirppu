@@ -45,6 +45,7 @@
         <span id="title_text">Checkout</span>
         <small id="subtitle_text" class="hidden-print"></small>
     </h1>
+    <div class="alert alert-danger alert-off" role="alert" id="error_container"></div>
     <form role="form" id="code_form" class="hidden-print">
         <div class="form-group">
             <label class="sr-only" for="code_input">Code</label>
@@ -63,7 +64,8 @@
 <script type="application/javascript"><!--
     CheckoutConfig.uiId.container = "body";
     CheckoutConfig.uiId.body = "receipt_body";
-    CheckoutConfig.uiId.glyph = "mode_glyph"
+    CheckoutConfig.uiId.errorText = "error_container";
+    CheckoutConfig.uiId.glyph = "mode_glyph";
     CheckoutConfig.uiId.stateText = "title_text";
     CheckoutConfig.uiId.subtitleText = "subtitle_text";
     CheckoutConfig.uiId.codeInput = "code_input";

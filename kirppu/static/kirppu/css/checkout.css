@@ -56,6 +56,15 @@ tr.receipt_tr_clickable:hover {
     background-color: #ffccff;
 }
 
+.alert-blink {
+    /* Container class when blinking. */
+    background-color: deeppink;
+}
+.alert-off {
+    /* Text container when no current error. */
+    display: none;
+}
+
 @media print {
 
     @page

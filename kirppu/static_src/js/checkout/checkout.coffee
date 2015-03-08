@@ -2,6 +2,7 @@ class Config
   uiId:
     container: null
     body: null
+    errorText: null
     glyph: null
     stateText: null
     subtitleText: null
@@ -12,6 +13,7 @@ class Config
   uiRef:
     container: null
     body: null
+    errorText: null
     glyph: null
     stateText: null
     subtitleText: null
@@ -29,6 +31,7 @@ class Config
     logoutPrefix: null
     counterCode: null
     clerkName: null
+    alertBlinkCount: 4
 
   # Check existence of uiId values and bind their references to uiRef.
   # @return True if errors. False if all ok.

@@ -58,7 +58,7 @@ class @CounterMode extends ItemCheckoutMode
       when 423 then errorMsg = text
       else errorMsg = "Error " + status + "."
 
-    alert(errorMsg + ' ' + code)
+    safeAlert(errorMsg + ' ' + code)
 
   restoreReceipt: (receipt) ->
     @switcher.setMenuEnabled(false)
@@ -92,7 +92,7 @@ class @CounterMode extends ItemCheckoutMode
         @reserveItem(code)
 
       (jqHXR) =>
-        alert("Could not start receipt!")
+        safeAlert("Could not start receipt!")
         # Rollback.
         @_receipt.end()
         @switcher.setMenuEnabled(true)
@@ -125,7 +125,7 @@ class @CounterMode extends ItemCheckoutMode
         @addRow(data.code, data.name, -data.price)
 
       () =>
-        alert("Item not found on receipt: " + code)
+        safeAlert("Item not found on receipt: " + code)
         return true
     )
 
@@ -142,11 +142,11 @@ class @CounterMode extends ItemCheckoutMode
       input = input - 0
 
     if input < @_receipt.total
-      alert("Not enough given money!")
+      safeAlert("Not enough given money!")
       return
 
     if input > 400*100
-      alert("Not accepting THAT much money!")
+      safeAlert("Not accepting THAT much money!")
       return
 
     # Convert previous payment calculations from success -> info,muted
@@ -175,7 +175,7 @@ class @CounterMode extends ItemCheckoutMode
         @receiptSum.setEnabled(false)
 
       () =>
-        alert("Error ending receipt!")
+        safeAlert("Error ending receipt!")
         return true
     )
 
@@ -193,13 +193,13 @@ class @CounterMode extends ItemCheckoutMode
         @receiptSum.setEnabled(false)
 
       () =>
-        alert("Error ending receipt!")
+        safeAlert("Error ending receipt!")
         return true
     )
 
   onLogout: =>
     if @_receipt.isActive()
-      alert("Cannot logout while receipt is active!")
+      safeAlert("Cannot logout while receipt is active!")
       return
 
     super

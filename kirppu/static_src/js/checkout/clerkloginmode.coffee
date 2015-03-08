@@ -32,7 +32,7 @@ class @ClerkLoginMode extends CheckoutMode
     if jqXHR.status == 419
       console.log("Login failed: " + jqXHR.responseText)
       return
-    alert("Error:" + jqXHR.responseText)
+    safeAlert("Error:" + jqXHR.responseText)
     return true
 
   activateReceipt: (receipt) ->

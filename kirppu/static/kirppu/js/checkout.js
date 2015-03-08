@@ -1,6 +1,8 @@
 // ================ 1: util.coffee ================
 
 (function() {
+  var stillBlinking;
+
   this.displayPrice = function(price, rounded) {
     var price_str, rounded_str;
     if (rounded == null) {
@@ -46,6 +48,44 @@
     }
   };
 
+  stillBlinking = false;
+
+  this.safeAlert = function(message, blink) {
+    var blinksToGo, body, cls, text, timeCb, timeout;
+    if (blink == null) {
+      blink = true;
+    }
+    body = CheckoutConfig.uiRef.container;
+    text = CheckoutConfig.uiRef.errorText;
+    cls = "alert-blink";
+    text.text(message);
+    text.removeClass("alert-off");
+    if (!blink) {
+      return;
+    }
+    body.addClass(cls);
+    blinksToGo = CheckoutConfig.settings.alertBlinkCount * 2;
+    timeout = 150;
+    stillBlinking = true;
+    timeCb = function() {
+      body.toggleClass(cls);
+      if (--blinksToGo > 0) {
+        return setTimeout(timeCb, timeout);
+      } else {
+        stillBlinking = false;
+        return body.removeClass(cls);
+      }
+    };
+    return setTimeout(timeCb, timeout);
+  };
+
+  this.safeAlertOff = function() {
+    if (stillBlinking) {
+      return;
+    }
+    return CheckoutConfig.uiRef.errorText.addClass("alert-off");
+  };
+
 }).call(this);
 
 // ================ 2: checkout.coffee ================
@@ -59,6 +99,7 @@
     Config.prototype.uiId = {
       container: null,
       body: null,
+      errorText: null,
       glyph: null,
       stateText: null,
       subtitleText: null,
@@ -71,6 +112,7 @@
     Config.prototype.uiRef = {
       container: null,
       body: null,
+      errorText: null,
       glyph: null,
       stateText: null,
       subtitleText: null,
@@ -89,7 +131,8 @@
       abortPrefix: null,
       logoutPrefix: null,
       counterCode: null,
-      clerkName: null
+      clerkName: null,
+      alertBlinkCount: 4
     };
 
     Config.prototype.check = function() {
@@ -621,6 +664,7 @@
       }
       this.setMenuEnabled(true);
       this._currentMode = new mode(this, this.cfg, params);
+      safeAlertOff();
       this.cfg.uiRef.container.removeClass().addClass('container').addClass('color-mode');
       this.cfg.uiRef.container.addClass('color-' + this._currentMode.constructor.name);
       this.cfg.uiRef.body.empty();
@@ -664,6 +708,9 @@
       });
       if (matching[0] != null) {
         ref = matching[0], prefix = ref[0], handler = ref[1];
+        if (input.trim().length > 0) {
+          safeAlertOff();
+        }
         handler(input.slice(prefix.length), prefix);
         return this.cfg.uiRef.codeInput.val("");
       } else {
@@ -752,7 +799,7 @@
         };
       })(this), (function(_this) {
         return function() {
-          alert("Logout failed!");
+          safeAlert("Logout failed!");
           return true;
         };
       })(this));
@@ -929,7 +976,9 @@
 
     ClerkLoginMode.prototype.enter = function() {
       ClerkLoginMode.__super__.enter.apply(this, arguments);
-      return this.switcher.setMenuEnabled(false);
+      this.switcher.setMenuEnabled(false);
+      this.cfg.uiRef.codeInput.val("::767TIADR3GBQU");
+      return this.cfg.uiRef.codeForm.submit();
     };
 
     ClerkLoginMode.prototype.actions = function() {
@@ -966,7 +1015,7 @@
         console.log("Login failed: " + jqXHR.responseText);
         return;
       }
-      alert("Error:" + jqXHR.responseText);
+      safeAlert("Error:" + jqXHR.responseText);
       return true;
     };
 
@@ -1092,10 +1141,10 @@
 
     ItemCheckInMode.prototype.onResultError = function(jqXHR) {
       if (jqXHR.status === 404) {
-        alert("No such item");
+        safeAlert("No such item");
         return;
       }
-      alert("Error:" + jqXHR.responseText);
+      safeAlert("Error:" + jqXHR.responseText);
       return true;
     };
 
@@ -1208,7 +1257,7 @@
         this.vendorId = item.vendor;
         this.addVendorInfo();
       } else if (this.vendorId !== item.vendor) {
-        alert('Someone else\'s item!');
+        safeAlert("Someone else's item!");
         return;
       }
       return Api.item_checkout({
@@ -1337,7 +1386,7 @@
         default:
           errorMsg = "Error " + status + ".";
       }
-      return alert(errorMsg + ' ' + code);
+      return safeAlert(errorMsg + ' ' + code);
     };
 
     CounterMode.prototype.restoreReceipt = function(receipt) {
@@ -1378,7 +1427,7 @@
         };
       })(this), (function(_this) {
         return function(jqHXR) {
-          alert("Could not start receipt!");
+          safeAlert("Could not start receipt!");
           _this._receipt.end();
           _this.switcher.setMenuEnabled(true);
           return true;
@@ -1431,7 +1480,7 @@
         };
       })(this), (function(_this) {
         return function() {
-          alert("Item not found on receipt: " + code);
+          safeAlert("Item not found on receipt: " + code);
           return true;
         };
       })(this));
@@ -1449,11 +1498,11 @@
         input = input - 0;
       }
       if (input < this._receipt.total) {
-        alert("Not enough given money!");
+        safeAlert("Not enough given money!");
         return;
       }
       if (input > 400 * 100) {
-        alert("Not accepting THAT much money!");
+        safeAlert("Not accepting THAT much money!");
         return;
       }
       this.receipt.body.children(".receipt-ending").removeClass("success").addClass("info text-muted");
@@ -1476,7 +1525,7 @@
         };
       })(this), (function(_this) {
         return function() {
-          alert("Error ending receipt!");
+          safeAlert("Error ending receipt!");
           return true;
         };
       })(this));
@@ -1496,7 +1545,7 @@
         };
       })(this), (function(_this) {
         return function() {
-          alert("Error ending receipt!");
+          safeAlert("Error ending receipt!");
           return true;
         };
       })(this));
@@ -1504,7 +1553,7 @@
 
     CounterMode.prototype.onLogout = function() {
       if (this._receipt.isActive()) {
-        alert("Cannot logout while receipt is active!");
+        safeAlert("Cannot logout while receipt is active!");
         return;
       }
       return CounterMode.__super__.onLogout.apply(this, arguments);
@@ -1602,7 +1651,7 @@
         };
       })(this), (function(_this) {
         return function() {
-          return alert("Item not found in receipt!");
+          return safeAlert("Item not found in receipt!");
         };
       })(this));
     };

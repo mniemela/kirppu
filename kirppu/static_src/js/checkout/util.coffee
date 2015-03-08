@@ -37,3 +37,40 @@ Number.prototype.round5 = ->
     return this + (5 - modulo)
   else
     return this - modulo
+
+# Internal flag to ensure that blinking is finished before the error text can be removed.
+stillBlinking = false
+
+# Display safe alert message.
+#
+# @param message [String] Message to display.
+# @param blink [Boolean, optional] If true (default), container is blinked.
+@safeAlert = (message, blink=true) ->
+  body = CheckoutConfig.uiRef.container
+  text = CheckoutConfig.uiRef.errorText
+  cls = "alert-blink"
+
+  text.text(message)
+  text.removeClass("alert-off")
+  return unless blink
+
+  body.addClass(cls)
+  blinksToGo = CheckoutConfig.settings.alertBlinkCount * 2  # *2 because every other step is a blink removal step.
+  timeout = 150
+  stillBlinking = true
+
+  timeCb = () ->
+    body.toggleClass(cls)
+    if --blinksToGo > 0
+      setTimeout(timeCb, timeout)
+    else
+      stillBlinking = false
+      body.removeClass(cls)
+  setTimeout(timeCb, timeout)
+
+# Remove safe alert message, if the alert has been completed.
+@safeAlertOff = ->
+  return if stillBlinking
+
+  CheckoutConfig.uiRef.errorText.addClass("alert-off")
+

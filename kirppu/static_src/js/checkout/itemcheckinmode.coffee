@@ -32,7 +32,7 @@ class @ItemCheckInMode extends ItemCheckoutMode
 
   onResultError: (jqXHR) =>
     if jqXHR.status == 404
-      alert("No such item")
+      safeAlert("No such item")
       return
-    alert("Error:" + jqXHR.responseText)
+    safeAlert("Error:" + jqXHR.responseText)
     return true

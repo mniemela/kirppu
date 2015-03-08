@@ -50,6 +50,6 @@ class @CheckoutMode
         @switcher.switchTo(ClerkLoginMode)
 
       () =>
-        alert("Logout failed!")
+        safeAlert("Logout failed!")
         return true
     )

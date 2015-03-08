@@ -27,7 +27,7 @@ class @ReceiptPrintMode extends CheckoutMode
       (data) =>
         @renderReceipt(data)
       () =>
-        alert("Item not found in receipt!")
+        safeAlert("Item not found in receipt!")
     )
 
   renderReceipt: (receiptData) ->

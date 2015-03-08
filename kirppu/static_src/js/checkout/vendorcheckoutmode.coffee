@@ -60,7 +60,7 @@ class @VendorCheckoutMode extends ItemCheckoutMode
       do @addVendorInfo
 
     else if @vendorId != item.vendor
-      alert('Someone else\'s item!')
+      safeAlert("Someone else's item!")
       return
 
     Api.item_checkout(code: item.code).done(@onCheckedOut)
