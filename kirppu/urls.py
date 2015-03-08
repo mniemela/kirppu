@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, url
 from django.conf import settings
 
 from .views import get_clerk_codes, get_counter_commands, get_barcode, checkout_view, vendor_view, \
@@ -26,7 +26,7 @@ _urls = [
 ]
 
 if settings.KIRPPU_CHECKOUT_ACTIVE:  # Only activate API when checkout is active.
-    _urls.append(url('^api/checkout.js/$', checkout_js, name='checkout_js'))
+    _urls.append(url('^api/checkout.js$', checkout_js, name='checkout_js'))
     _urls.extend([
         url(func.url, "kirppu.checkout_api.%s" % func.name, name=func.view_name)
         for func in AJAX_FUNCTIONS.itervalues()

@@ -6,13 +6,13 @@ It consists of a high level guide outlining the steps, example guide that has mo
 ## High level guide
 
 1. Install python.
-  1. Install pip.
-     Pip is used for downloading and installing dependencies. It is included
-     by default in Python since 2.7.9 and 3.4.
-  2. (recommended) Install virtualenv.
-     Virtualenv is used to install Python and dependencies directly to the
-     project folder, so that any updates to the rest of the system don't
-     influence the project.
+    1. Install pip.
+       Pip is used for downloading and installing dependencies. It is included
+       by default in Python since 2.7.9 and 3.4.
+    2. (recommended) Install virtualenv.
+       Virtualenv is used to install Python and dependencies directly to the
+       project folder, so that any updates to the rest of the system don't
+       influence the project.
 4. Clone Kirppu.
 5. Install dependencies with pip and dependencies.txt.
 6. Install js dependencies with npm. (Needed only if doing CoffeeScript/js/css editing.)
@@ -23,14 +23,17 @@ It consists of a high level guide outlining the steps, example guide that has mo
 ## Example guide
 
 Windows:
+
 - If pip or virtualenv are missing from PATH, even though they are installed, call them through python
-  - python -m pip install virtualenv
-  - python -m virtualenv venv
+    - `python -m pip install virtualenv`
+    - `python -m virtualenv venv`
 
 Syntax:
-- # comment
+
+- \# comment
 - $ Linux/generic command line
-- > Windows specific command line
+- \> Windows specific command line
+
 
 ### Setting up Kirppu and its dependencies
 ```Text
@@ -88,33 +91,54 @@ Installed 10 object(s) from 1 fixture(s)
 ## Testing Kirppu
 
 - Admin interface
-  - localhost:9874/admin/
-  - Login with the local superuser credentials.
-  - You can view and modify the model at your will here.
+    - `localhost:9874/admin/`
+    - Login with the local superuser credentials.
+    - You can view and modify the model at your will here.
 - Vendor UI
-  - localhost:9874/kirppu/vendor
-  - Vendors register their items here.
+    - `localhost:9874/kirppu/vendor`
+    - Vendors register their items here.
 - Clerk UI
-  - localhost:9874/kirppu/checkout
-  - To enable, you need to set KIRPPU_CHECKOUT_ACTIVE to True in 
-    kirppu/settings.py
-  - "Locked Need to validate counter."
-    - Input :*dev_counter
-  - "Locked Login..."
-    - In admin panel, goto clerks and generate an access code for you self with
-      Action: "Generate missing Clerk access codes"
-    - Input your access code.
+    - `localhost:9874/kirppu/checkout`
+    - To enable, you need to set `KIRPPU_CHECKOUT_ACTIVE` to _True_ in
+      `kirppu/local_settings.py`
+    - "Locked Need to validate counter."
+        - Input `:*dev_counter`
+    - "Locked Login..."
+        - In admin panel, goto clerks and generate an access code for you self with
+          Action: "Generate missing Clerk access codes"
+        - Input your access code.
 
 
 ## Frontend development notes
 
+To compile frontend sources for use in browser, there is two choices, which can both be added to IDE simultaneously.
+
+
+### Gulp watcher
+
 - When changing files in `static_src`, they need to be compiled with `gulp`. Manually:
   `~/kirppu/kirppu$ node node_modules/gulp/bin/gulp.js`
+
 - Automatic compilation can be added to IDE. Following configuration compiles only module whose part has been changed.
-  - Disable _Immediate file synchronization_
-  - Show console: _Always_  (errors are currently not found correctly from output)
-  - File type: _Any_
-  - Scope: Define own scope that recursively contains `static_src` directory.
-  - Program: Either `node_modules/gulp/bin/gulp.js` or wrapper script (or `node` itself; add the gulp.js to first argument then).
-  - Arguments: `build --file $FilePathRelativeToProjectRoot$`
-  - Output paths to refresh: `./static`
+    - Disable _Immediate file synchronization_
+    - Show console: _Always_  (errors are currently not found correctly from output)
+    - File type: _Any_
+    - Scope: Define own scope that recursively contains `static_src` directory.
+    - Program: Either `node_modules/gulp/bin/gulp.js` or wrapper script (or `node` itself; add the gulp.js to first argument then).
+    - Arguments: `build --file $FilePathRelativeToProjectRoot$`
+    - Output paths to refresh: `./static`
+
+- When needed, automatic compilation can be disabled from watcher list by un-checking the watcher.
+
+
+### Gulp run configuration
+
+- "Rebuild":
+    - Gulpfile: Choose the `gulpfile.js` from `kirppu` module.
+    - Task: `default`
+    - Node: Choose your node binary.
+    - Gulp package: Find `kirppu/kirppu/node_modules/gulp`.
+
+- "Rebuild production":
+    - Same as above, but this additionally compress the results (of some parts). This will take a bit longer than without compress.
+    - Arguments: `--type production`
