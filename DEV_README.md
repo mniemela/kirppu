@@ -15,8 +15,9 @@ It consists of a high level guide outlining the steps, example guide that has mo
      influence the project.
 4. Clone Kirppu.
 5. Install dependencies with pip and dependencies.txt.
-6. Setup database with dev data.
-7. Run django with manage.py.
+6. Install js dependencies with npm. (Needed only if doing CoffeeScript/js/css editing.)
+7. Setup database with dev data.
+8. Run django with manage.py.
 
 
 ## Example guide
@@ -54,14 +55,19 @@ $ cd kirppu
 
 # Install packages needed to build the requirements from source.
 # On Windows pip might download actual binaries, or you might need to
-# have Visual Studio and install the dependancies 
+# have Visual Studio and install the dependencies
 # Pillow/PIL can make use of other libs too, but zlib should suffice.
-sudo aptitude install python-dev zlib1g-dev
-sudo yum install python-devel libzip-devel
+sudo aptitude install python-dev zlib1g-dev nodejs
+sudo yum install python-devel libzip-devel nodejs
 
-# Install 
+# Install required python packages.
 ~/kirppu$ pip install -r requirements.txt
 Successfully installed django-1.6.10 django-pipeline-1.3.27 pillow-2.4.0 pyBarcode-0.8b1
+
+# Install required js packages (defined by package.json).
+# Note, that this is ran inside the "kirppu" module instead of project root.
+~/kirppu/kirppu$ npm install
+# (this may take a while, and will output huge tree after it completes.)
 ```
 
 ### Add some example Data for Kirppu.
@@ -98,3 +104,17 @@ Installed 10 object(s) from 1 fixture(s)
     - In admin panel, goto clerks and generate an access code for you self with
       Action: "Generate missing Clerk access codes"
     - Input your access code.
+
+
+## Frontend development notes
+
+- When changing files in `static_src`, they need to be compiled with `gulp`. Manually:
+  `~/kirppu/kirppu$ node node_modules/gulp/bin/gulp.js`
+- Automatic compilation can be added to IDE. Following configuration compiles only module whose part has been changed.
+  - Disable _Immediate file synchronization_
+  - Show console: _Always_  (errors are currently not found correctly from output)
+  - File type: _Any_
+  - Scope: Define own scope that recursively contains `static_src` directory.
+  - Program: Either `node_modules/gulp/bin/gulp.js` or wrapper script (or `node` itself; add the gulp.js to first argument then).
+  - Arguments: `build --file $FilePathRelativeToProjectRoot$`
+  - Output paths to refresh: `./static`
