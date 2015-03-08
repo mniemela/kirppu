@@ -1724,6 +1724,7 @@
     VendorCompensation.prototype.enter = function() {
       VendorCompensation.__super__.enter.apply(this, arguments);
       this.cfg.uiRef.codeForm.hide();
+      this.switcher.setMenuEnabled(false);
       this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
       this.buttonForm = $('<form class="hidden-print">').append(this.abortButton());
       this.cfg.uiRef.body.append(this.buttonForm);
@@ -1736,6 +1737,7 @@
 
     VendorCompensation.prototype.exit = function() {
       this.cfg.uiRef.codeForm.show();
+      this.switcher.setMenuEnabled(true);
       return VendorCompensation.__super__.exit.apply(this, arguments);
     };
 

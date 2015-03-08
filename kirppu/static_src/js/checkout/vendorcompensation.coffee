@@ -9,6 +9,7 @@ class @VendorCompensation extends CheckoutMode
   enter: ->
     super
     @cfg.uiRef.codeForm.hide()
+    @switcher.setMenuEnabled(false)
     @cfg.uiRef.body.append(new VendorInfo(@vendor).render())
 
     @buttonForm = $('<form class="hidden-print">').append(@abortButton())
@@ -21,6 +22,7 @@ class @VendorCompensation extends CheckoutMode
 
   exit: ->
     @cfg.uiRef.codeForm.show()
+    @switcher.setMenuEnabled(true)
     super
 
   confirmButton: ->
