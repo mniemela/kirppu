@@ -1,0 +1,163 @@
+{% extends "kirppu/common.html" %}{% load i18n %}
+
+{% load static %}
+
+{% block title %}Kirppu - Checkout{% endblock %}
+
+{% block head %}
+    <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+    <link href="{% static "kirppu/css/checkout.css" %}" rel="stylesheet">
+    <script src="{% static "kirppu/js/general.js" %}"></script>
+    <script src="{% static "kirppu/js/checkout.js" %}"></script>
+{% endblock %}
+
+{% block navbar_left %}
+    <li class="dropdown" id="modeMenu"><a href="javascript:void(1)" class="dropdown-toggle" data-toggle="dropdown">Counter mode <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="customer_checkout" class="color-CounterMode"><span class="glyphicon glyphicon-euro"></span> Checkout counter</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="vendor_check_in" class="color-ItemCheckInMode"><span class="glyphicon glyphicon-import"></span> Vendor Check-In</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="reports" class="color-ReceiptPrintMode"><span class="glyphicon glyphicon-list-alt"></span> Receipt Search</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="vendor_check_out" class="color-VendorCheckoutMode"><span class="glyphicon glyphicon-export"></span> Vendor Check-Out</a>
+        </li>
+        <li>
+            <a href="javascript:void(1)" data-entrypoint="vendor_find" class="color-VendorFindMode"><span class="glyphicon glyphicon-user"></span> Vendor Search</a>
+        </li>
+        </ul>
+    </li>
+{% endblock %}
+{% block navbar_right %}
+    <li>
+        <a href="javascript:void(1)" data-toggle="modal" data-target="#help_dialog"><span class="glyphicon glyphicon-question-sign"></span> Help</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <h1>
+        <span id="mode_glyph" class="glyphicon glyphicon-euro"></span>
+        <span id="title_text">Checkout</span>
+        <small id="subtitle_text" class="hidden-print"></small>
+    </h1>
+    <form role="form" id="code_form" class="hidden-print">
+        <div class="form-group">
+            <label class="sr-only" for="code_input">Code</label>
+            <input type="text" id="code_input" class="form-control"
+                   placeholder="Barcode" autofocus="true"/>
+        </div>
+    </form>
+
+    <div id="receipt_body"></div>
+{% endblock  %}
+
+{% block tail %}
+<script type="application/javascript"
+        src="{% url 'kirppu:checkout_js' %}"
+        charset="UTF-8"></script>
+<script type="application/javascript"><!--
+    CheckoutConfig.uiId.container = "body";
+    CheckoutConfig.uiId.body = "receipt_body";
+    CheckoutConfig.uiId.glyph = "mode_glyph"
+    CheckoutConfig.uiId.stateText = "title_text";
+    CheckoutConfig.uiId.subtitleText = "subtitle_text";
+    CheckoutConfig.uiId.codeInput = "code_input";
+    CheckoutConfig.uiId.codeForm = "code_form";
+    CheckoutConfig.uiId.modeMenu = "modeMenu";
+    CheckoutConfig.uiId.dialog = "dialog_template";
+    CheckoutConfig.settings.abortPrefix = "{{ CounterCommands.ABORT }}";
+    CheckoutConfig.settings.logoutPrefix = "{{ CounterCommands.LOGOUT }}";
+    DateTimeFormatter.locales = "{{ LANGUAGE_CODE }}";
+    DateTimeFormatter.timeZone = "{{ TIME_ZONE }}";
+    DateTimeFormatter.init()
+
+{# Until js localization domain is splitted from the public domain, using this. #}
+{% language settings.LANGUAGE_CODE %}
+    ReceiptPrintMode.strTotal = "{% trans "Total:" %}";
+    PrintReceiptTable.strVendor = "{% trans "vendor" %}";
+    PrintReceiptTable.strCode = "{% trans "code" %}";
+    PrintReceiptTable.strItem = "{% trans "name" %}";
+    PrintReceiptTable.strPrice = "{% trans "price" %}";
+{% endlanguage %}
+
+    $(document).ready(function() {
+        setupAjax();
+        CheckoutConfig.check();
+        new ModeSwitcher().startDefault();
+    });
+//--></script>
+    <div class="modal fade" id="help_dialog" tabindex="-1" role="dialog" aria-labelledby="help_dialog_label"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="help_dialog_label">Counter Help</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Input</th>
+                            <th>Example</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Log out from counter</td>
+                            <td><kbd>{{ CounterCommands.LOGOUT }}</kbd></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Abort current receipt</td>
+                            <td><kbd>{{ CounterCommands.ABORT }}</kbd></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Remove item from receipt</td>
+                            <td><kbd>-ITEM_CODE</kbd></td>
+                            <td><code>-PF72NOZI</code></td>
+                        </tr>
+                        <tr>
+                            <td>Payment</td>
+                            <td><kbd>+CENTS</kbd></td>
+                            <td><code>+1200</code> for 12,00&euro;</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><kbd>+EUROS,CENTS</kbd></td>
+                            <td><code>+12,00</code> for 12,00&euro;</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="dialog_template" tabindex="-1" role="dialog" aria-labelledby="dialog_template_label"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="dialog_template_label">&lt;Dialog&gt;</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
