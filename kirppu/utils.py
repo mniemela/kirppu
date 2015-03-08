@@ -5,11 +5,15 @@ import django.forms
 from django.http.response import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+import datetime
 import pytz
 
 __author__ = 'jyrkila'
 
-RFC2822TIME = "%a, %d %b %Y %H:%M:%S %z"
+RFC8601DATETIME = "%Y-%m-%dT%H:%M:%S%z"
+RFC8601DATE = "%Y-%m-%d"
+TIME = "%H:%M:%S"
+# RFC2822TIME = "%a, %d %b %Y %H:%M:%S %z"
 MEM_TIMES = {}
 
 
@@ -125,15 +129,23 @@ def model_dict_fn(*args, **kwargs):
 
 def format_datetime(dt):
     """
-    Format given datetime in RFC2822 format, that is used in web/javascript.
+    Format given datetime in RFC8601 format, that is used with moment.js.
 
     :param dt: Datetime to format.
-    :type dt: datetime.datetime
+    :type dt: datetime.datetime|datetime.date|datetime.time
     :return: Formatted string.
     :rtype: str
+    :raises RuntimeError: If input type is not understood.
     """
-
-    return dt.strftime(RFC2822TIME)
+    if isinstance(dt, datetime.datetime):
+        result = dt.strftime(RFC8601DATETIME)
+    elif isinstance(dt, datetime.date):
+        result = dt.strftime(RFC8601DATE)
+    elif isinstance(dt, datetime.time):
+        result = dt.strftime(TIME)
+    else:
+        raise RuntimeError("Unsupported object given for format_datetime: " + repr(dt))
+    return result
 
 
 class StaticTextWidget(django.forms.widgets.Widget):

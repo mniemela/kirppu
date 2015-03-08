@@ -76,9 +76,17 @@ module.exports.js = {
             "js/checkout/vendorfindmode.coffee",
 
             "js/number_test.coffee",
-            "js/jquery.cookie-1.4.1-0.js",
         ],
         "output_filename": "checkout.js",
+    },
+    'checkout_compressed': {
+        "source_filenames": [
+            "js/jquery.cookie-1.4.1-0.js",
+            "js/moment.js",
+            "js/moment.fi.js",
+        ],
+        "output_filename": "checkout_comp.js",
+        "compress": true
     },
     'jeditable': {
         "source_filenames": [

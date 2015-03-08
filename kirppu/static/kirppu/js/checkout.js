@@ -169,54 +169,12 @@
 // ================ 3: datetime_formatter.coffee ================
 
 (function() {
-  var slice = [].slice;
-
   this.DateTimeFormatter = (function() {
     function DateTimeFormatter() {}
 
     DateTimeFormatter.timeZone = null;
 
     DateTimeFormatter.locales = null;
-
-    DateTimeFormatter._createDateOptions = function() {
-      return {
-        timeZone: this.constructor.timeZone
-      };
-    };
-
-    DateTimeFormatter._dateSupportsLocales = function(fn) {
-      var e;
-      try {
-        new Date()[fn]("i");
-      } catch (_error) {
-        e = _error;
-        if (e.name === "RangeError") {
-          try {
-            new Date()[fn](this.locales, {
-              timeZone: this.timeZone
-            });
-          } catch (_error) {
-            e = _error;
-            if (e.name === "RangeError") {
-              return 1;
-            }
-          }
-          return 2;
-        }
-      }
-      return 0;
-    };
-
-    DateTimeFormatter._buildSupport = function() {
-      var arg, args, i, len, r;
-      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      r = {};
-      for (i = 0, len = args.length; i < len; i++) {
-        arg = args[i];
-        r[arg] = this._dateSupportsLocales(arg);
-      }
-      return r;
-    };
 
     DateTimeFormatter.init = function(locales, timeZone) {
       if (locales == null) {
@@ -229,34 +187,19 @@
         this.locales = locales;
         this.timeZone = timeZone;
       }
-      return this._dateSupport = this._buildSupport("toLocaleDateString", "toLocaleTimeString", "toLocaleString");
-    };
-
-    DateTimeFormatter._dateSupport = null;
-
-    DateTimeFormatter._callDateLocale = function(dateStr, fn) {
-      var dateObj, supported;
-      dateObj = new Date(dateStr);
-      supported = this._dateSupport[fn];
-      if (supported === 2) {
-        return dateObj[fn](this.locales, this._createDateOptions());
-      } else if (supported === 1) {
-        return dateObj[fn](this.locales);
-      } else {
-        return dateObj[fn]();
-      }
+      return moment.locale(this.locales);
     };
 
     DateTimeFormatter.date = function(value) {
-      return this._callDateLocale(value, "toLocaleDateString");
+      return moment(value).format("L");
     };
 
     DateTimeFormatter.time = function(value) {
-      return this._callDateLocale(value, "toLocaleTimeString");
+      return moment(value).format("LTS");
     };
 
     DateTimeFormatter.datetime = function(value) {
-      return this._callDateLocale(value, "toLocaleString");
+      return moment(value).format("L LTS");
     };
 
     return DateTimeFormatter;
@@ -2037,123 +1980,3 @@
   };
 
 }).call(this);
-
-// ================ 25: jquery.cookie-1.4.1-0.js ================
-
-/*!
- * jQuery Cookie Plugin v1.4.1
- * https://github.com/carhartl/jquery-cookie
- *
- * Copyright 2013 Klaus Hartl
- * Released under the MIT license
- */
-(function (factory) {
-	if (typeof define === 'function' && define.amd) {
-		// AMD
-		define(['jquery'], factory);
-	} else if (typeof exports === 'object') {
-		// CommonJS
-		factory(require('jquery'));
-	} else {
-		// Browser globals
-		factory(jQuery);
-	}
-}(function ($) {
-
-	var pluses = /\+/g;
-
-	function encode(s) {
-		return config.raw ? s : encodeURIComponent(s);
-	}
-
-	function decode(s) {
-		return config.raw ? s : decodeURIComponent(s);
-	}
-
-	function stringifyCookieValue(value) {
-		return encode(config.json ? JSON.stringify(value) : String(value));
-	}
-
-	function parseCookieValue(s) {
-		if (s.indexOf('"') === 0) {
-			// This is a quoted cookie as according to RFC2068, unescape...
-			s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-		}
-
-		try {
-			// Replace server-side written pluses with spaces.
-			// If we can't decode the cookie, ignore it, it's unusable.
-			// If we can't parse the cookie, ignore it, it's unusable.
-			s = decodeURIComponent(s.replace(pluses, ' '));
-			return config.json ? JSON.parse(s) : s;
-		} catch(e) {}
-	}
-
-	function read(s, converter) {
-		var value = config.raw ? s : parseCookieValue(s);
-		return $.isFunction(converter) ? converter(value) : value;
-	}
-
-	var config = $.cookie = function (key, value, options) {
-
-		// Write
-
-		if (value !== undefined && !$.isFunction(value)) {
-			options = $.extend({}, config.defaults, options);
-
-			if (typeof options.expires === 'number') {
-				var days = options.expires, t = options.expires = new Date();
-				t.setTime(+t + days * 864e+5);
-			}
-
-			return (document.cookie = [
-				encode(key), '=', stringifyCookieValue(value),
-				options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-				options.path    ? '; path=' + options.path : '',
-				options.domain  ? '; domain=' + options.domain : '',
-				options.secure  ? '; secure' : ''
-			].join(''));
-		}
-
-		// Read
-
-		var result = key ? undefined : {};
-
-		// To prevent the for loop in the first place assign an empty array
-		// in case there are no cookies at all. Also prevents odd result when
-		// calling $.cookie().
-		var cookies = document.cookie ? document.cookie.split('; ') : [];
-
-		for (var i = 0, l = cookies.length; i < l; i++) {
-			var parts = cookies[i].split('=');
-			var name = decode(parts.shift());
-			var cookie = parts.join('=');
-
-			if (key && key === name) {
-				// If second argument (value) is a function it's a converter...
-				result = read(cookie, value);
-				break;
-			}
-
-			// Prevent storing a cookie that we couldn't decode.
-			if (!key && (cookie = read(cookie)) !== undefined) {
-				result[name] = cookie;
-			}
-		}
-
-		return result;
-	};
-
-	config.defaults = {};
-
-	$.removeCookie = function (key, options) {
-		if ($.cookie(key) === undefined) {
-			return false;
-		}
-
-		// Must not alter options, thus extending a fresh object...
-		$.cookie(key, '', $.extend({}, options, { expires: -1 }));
-		return !$.cookie(key);
-	};
-
-}));
