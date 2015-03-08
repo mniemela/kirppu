@@ -1,6 +1,10 @@
+// ================ 1: gettext_shim.js ================
+
 if(!window.gettext) {
     window.gettext = function(s) { return s; };
 }
+
+// ================ 2: jquery-1.10.2.js ================
 
 /*!
  * jQuery JavaScript Library v1.10.2
@@ -9792,6 +9796,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
 })( window );
 
+// ================ 3: bootstrap.js ================
+
 /*!
  * Bootstrap v3.2.0 (http://getbootstrap.com)
  * Copyright 2011-2014 Twitter, Inc.
@@ -11906,6 +11912,8 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   })
 
 }(jQuery);
+
+// ================ 4: csrf.coffee ================
 
 (function() {
   var csrfSafeMethod, getCookie, getCsrf, setupAjax;

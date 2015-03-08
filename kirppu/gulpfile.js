@@ -1,6 +1,6 @@
 var gulp = require("gulp");
 var gif = require("gulp-if");
-var concat = require("gulp-concat");
+var concat = require("gulp-concat-util");
 var coffee = require("gulp-coffee");
 var uglify = require("gulp-uglify");
 var minify = require("gulp-minify-css");
@@ -15,6 +15,9 @@ var DEST = "static/kirppu";
 // Compression enabled, if run with arguments: --type production
 var shouldCompress = gutil.env.type === "production";
 
+var jsHeader = "// ================ <%= index %>: <%= original %> ================\n\n";
+var cssHeader = "/* ================ <%= index %>: <%= original %> ================ */\n\n";
+
 /**
  * Add source (SRC) prefix for all source file names from pipeline definition.
  *
@@ -25,12 +28,30 @@ var srcPrepend = function(def) {
     return _.map(def.source_filenames, function(n) { return SRC + "/" + n; })
 };
 
+/**
+ * Get concat:process function that adds given header to each part of concatenated file.
+ *
+ * @param header {string} Header template to use.
+ * @returns {Function} Function for concat:process.
+ */
+var fileHeader = function(header) {
+    var index = 1;
+    return function(src) {
+        if (shouldCompress) {
+            return src;
+        }
+        var original = /[/\\]?([^/\\]*)$/.exec(this.history[0]);
+        if (original != null) original = original[1]; else original = "?";
+        return gutil.template(header, {file: this, index: index++, original: original}) + src;
+    };
+};
+
 var jsTasks = _.map(pipeline.js, function(def, name) {
     var taskName = "js:" + name;
     gulp.task(taskName, function() {
         return gulp.src(srcPrepend(def))
             .pipe(gif(/\.coffee$/, coffee(), gutil.noop()))
-            .pipe(concat(def.output_filename))
+            .pipe(concat(def.output_filename, {process: fileHeader(jsHeader)}))
             .pipe(gif(shouldCompress && def.compress, uglify()))
             .pipe(gulp.dest(DEST + "/js/"));
     });
@@ -41,7 +62,7 @@ var cssTasks = _.map(pipeline.css, function(def, name) {
     var taskName = "css:" + name;
     gulp.task(taskName, function() {
         return gulp.src(srcPrepend(def))
-            .pipe(concat(def.output_filename))
+            .pipe(concat(def.output_filename, {process: fileHeader(cssHeader)}))
             .pipe(gif(shouldCompress, minify()))
             .pipe(gulp.dest(DEST + "/css/"));
     });

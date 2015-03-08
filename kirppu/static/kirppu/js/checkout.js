@@ -1,3 +1,5 @@
+// ================ 1: util.coffee ================
+
 (function() {
   this.displayPrice = function(price, rounded) {
     var price_str, rounded_str;
@@ -45,6 +47,8 @@
   };
 
 }).call(this);
+
+// ================ 2: checkout.coffee ================
 
 (function() {
   var Config;
@@ -162,6 +166,8 @@
 
 }).call(this);
 
+// ================ 3: datetime_formatter.coffee ================
+
 (function() {
   var slice = [].slice;
 
@@ -259,6 +265,8 @@
 
 }).call(this);
 
+// ================ 4: dialog.coffee ================
+
 (function() {
   this.Dialog = (function() {
     function Dialog(template, title) {
@@ -332,6 +340,8 @@
 
 }).call(this);
 
+// ================ 5: resulttable.coffee ================
+
 (function() {
   this.ResultTable = (function() {
     function ResultTable(caption) {
@@ -354,6 +364,8 @@
 
 }).call(this);
 
+// ================ 6: itemreceipttable.coffee ================
+
 (function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -371,6 +383,8 @@
   })(ResultTable);
 
 }).call(this);
+
+// ================ 7: itemreporttable.coffee ================
 
 (function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -455,6 +469,8 @@
 
 }).call(this);
 
+// ================ 8: vendorlist.coffee ================
+
 (function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -492,6 +508,8 @@
 
 }).call(this);
 
+// ================ 9: vendorinfo.coffee ================
+
 (function() {
   this.VendorInfo = (function() {
     function VendorInfo(vendor) {
@@ -517,6 +535,8 @@
   })();
 
 }).call(this);
+
+// ================ 10: receiptsum.coffee ================
 
 (function() {
   this.ReceiptSum = (function() {
@@ -544,6 +564,8 @@
   })();
 
 }).call(this);
+
+// ================ 11: printreceipttable.coffee ================
 
 (function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -595,6 +617,8 @@
   })(ResultTable);
 
 }).call(this);
+
+// ================ 12: modeswitcher.coffee ================
 
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -739,6 +763,8 @@
 
 }).call(this);
 
+// ================ 13: checkoutmode.coffee ================
+
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -794,6 +820,8 @@
 
 }).call(this);
 
+// ================ 14: itemcheckoutmode.coffee ================
+
 (function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -833,6 +861,8 @@
   })(CheckoutMode);
 
 }).call(this);
+
+// ================ 15: countervalidationmode.coffee ================
 
 (function() {
   var b64_to_utf8, utf8_to_b64,
@@ -926,6 +956,8 @@
   })(CheckoutMode);
 
 }).call(this);
+
+// ================ 16: clerkloginmode.coffee ================
 
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -1050,6 +1082,8 @@
 
 }).call(this);
 
+// ================ 17: itemcheckinmode.coffee ================
+
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1126,6 +1160,8 @@
   })(ItemCheckoutMode);
 
 }).call(this);
+
+// ================ 18: vendorcheckoutmode.coffee ================
 
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -1246,6 +1282,8 @@
   })(ItemCheckoutMode);
 
 }).call(this);
+
+// ================ 19: countermode.coffee ================
 
 (function() {
   var ReceiptData,
@@ -1566,6 +1604,8 @@
 
 }).call(this);
 
+// ================ 20: receiptprintmode.coffee ================
+
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1665,6 +1705,8 @@
   })(CheckoutMode);
 
 }).call(this);
+
+// ================ 21: vendorcompensation.coffee ================
 
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -1786,6 +1828,8 @@
 
 }).call(this);
 
+// ================ 22: vendorreport.coffee ================
+
 (function() {
   var tables,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -1899,6 +1943,8 @@
 
 }).call(this);
 
+// ================ 23: vendorfindmode.coffee ================
+
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1978,6 +2024,8 @@
 
 }).call(this);
 
+// ================ 24: number_test.coffee ================
+
 (function() {
   var NUM_PAT;
 
@@ -1988,6 +2036,8 @@
   };
 
 }).call(this);
+
+// ================ 25: jquery.cookie-1.4.1-0.js ================
 
 /*!
  * jQuery Cookie Plugin v1.4.1

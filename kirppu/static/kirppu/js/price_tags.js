@@ -1,3 +1,5 @@
+// ================ 1: number_test.coffee ================
+
 (function() {
   var NUM_PAT;
 
@@ -8,6 +10,8 @@
   };
 
 }).call(this);
+
+// ================ 2: price_tags.coffee ================
 
 (function() {
   var C, PriceTagsConfig, addItem, bindFormEvents, bindItemToNotPrintedEvents, bindItemToPrintedEvents, bindItemToggleEvents, bindListTagEvents, bindNameEditEvents, bindPriceEditEvents, bindTagEvents, createTag, deleteAll, listViewIsOn, moveItemToNotPrinted, moveItemToPrinted, moveTagToPrinted, onPriceChange, toggleListView, unbindTagEvents;

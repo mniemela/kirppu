@@ -1,3 +1,5 @@
+/* ================ 1: general.css ================ */
+
 table .numeric {
     text-align: right;
 }
@@ -5,6 +7,8 @@ table .numeric {
 table .bool {
     text-align: center;
 }
+
+/* ================ 2: bootstrap.css ================ */
 
 /*!
  * Bootstrap v3.2.0 (http://getbootstrap.com)
@@ -6209,6 +6213,8 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+
+/* ================ 3: bootstrap-theme.css ================ */
 
 /*!
  * Bootstrap v3.2.0 (http://getbootstrap.com)
