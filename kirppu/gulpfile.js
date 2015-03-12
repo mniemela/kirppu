@@ -101,7 +101,9 @@ var findTask = function(haystack, file) {
  * @returns {boolean} True if task was run. Otherwise false.
  */
 var startFileTask = function(group) {
-    var task = findTask(_.result(pipeline, group), gutil.env.file);
+    // Replace '\' with '/' so Windows file paths work.
+    var filename = gutil.env.file.replace(/\\/g, "/");
+    var task = findTask(_.result(pipeline, group), filename);
     if (task != null) {
         gulp.start(group + ":" + task);
         return true;
