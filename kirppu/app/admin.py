@@ -4,7 +4,7 @@ from django.utils.translation import ugettext
 from django.contrib import messages
 from kirppu.app.forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm
 
-from kirppu.app.models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem
+from kirppu.app.models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem, UIText
 
 __author__ = 'jyrkila'
 
@@ -121,6 +121,13 @@ class ClerkAdmin(admin.ModelAdmin):
 admin.site.register(Clerk, ClerkAdmin)
 
 admin.site.register(Counter)
+
+class UITextAdmin(admin.ModelAdmin):
+    model = UIText
+    ordering = ["identifier"]
+
+
+admin.site.register(UIText, UITextAdmin)
 
 
 class ReceiptItemAdmin(admin.TabularInline):

@@ -8,6 +8,7 @@ import base64
 from cStringIO import StringIO
 from django.utils.functional import memoize
 from collections import OrderedDict
+from kirppu.app.models import UIText
 
 
 class FifoDict(OrderedDict):
@@ -59,6 +60,9 @@ class KirppuBarcode(barcode.Code128):
         # Text is actually going to be text+LF. CH=11, (START=11, END=13)=24
         return (len(text) + 1) * 11 + 24 + writer.quiet_zone()
 
+@register.simple_tag
+def load_text(id_):
+    return UIText.objects.get(identifier=id_).text
 
 def generate_dataurl(code, ext, expect_width=143):
     if not code:
