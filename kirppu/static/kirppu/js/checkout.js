@@ -976,9 +976,7 @@
 
     ClerkLoginMode.prototype.enter = function() {
       ClerkLoginMode.__super__.enter.apply(this, arguments);
-      this.switcher.setMenuEnabled(false);
-      this.cfg.uiRef.codeInput.val("::767TIADR3GBQU");
-      return this.cfg.uiRef.codeForm.submit();
+      return this.switcher.setMenuEnabled(false);
     };
 
     ClerkLoginMode.prototype.actions = function() {
