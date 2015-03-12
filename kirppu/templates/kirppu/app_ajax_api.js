@@ -1,8 +1,8 @@
 (function() {
-    var Api = {};
+    var {{ api_name }} = {};
 {% for name, f in funcs.iteritems %}
 
-Api['{{ name }}'] = function(params, onSuccess, onError) {
+{{ api_name }}['{{ name }}'] = function(params) {
     return $.ajax({
         type: '{{ f.method }}',
         url:  '{% url f.view %}',
@@ -11,5 +11,5 @@ Api['{{ name }}'] = function(params, onSuccess, onError) {
 };
 
 {% endfor %}
-    window.Api = Api;
+    window.{{ api_name }} = {{ api_name }};
 }).call(this);
