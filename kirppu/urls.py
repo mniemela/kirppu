@@ -3,7 +3,7 @@ from django.conf import settings
 
 from .views import get_clerk_codes, get_counter_commands, get_barcode, checkout_view, vendor_view, \
     get_items, all_to_print, item_add, item_to_printed, item_to_not_printed, item_update_name, item_update_type, \
-    item_update_price, remove_item_from_receipt
+    item_update_price, remove_item_from_receipt, login_view, logout_view
 from .checkout_api import AJAX_FUNCTIONS, checkout_js
 
 __author__ = 'jyrkila'
@@ -24,6 +24,11 @@ _urls = [
     url(r'^vendor/item/(?P<code>\w+?)/to_not_printed$', item_to_not_printed, name='item_to_not_printed'),
     url(r'^remove_item', remove_item_from_receipt, name='remove_item_from_receipt'),
 ]
+
+if settings.KIRPPU_USE_SSO:
+    _urls.append(url(r'^login/?$', login_view, name='login_view'))
+    _urls.append(url(r'^logout/?$', logout_view, name='logout_view'))
+
 
 if settings.KIRPPU_CHECKOUT_ACTIVE:  # Only activate API when checkout is active.
     _urls.append(url('^api/checkout.js$', checkout_js, name='checkout_js'))
