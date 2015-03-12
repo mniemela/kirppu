@@ -1,7 +1,7 @@
 // ================ 1: util.coffee ================
 
 (function() {
-  var stillBlinking;
+  var errorSound, stillBlinking;
 
   this.displayPrice = function(price, rounded) {
     var price_str, rounded_str;
@@ -50,11 +50,14 @@
 
   stillBlinking = false;
 
+  errorSound = new Audio("/static/kirppu/audio/error-buzzer.mp3");
+
   this.safeAlert = function(message, blink) {
     var blinksToGo, body, cls, text, timeCb, timeout;
     if (blink == null) {
       blink = true;
     }
+    errorSound.play();
     body = CheckoutConfig.uiRef.container;
     text = CheckoutConfig.uiRef.errorText;
     cls = "alert-blink";
