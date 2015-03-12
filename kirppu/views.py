@@ -417,7 +417,7 @@ def overseer_view(request):
     """Overseer view."""
     try:
         ajax_util.get_counter(request)
-        ajax_util.require_staff_clerk_login(lambda _: None)(request)
+        ajax_util.require_overseer_clerk_login(lambda _: None)(request)
     except ajax_util.AjaxError:
         return redirect('kirppu:checkout_view')
     else:

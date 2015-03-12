@@ -165,11 +165,11 @@ def require_clerk_login(func):
     return wrapper
 
 
-def require_staff_clerk_login(func):
+def require_overseer_clerk_login(func):
     @wraps(func)
     def wrapper(request, *args, **kwargs):
         clerk = get_clerk(request)
-        if not clerk.user.is_staff:
+        if not clerk.user.has_perm('kirppu.oversee'):
             raise AjaxError(RET_FORBIDDEN, _i(u"Access denied."))
         return func(request, *args, **kwargs)
     return wrapper

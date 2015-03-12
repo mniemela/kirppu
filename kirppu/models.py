@@ -63,6 +63,11 @@ class Clerk(models.Model):
         validators=[RegexValidator("^[0-9a-fA-F]{14}$", message="Must be 14 hex chars.")]
     )
 
+    class Meta:
+        permissions = (
+            ("oversee", "Can perform overseer actions"),
+        )
+
     def __unicode__(self):
         if self.user is not None:
             return unicode(self.user)
