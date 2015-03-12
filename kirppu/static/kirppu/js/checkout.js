@@ -1249,7 +1249,9 @@
     VendorCheckoutMode.prototype.returnItem = function(code) {
       return Api.item_find({
         code: code
-      }).done(this.onItemFound);
+      }).then(this.onItemFound, function() {
+        return safeAlert("Item not found: " + code);
+      });
     };
 
     VendorCheckoutMode.prototype.onItemFound = function(item) {
@@ -1262,7 +1264,9 @@
       }
       return Api.item_checkout({
         code: item.code
-      }).done(this.onCheckedOut);
+      }).then(this.onCheckedOut, function(jqHXR) {
+        return safeAlert(jqHXR.responseText);
+      });
     };
 
     VendorCheckoutMode.prototype.onCheckedOut = function(item) {

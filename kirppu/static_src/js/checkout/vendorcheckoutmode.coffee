@@ -52,7 +52,12 @@ class @VendorCheckoutMode extends ItemCheckoutMode
       @receipt.body.prepend(row)
 
   returnItem: (code) =>
-    Api.item_find(code: code).done(@onItemFound)
+    Api.item_find(code: code).then(
+      @onItemFound
+
+      () ->
+        safeAlert("Item not found: " + code)
+    )
 
   onItemFound: (item) =>
     if not @vendorId?
@@ -63,7 +68,12 @@ class @VendorCheckoutMode extends ItemCheckoutMode
       safeAlert("Someone else's item!")
       return
 
-    Api.item_checkout(code: item.code).done(@onCheckedOut)
+    Api.item_checkout(code: item.code).then(
+      @onCheckedOut
+
+      (jqHXR) ->
+        safeAlert(jqHXR.responseText)
+    )
 
   onCheckedOut: (item) =>
     @receipt.body.prepend($('tr', @lastItem.body))
