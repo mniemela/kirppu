@@ -1,4 +1,4 @@
-{% extends "kirppu/app_vendor.html" %}{% load i18n %}
+{% extends "kirppu/app_vendor.html" %}{% load kirppu_tags %}{% load i18n %}
 
 {% load static %}
 
@@ -16,21 +16,16 @@
     <form id="item-add-form" method="POST" class="form-horizontal">
         {% csrf_token %}
         <p class="help-block">
-            {% blocktrans %}Set the name and price of your item and press 'Add item'.
-            Name and price can be modified later.{% endblocktrans %}
+            {% load_text "item_info1" %}
         </p>
         <p class="help-block">
-            {% blocktrans %}Modify the size of the price tags by setting size.
-            Size can be modified later by pressing the arrow button on the price tag.{% endblocktrans %}
+            {% load_text "item_info2" %}
         </p>
         <p class="help-block">
-            {% blocktrans %}Register more than one similar items at once by adding a suffix.
-            Name 'Manga' and suffix '1-3' would create items 'Manga 1', 'Manga 2' and 'Manga 3'.
-            Suffix 'Blue Red' would create items 'Manga Blue' and 'Manga Red'.{% endblocktrans %}
+            {% load_text "item_info3" %}
         </p>
         <p class="help-block">
-            {% blocktrans %}Print the price tags for your items by printing this page.
-            Tips on attaching the tags can be found on here:{% endblocktrans %}
+            {% load_text "item_info4" %}
             <a href="">{% trans "price tag guide" %}</a>
         </p>
         <p class="help-block">

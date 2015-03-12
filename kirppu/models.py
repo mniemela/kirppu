@@ -370,6 +370,22 @@ class Item(models.Model):
         return Item.objects.get(code=data)
 
 
+class UIText(models.Model):
+    def __unicode__(self):
+        return self.identifier
+
+    identifier = models.CharField(
+        max_length=16,
+        blank=True,
+        null=False,
+        unique=True,
+        help_text=_(u"Identifier of the textitem")
+    )
+    text = models.CharField(
+        max_length=16384,
+        help_text=_(u"Textitem in UI")
+    )
+
 class Counter(models.Model):
     identifier = models.CharField(
         max_length=32,
