@@ -19,6 +19,7 @@ Utility functions for writing AJAX views.
 
 # Some HTTP Status codes that are used here.
 RET_UNAUTHORIZED = 401  # Unauthorized, though, not expecting Basic Auth...
+RET_FORBIDDEN = 403     # Forbidden
 
 class AjaxError(Exception):
     def __init__(self, status, message='AJAX request failed'):
@@ -160,5 +161,15 @@ def require_clerk_login(func):
     @wraps(func)
     def wrapper(request, *args, **kwargs):
         get_clerk(request)
+        return func(request, *args, **kwargs)
+    return wrapper
+
+
+def require_staff_clerk_login(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        clerk = get_clerk(request)
+        if not clerk.user.is_staff:
+            raise AjaxError(RET_FORBIDDEN, _i(u"Access denied."))
         return func(request, *args, **kwargs)
     return wrapper

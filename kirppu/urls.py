@@ -1,9 +1,25 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 
-from .views import get_clerk_codes, get_counter_commands, get_barcode, checkout_view, vendor_view, \
-    get_items, all_to_print, item_add, item_to_printed, item_to_not_printed, item_update_name, item_update_type, \
-    item_update_price, remove_item_from_receipt, login_view, logout_view
+from .views import (
+    get_clerk_codes,
+    get_counter_commands,
+    get_barcode,
+    checkout_view,
+    overseer_view,
+    vendor_view,
+    get_items,
+    all_to_print,
+    item_add,
+    item_to_printed,
+    item_to_not_printed,
+    item_update_name,
+    item_update_type,
+    item_update_price,
+    remove_item_from_receipt,
+    login_view,
+    logout_view,
+)
 from .checkout_api import AJAX_FUNCTIONS, checkout_js
 
 __author__ = 'jyrkila'
@@ -12,7 +28,8 @@ _urls = [
     url(r'^clerks/$', get_clerk_codes, name='clerks'),
     url(r'^commands/$', get_counter_commands),
     url(r'^barcode/(?P<data>\w+?)\.(?P<ext>\w+)$', get_barcode, name='barcode'),
-    url(r'^checkout/$', checkout_view),
+    url(r'^checkout/$', checkout_view, name='checkout_view'),
+    url(r'^overseer/$', overseer_view, name='overseer_view'),
     url(r'^vendor/$', vendor_view, name='vendor_view'),
     url(r'^vendor/items/$', get_items, name='page'),
     url(r'^vendor/items/move_to_print$', all_to_print, name='all_to_print'),

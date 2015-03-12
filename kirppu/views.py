@@ -4,6 +4,7 @@ import decimal
 import json
 from django.core.exceptions import PermissionDenied
 from .checkout_api import clerk_logout_fn
+from . import ajax_util
 from .forms import ItemRemoveForm
 from kirppu.util import get_form
 import re
@@ -408,6 +409,19 @@ def checkout_view(request):
     return render(request, "kirppu/app_checkout.html", {
         'CounterCommands': CounterCommands,
     })
+
+
+@require_setting("KIRPPU_CHECKOUT_ACTIVE", True)
+@ensure_csrf_cookie
+def overseer_view(request):
+    """Overseer view."""
+    try:
+        ajax_util.get_counter(request)
+        ajax_util.require_staff_clerk_login(lambda _: None)(request)
+    except ajax_util.AjaxError:
+        return redirect('kirppu:checkout_view')
+    else:
+        return render(request, 'kirppu/app_overseer.html', {})
 
 
 def vendor_view(request):

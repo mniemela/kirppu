@@ -1,0 +1,21 @@
+{% extends "kirppu/common.html" %}{% load i18n %}
+
+{% load static %}
+
+{% block title %}Kirppu - Overseer Dashboard{% endblock %}
+
+{% block head %}
+    <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+    <script src="{% static "kirppu/js/general.js" %}"></script>
+{% endblock %}
+
+{% block navbar_right %}
+    <li><a href="{% url 'kirppu:checkout_view' %}" title="Return to checkout">Checkout</a></li>
+{% endblock %}
+
+{% block body %}
+    <h1>
+        <span id="mode_glyph" class="glyphicon glyphicon-dashboard"></span>
+        <span id="title_text">Overseer Dashboard</span>
+    </h1>
+{% endblock  %}
