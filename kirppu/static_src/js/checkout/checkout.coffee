@@ -9,6 +9,7 @@ class Config
     codeInput: null
     codeForm: null
     modeMenu: null
+    overseerLink: null
     dialog: null
   uiRef:
     container: null
@@ -20,6 +21,7 @@ class Config
     codeInput: null
     codeForm: null
     modeMenu: null
+    overseerLink: null
     dialog: null
   settings:
     itemPrefix: null

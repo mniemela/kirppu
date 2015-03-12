@@ -109,6 +109,7 @@
       codeInput: null,
       codeForm: null,
       modeMenu: null,
+      overseerLink: null,
       dialog: null
     };
 
@@ -122,6 +123,7 @@
       codeInput: null,
       codeForm: null,
       modeMenu: null,
+      overseerLink: null,
       dialog: null
     };
 
@@ -751,6 +753,10 @@
       return setClass(menu.find("a:first"), "disabled", !enabled);
     };
 
+    ModeSwitcher.prototype.setOverseerEnabled = function(enabled) {
+      return setClass(this.cfg.uiRef.overseerLink, 'hidden', !enabled);
+    };
+
     return ModeSwitcher;
 
   })();
@@ -798,6 +804,7 @@
         return function() {
           console.log("Logged out " + _this.cfg.settings.clerkName + ".");
           _this.cfg.settings.clerkName = null;
+          _this.switcher.setOverseerEnabled(false);
           return _this.switcher.switchTo(ClerkLoginMode);
         };
       })(this), (function(_this) {
@@ -1002,6 +1009,7 @@
       username = data["user"];
       this.cfg.settings.clerkName = username;
       console.log("Logged in as " + username + ".");
+      this.switcher.setOverseerEnabled(data["overseer_enabled"]);
       if (data["receipts"] != null) {
         return this.multipleReceipts(data["receipts"]);
       } else if (data["receipt"] != null) {

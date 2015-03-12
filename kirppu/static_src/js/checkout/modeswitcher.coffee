@@ -135,3 +135,10 @@ class @ModeSwitcher
     menu = @cfg.uiRef.modeMenu
     setClass(menu, "disabled", not enabled)
     setClass(menu.find("a:first"), "disabled", not enabled)
+
+  # Enable or disable the link to overseer dashboard
+  #
+  # @param enabled [Boolean] If true, enable the link. If false, disable
+  # the link.
+  setOverseerEnabled: (enabled) ->
+    setClass(@cfg.uiRef.overseerLink, 'hidden', not enabled)

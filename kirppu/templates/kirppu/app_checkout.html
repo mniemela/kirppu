@@ -34,7 +34,9 @@
     </li>
 {% endblock %}
 {% block navbar_right %}
-    <li><a href="{% url 'kirppu:overseer_view' %}" title="Overseer Dashboard">Overseer Dashboard</a></li>
+    <li id="overseer_link" class="hidden">
+        <a href="{% url 'kirppu:overseer_view' %}" title="Overseer Dashboard">Overseer Dashboard</a>
+    </li>
     <li>
         <a href="javascript:void(1)" data-toggle="modal" data-target="#help_dialog"><span class="glyphicon glyphicon-question-sign"></span> Help</a>
     </li>
@@ -72,6 +74,7 @@
     CheckoutConfig.uiId.codeInput = "code_input";
     CheckoutConfig.uiId.codeForm = "code_form";
     CheckoutConfig.uiId.modeMenu = "modeMenu";
+    CheckoutConfig.uiId.overseerLink= "overseer_link";
     CheckoutConfig.uiId.dialog = "dialog_template";
     CheckoutConfig.settings.abortPrefix = "{{ CounterCommands.ABORT }}";
     CheckoutConfig.settings.logoutPrefix = "{{ CounterCommands.LOGOUT }}";
