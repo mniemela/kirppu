@@ -7,14 +7,16 @@
  *
  *  .item_container
  *      .item_head
- *          .item_price
+ *          .item_head_price
  *      .item_body
- *          .item_price
  *          .item_name
+ *          .item_price
  *          .barcode_container
- *              img
+ *              .barcode_img
+ *              .item_extra_code
+ *          .item_adult_tag
  *          .item_vendor_id
- *          .item_extra_code
+ *
  *      .item_button_delete
  *      .item_button_toggle
  */
@@ -189,6 +191,17 @@
 .item_tiny .barcode_img {
     width: 143px;
 }
+
+.item_adult_tag {
+    position: absolute;
+    top: 1cm;
+    left: 1.75cm;
+    font-weight: bold;
+}
+.item_list .item_adult_tag {
+    display: none;
+}
+
 .item_vendor_id {
     position: absolute;
     top: 1cm;

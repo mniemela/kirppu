@@ -59,17 +59,10 @@ createTag = (name, price, vendor_id, code, dataurl, type, adult) ->
   $('.item_price', tag).text(price)
   $('.item_head_price', tag).text(price)
 
-  ##TEMPORARY LOCATION FOR THE ADULT MARKER BELOW
-  ##
-  ##TODO: CREATE A TAG FOR ADULT IN app_items_item.html,
-  ##EDIT AWAY THE UGLY IF-ELSE ON THE ADULT VARIABLE,
-  ##ADD THE NECESSARY CSS TO price_tags.css AND EDIT CODE BELOW
-  ##
-  ##POSSIBLY ADD EDITING FUNCTIONS LATER
-  if adult == "no"
-    $('.item_vendor_id', tag).text(vendor_id)
-  else
-    $('.item_vendor_id', tag).text(vendor_id + " | K-18!")
+  if adult == "yes"
+    $('.item_adult_tag', tag).text("K-18")
+
+  $('.item_vendor_id', tag).text(vendor_id)
 
   $(tag).attr('id', code)
   $('.item_extra_code', tag).text(code)
@@ -217,7 +210,7 @@ moveItemToNotPrinted = (tag, code) ->
     success: (item) ->
       $(tag).remove()
 
-      new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type)
+      new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type, item.adult)
       $(new_tag).hide()
       $(new_tag).appendTo("#items")
       $(new_tag).show('slow')

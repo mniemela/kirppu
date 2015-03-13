@@ -14,13 +14,12 @@
                     <img class="barcode_img" src="{% barcode_dataurl code bar_type %}" alt="Barcode: {{ code }}" />
                     <div class="item_extra_code">{{ code }}</div>
                 </div>
-
-                {% if adult != "yes" %}
-                    <div class="item_vendor_id">{{ vendor_id }}</div>
+                {% if adult == "yes" %}
+                    <div class="item_adult_tag">K-18</div>
                 {% else %}
-                    <div class="item_vendor_id">{{ vendor_id }} | K-18!</div>
+                    <div class="item_adult_tag"></div>
                 {% endif %}
-
+                <div class="item_vendor_id">{{ vendor_id }}</div>
             {% endif %}
         </div>
 

@@ -150,7 +150,7 @@ def item_to_not_printed(request, code):
             return HttpResponseForbidden("Registration is closed")
 
         new_item = Item.new(name=item.name, price=item.price,
-                vendor=item.vendor, type=item.type, state=Item.ADVERTISED)
+                vendor=item.vendor, type=item.type, state=Item.ADVERTISED, itemtype=item.itemtype, adult=item.adult)
         item.hidden = True
     else:
         item.printed = False
@@ -164,6 +164,7 @@ def item_to_not_printed(request, code):
         'name': new_item.name,
         'price': str(new_item.price).replace('.', ','),
         'type': new_item.type,
+        'adult': new_item.adult,
     }
 
     return HttpResponse(json.dumps(item_dict), 'application/json')

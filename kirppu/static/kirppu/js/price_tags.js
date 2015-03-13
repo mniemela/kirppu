@@ -92,11 +92,10 @@
     $('.item_name', tag).text(name);
     $('.item_price', tag).text(price);
     $('.item_head_price', tag).text(price);
-    if (adult === "no") {
-      $('.item_vendor_id', tag).text(vendor_id);
-    } else {
-      $('.item_vendor_id', tag).text(vendor_id + " | K-18!");
+    if (adult === "yes") {
+      $('.item_adult_tag', tag).text("K-18");
     }
+    $('.item_vendor_id', tag).text(vendor_id);
     $(tag).attr('id', code);
     $('.item_extra_code', tag).text(code);
     $('.barcode_container > img', tag).attr('src', dataurl);
@@ -231,7 +230,7 @@
       success: function(item) {
         var new_tag;
         $(tag).remove();
-        new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type);
+        new_tag = createTag(item.name, item.price, item.vendor_id, item.code, item.barcode_dataurl, item.type, item.adult);
         $(new_tag).hide();
         $(new_tag).appendTo("#items");
         $(new_tag).show('slow');
