@@ -34,6 +34,7 @@
     </li>
 {% endblock %}
 {% block navbar_right %}
+    <li><a href="{% url 'kirppu:stats_view' %}" title="Stats">Stats</a></li>
     <li id="overseer_link" class="hidden">
         <a href="{% url 'kirppu:overseer_view' %}" title="Overseer Dashboard">Overseer Dashboard</a>
     </li>

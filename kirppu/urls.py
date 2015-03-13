@@ -19,6 +19,7 @@ from .views import (
     remove_item_from_receipt,
     login_view,
     logout_view,
+    stats_view,
 )
 from .checkout_api import AJAX_FUNCTIONS, checkout_js
 
@@ -30,6 +31,7 @@ _urls = [
     url(r'^barcode/(?P<data>\w+?)\.(?P<ext>\w+)$', get_barcode, name='barcode'),
     url(r'^checkout/$', checkout_view, name='checkout_view'),
     url(r'^overseer/$', overseer_view, name='overseer_view'),
+    url(r'^stats/$', stats_view, name='stats_view'),
     url(r'^vendor/$', vendor_view, name='vendor_view'),
     url(r'^vendor/items/$', get_items, name='page'),
     url(r'^vendor/items/move_to_print$', all_to_print, name='all_to_print'),

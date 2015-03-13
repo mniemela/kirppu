@@ -424,6 +424,19 @@ def overseer_view(request):
         return render(request, 'kirppu/app_overseer.html', {})
 
 
+@require_setting("KIRPPU_CHECKOUT_ACTIVE", True)
+@ensure_csrf_cookie
+def stats_view(request):
+    """Stats view."""
+    try:
+        ajax_util.get_counter(request)
+        ajax_util.require_clerk_login(lambda _: None)(request)
+    except ajax_util.AjaxError:
+        return redirect('kirppu:checkout_view')
+    else:
+        return render(request, 'kirppu/app_stats.html', {})
+
+
 def vendor_view(request):
     """
     Render main view for vendors.
