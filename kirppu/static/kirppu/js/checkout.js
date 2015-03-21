@@ -626,7 +626,8 @@
 // ================ 12: modeswitcher.coffee ================
 
 (function() {
-  var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var _populateCommandRefs,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.setClass = function(element, cls, enabled) {
     if (element.hasClass(cls) !== enabled) {
@@ -671,7 +672,8 @@
     }
 
     ModeSwitcher.prototype.startDefault = function() {
-      return this.switchTo(ModeSwitcher.entryPoints["counter_validation"]);
+      this.switchTo(ModeSwitcher.entryPoints["counter_validation"]);
+      _populateCommandRefs();
     };
 
     ModeSwitcher.prototype.switchTo = function(mode, params) {
@@ -774,6 +776,27 @@
     return ModeSwitcher;
 
   })();
+
+  _populateCommandRefs = function() {
+    var cmds, codes, key, mode, modeName, ref, results, value;
+    codes = {};
+    ref = ModeSwitcher.entryPoints;
+    for (modeName in ref) {
+      mode = ref[modeName];
+      cmds = mode.prototype.commands();
+      for (key in cmds) {
+        value = cmds[key];
+        codes[key] = value;
+      }
+    }
+    results = [];
+    for (key in codes) {
+      value = codes[key];
+      $("[data-command-value='" + key + "']").text(value[0]);
+      results.push($("[data-command-title='" + key + "']").text(value[1]));
+    }
+    return results;
+  };
 
 }).call(this);
 
@@ -1372,7 +1395,7 @@
 
     CounterMode.prototype.commands = function() {
       return {
-        abort: [":abrt", "Abort receipt"]
+        abort: [":abort", "Abort receipt"]
       };
     };
 

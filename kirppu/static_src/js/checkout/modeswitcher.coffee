@@ -48,6 +48,8 @@ class @ModeSwitcher
   # Start default mode operation.
   startDefault: ->
     @switchTo(ModeSwitcher.entryPoints["counter_validation"])
+    _populateCommandRefs()
+    return
 
   # Switch to new mode. This is called by modes.
   #
@@ -142,3 +144,16 @@ class @ModeSwitcher
   # the link.
   setOverseerEnabled: (enabled) ->
     setClass(@cfg.uiRef.overseerLink, 'hidden', not enabled)
+
+
+# Populate values from commands of Modes for all 'data-command-value' and 'data-command-title' elements in DOM.
+_populateCommandRefs = () ->
+  codes = {}  # All codes from various modes.
+  for modeName, mode of ModeSwitcher.entryPoints
+    cmds = mode.prototype.commands()
+    for key, value of cmds
+      codes[key] = value
+
+  for key, value of codes
+    $("[data-command-value='#{ key }']").text(value[0])
+    $("[data-command-title='#{ key }']").text(value[1])

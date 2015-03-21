@@ -34,7 +34,6 @@ from .models import (
     Item,
     Clerk,
     Vendor,
-    CounterCommands,
 )
 from .utils import require_setting, PixelWriter, require_vendor_open, is_vendor_open, barcode_view, \
     require_test
@@ -405,9 +404,7 @@ def checkout_view(request):
     :rtype: HttpResponse
     """
     clerk_logout_fn(request)
-    return render(request, "kirppu/app_checkout.html", {
-        'CounterCommands': CounterCommands,
-    })
+    return render(request, "kirppu/app_checkout.html")
 
 
 @require_setting("KIRPPU_CHECKOUT_ACTIVE", True)

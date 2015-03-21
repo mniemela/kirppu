@@ -39,16 +39,6 @@ class UserAdapterBase(object):
 UserAdapter = import_by_path(settings.KIRPPU_USER_ADAPTER)
 
 
-class CounterCommands(object):
-    LOGOUT = ":exit"
-    ABORT = ":abrt"
-
-    DICT = {
-        LOGOUT: _(u"Logout"),
-        ABORT: _(u"Abort"),
-    }
-
-
 class Clerk(models.Model):
     PREFIX = "::"
 
@@ -425,6 +415,7 @@ class UIText(models.Model):
         max_length=16384,
         help_text=_(u"Textitem in UI")
     )
+
 
 class Counter(models.Model):
     identifier = models.CharField(
