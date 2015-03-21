@@ -121,10 +121,10 @@ admin.site.register(Clerk, ClerkAdmin)
 
 admin.site.register(Counter)
 
+
 class UITextAdmin(admin.ModelAdmin):
     model = UIText
     ordering = ["identifier"]
-
 
 admin.site.register(UIText, UITextAdmin)
 
@@ -133,6 +133,7 @@ class ReceiptItemAdmin(admin.TabularInline):
     model = ReceiptItem
     ordering = ["add_time"]
     form = ReceiptItemAdminForm
+    readonly_fields = ["item"]
 
 
 class ReceiptAdmin(admin.ModelAdmin):
@@ -142,6 +143,7 @@ class ReceiptAdmin(admin.ModelAdmin):
     ordering = ["clerk", "start_time"]
     list_display = ["__unicode__", "status", "total", "counter", "sell_time"]
     form = ReceiptAdminForm
+    search_fields = ["items__code", "items__name"]
 
     def has_delete_permission(self, request, obj=None):
         return False

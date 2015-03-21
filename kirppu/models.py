@@ -468,6 +468,9 @@ class ReceiptItem(models.Model):
         ret.update(self.item.as_dict())
         return ret
 
+    def __unicode__(self):
+        return unicode(self.item)
+
 
 class Receipt(models.Model):
     PENDING = "PEND"
