@@ -1,0 +1,60 @@
+{% load kirppu_tags i18n static %}
+{% with display_width=display_width|default:barcode_width %}
+<!doctype html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link href="{% static "kirppu/css/general.css" %}" rel="stylesheet">
+    <link href="{% static "kirppu/css/price_tags.css" %}" rel="stylesheet">
+    <script src="{% static "kirppu/js/general.js" %}"></script>
+    <script src="{% static "kirppu/js/checkout.js" %}"></script>
+    <script src="{% static "kirppu/js/commands.js" %}"></script>
+    <style type="text/css">
+        .item_container {
+            height: 2.7cm;
+        }
+        .item_extra_code {
+            width: 12em;
+        }
+        .item_name {
+            height: 1.5em;
+            margin-left: 1em;
+            font-size: larger;
+            font-weight: bold;
+        }
+        .item_container .barcode_container {
+            width: {{ display_width }}px;
+        }
+        .item_container .barcode_img {
+            width: {{ display_width }}px;
+        }
+    </style>
+</head>
+<body style="padding-left: 0.5cm;">
+<script type="application/javascript"
+        src="{% url 'kirppu:checkout_js' %}"
+        charset="UTF-8"></script>
+<div id="items"><!-- Result is rendered here. --></div>
+<div id="item_template" style="visibility: hidden">
+    <div class="item_container item_short">
+        <div class="item_body">
+            <div class="item_name" data-id="name"></div>
+            <div class="barcode_container">
+                <img class="barcode_img" data-id="barcode" src="" />
+                <div class="item_extra_code" data-id="barcode_text"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="group_separator" style="visibility: hidden">
+    <div style="clear:both;"></div>
+</div>
+<script type="application/javascript"><!--
+    $(document).ready(function() {
+        setupAjax();
+        listCommands("items");
+    });
+//--></script>
+</body>
+</html>
+{% endwith %}

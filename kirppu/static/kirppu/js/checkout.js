@@ -133,8 +133,6 @@
       counterPrefix: ":*",
       removeItemPrefix: "-",
       payPrefix: "+",
-      abortPrefix: null,
-      logoutPrefix: null,
       counterCode: null,
       clerkName: null,
       alertBlinkCount: 4
@@ -773,7 +771,25 @@
       this.onLogout = bind(this.onLogout, this);
       this.switcher = switcher;
       this.cfg = config ? config : CheckoutConfig;
+      this._gatherCommands();
     }
+
+    CheckoutMode.prototype._gatherCommands = function() {
+      var commandDescriptions, commands, key, ref, val;
+      commandDescriptions = CheckoutMode.prototype.commands();
+      ref = this.commands();
+      for (key in ref) {
+        val = ref[key];
+        commandDescriptions[key] = val;
+      }
+      commands = {};
+      for (key in commandDescriptions) {
+        val = commandDescriptions[key];
+        commands[key] = val[0];
+      }
+      this.commands = commands;
+      return this.commandDescriptions = commandDescriptions;
+    };
 
     CheckoutMode.prototype.glyph = function() {
       return "";
@@ -794,6 +810,12 @@
     CheckoutMode.prototype.enter = function() {};
 
     CheckoutMode.prototype.exit = function() {};
+
+    CheckoutMode.prototype.commands = function() {
+      return {
+        logout: [":exit", "Log out"]
+      };
+    };
 
     CheckoutMode.prototype.actions = function() {
       return [["", function() {}]];
@@ -1124,7 +1146,7 @@
               }).then(_this.onResultSuccess, _this.onResultError);
             };
           })(this)
-        ], [this.cfg.settings.logoutPrefix, this.onLogout]
+        ], [this.commands.logout, this.onLogout]
       ];
     };
 
@@ -1205,7 +1227,7 @@
     };
 
     VendorCheckoutMode.prototype.actions = function() {
-      return [['', this.returnItem], [this.cfg.settings.logoutPrefix, this.onLogout]];
+      return [['', this.returnItem], [this.commands.logout, this.onLogout]];
     };
 
     VendorCheckoutMode.prototype.addVendorInfo = function() {
@@ -1329,8 +1351,14 @@
       return "Checkout";
     };
 
+    CounterMode.prototype.commands = function() {
+      return {
+        abort: [":abrt", "Abort receipt"]
+      };
+    };
+
     CounterMode.prototype.actions = function() {
-      return [[this.cfg.settings.abortPrefix, this.onAbortReceipt], [this.cfg.settings.logoutPrefix, this.onLogout], [this.cfg.settings.payPrefix, this.onPayReceipt], [this.cfg.settings.removeItemPrefix, this.onRemoveItem], ["", this.onAddItem]];
+      return [[this.commands.abort, this.onAbortReceipt], [this.commands.logout, this.onLogout], [this.cfg.settings.payPrefix, this.onPayReceipt], [this.cfg.settings.removeItemPrefix, this.onRemoveItem], ["", this.onAddItem]];
     };
 
     CounterMode.prototype.enter = function() {
@@ -1652,7 +1680,7 @@
     };
 
     ReceiptPrintMode.prototype.actions = function() {
-      return [["", this.findReceipt], [this.cfg.settings.logoutPrefix, this.onLogout]];
+      return [["", this.findReceipt], [this.commands.logout, this.onLogout]];
     };
 
     ReceiptPrintMode.prototype.findReceipt = function(code) {
@@ -1894,7 +1922,7 @@
               return _this.switcher.switchTo(VendorFindMode, query);
             };
           })(this)
-        ], [this.cfg.settings.logoutPrefix, this.onLogout]
+        ], [this.commands.logout, this.onLogout]
       ];
     };
 
@@ -2005,7 +2033,7 @@
               }).done(_this.onVendorsFound);
             };
           })(this)
-        ], [this.cfg.settings.logoutPrefix, this.onLogout]
+        ], [this.commands.logout, this.onLogout]
       ];
     };
 

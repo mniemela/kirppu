@@ -386,13 +386,9 @@ def get_clerk_codes(request, bar_type):
 @require_test(lambda request: request.user.is_staff or request.user.is_clerk())
 @barcode_view
 def get_counter_commands(request, bar_type):
-    code_item = namedtuple("CodeItem", "name code")
     width = KirppuBarcode.length(CounterCommands.LOGOUT, PixelWriter)
 
-    return render(request, "kirppu/app_clerks.html", {
-        'items': [code_item(value, key) for key, value in CounterCommands.DICT.items()],
-        'bar_type': bar_type,
-        'repeat': range(int(request.GET.get("repeat", "1"))),
+    return render(request, "kirppu/app_commands.html", {
         'barcode_width': width,
         'display_width': width * 2,
         'title': _(u"Counter commands"),

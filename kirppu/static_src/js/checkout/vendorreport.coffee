@@ -16,7 +16,7 @@ class @VendorReport extends CheckoutMode
 
   actions: -> [
     ["", (query) => @switcher.switchTo(VendorFindMode, query)]
-    [@cfg.settings.logoutPrefix,      @onLogout]
+    [@commands.logout, @onLogout]
   ]
 
   enter: ->

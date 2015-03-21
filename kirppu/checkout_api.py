@@ -406,3 +406,28 @@ def receipt_activate(request):
     data = _get_receipt_data_with_items(pk=receipt_id, clerk__id=clerk, status=Receipt.PENDING)
     request.session["receipt"] = receipt_id
     return data
+
+
+@ajax_func('^barcode$', counter=False, clerk=False)
+def get_barcodes(request, codes=None):
+    """
+    Get barcode images for a code, or list of codes.
+
+    :param codes: Either list of codes, or a string, encoded in Json string.
+    :type codes: str
+    :return: List of barcode images encoded in data-url.
+    :rtype: list[str]
+    """
+    from templatetags.kirppu_tags import barcode_dataurl
+    from json import loads
+
+    codes = loads(codes)
+    if type(codes) in (str, unicode):
+        codes = [codes]
+
+    # XXX: This does ignore the width assertion. Beware with style sheets...
+    outs = [
+        barcode_dataurl(code, "png", None)
+        for code in codes
+    ]
+    return outs

@@ -87,7 +87,7 @@ def generate_dataurl(code, ext, expect_width=143):
     # to not register on the scanner.
     if settings.DEBUG:
         assert(height == 1)
-        assert(width == expect_width)
+        assert(expect_width is None or width == expect_width)
 
     pil_image.save(memory_file, format=ext)
     data = memory_file.getvalue()

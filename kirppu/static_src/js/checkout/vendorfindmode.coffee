@@ -19,7 +19,7 @@ class @VendorFindMode extends CheckoutMode
 
   actions: -> [
     ["", (query) => Api.vendor_find(q: query).done(@onVendorsFound)]
-    [@cfg.settings.logoutPrefix,      @onLogout]
+    [@commands.logout, @onLogout]
   ]
 
   onVendorsFound: (vendors) =>

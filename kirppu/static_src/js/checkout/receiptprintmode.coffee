@@ -19,7 +19,7 @@ class @ReceiptPrintMode extends CheckoutMode
 
   actions: -> [
     ["", @findReceipt]
-    [@cfg.settings.logoutPrefix,      @onLogout]
+    [@commands.logout, @onLogout]
   ]
 
   findReceipt: (code) =>

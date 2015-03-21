@@ -29,8 +29,6 @@ class Config
     counterPrefix: ":*"
     removeItemPrefix: "-"
     payPrefix: "+"
-    abortPrefix: null
-    logoutPrefix: null
     counterCode: null
     clerkName: null
     alertBlinkCount: 4

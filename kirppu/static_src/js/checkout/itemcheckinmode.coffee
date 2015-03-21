@@ -14,7 +14,7 @@ class @ItemCheckInMode extends ItemCheckoutMode
         code: code
       ).then(@onResultSuccess, @onResultError)
     ]
-    [@cfg.settings.logoutPrefix,      @onLogout]
+    [@commands.logout, @onLogout]
   ]
 
   onResultSuccess: (data) =>

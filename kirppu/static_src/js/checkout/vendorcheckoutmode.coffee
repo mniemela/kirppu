@@ -22,7 +22,7 @@ class @VendorCheckoutMode extends ItemCheckoutMode
 
   actions: -> [
     ['', @returnItem]
-    [@cfg.settings.logoutPrefix,      @onLogout]
+    [@commands.logout, @onLogout]
   ]
 
   addVendorInfo: ->

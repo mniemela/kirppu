@@ -94,5 +94,11 @@ module.exports.js = {
         ],
         "output_filename": "jeditable.js",
         "compress": true,
+    },
+    'command_list': {
+        "source_filenames": [
+            "js/commands.coffee"
+        ],
+        "output_filename": "commands.js"
     }
 };

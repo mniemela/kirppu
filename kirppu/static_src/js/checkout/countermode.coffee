@@ -11,10 +11,12 @@ class @CounterMode extends ItemCheckoutMode
 
   glyph: -> "euro"
   title: -> "Checkout"
+  commands: ->
+    abort: [":abrt", "Abort receipt"]
 
   actions: -> [
-    [@cfg.settings.abortPrefix,       @onAbortReceipt]
-    [@cfg.settings.logoutPrefix,      @onLogout]
+    [@commands.abort,                 @onAbortReceipt]
+    [@commands.logout,                @onLogout]
     [@cfg.settings.payPrefix,         @onPayReceipt]
     [@cfg.settings.removeItemPrefix,  @onRemoveItem]
     ["",                              @onAddItem]
