@@ -3,6 +3,7 @@ class Config
     container: null
     body: null
     errorText: null
+    warningText: null
     glyph: null
     stateText: null
     subtitleText: null

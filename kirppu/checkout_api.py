@@ -47,11 +47,12 @@ def raise_if_item_not_available(item):
         # Staged somewhere other?
         raise AjaxError(RET_LOCKED, 'Item is already staged to be sold.')
     elif item.state == Item.ADVERTISED:
-        raise AjaxError(RET_CONFLICT, 'Item has not been brought to event.')
+        return 'Item has not been brought to event.'
     elif item.state in (Item.SOLD, Item.COMPENSATED):
         raise AjaxError(RET_CONFLICT, 'Item has already been sold.')
     elif item.state == Item.RETURNED:
         raise AjaxError(RET_CONFLICT, 'Item has already been returned to owner.')
+    return None
 
 
 # Registry for ajax functions. Maps function names to AjaxFuncs.
@@ -107,12 +108,18 @@ def _get_item_or_404(code):
     return item
 
 
-def item_mode_change(code, from_, to):
+def item_mode_change(code, from_, to, message_if_not_first=None):
     item = _get_item_or_404(code)
-    if item.state == from_:
+    if not isinstance(from_, tuple):
+        from_ = (from_,)
+    if item.state in from_:
+        old_state = item.state
         item.state = to
         item.save()
-        return item.as_dict()
+        ret = item.as_dict()
+        if message_if_not_first is not None and len(from_) > 1 and old_state != from_[0]:
+            ret.update(_message=message_if_not_first)
+        return ret
 
     else:
         # Item not in expected state.
@@ -193,9 +200,12 @@ def counter_validate(request, code):
 @ajax_func('^item/find$', method='GET')
 def item_find(request, code):
     item = _get_item_or_404(code)
+    value = item.as_dict()
     if "available" in request.GET:
-        raise_if_item_not_available(item)
-    return item.as_dict()
+        message = raise_if_item_not_available(item)
+        if message is not None:
+            value.update(_message=message)
+    return value
 
 
 @ajax_func('^item/list$', method='GET')
@@ -211,7 +221,7 @@ def item_checkin(request, code):
 
 @ajax_func('^item/checkout$')
 def item_checkout(request, code):
-    return item_mode_change(code, Item.BROUGHT, Item.RETURNED)
+    return item_mode_change(code, (Item.BROUGHT, Item.ADVERTISED), Item.RETURNED, _i(u"Item was not brought to event."))
 
 
 @ajax_func('^item/compensate$')
@@ -272,9 +282,8 @@ def item_reserve(request, code):
     receipt_id = request.session["receipt"]
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
-    raise_if_item_not_available(item)
-
-    if item.state in (Item.BROUGHT, Item.MISSING):
+    message = raise_if_item_not_available(item)
+    if item.state in (Item.ADVERTISED, Item.BROUGHT, Item.MISSING):
         item.state = Item.STAGED
         item.save()
 
@@ -285,6 +294,8 @@ def item_reserve(request, code):
 
         ret = item.as_dict()
         ret.update(total=receipt.total_cents)
+        if message is not None:
+            ret.update(_message=message)
         return ret
     else:
         # Not in expected state.

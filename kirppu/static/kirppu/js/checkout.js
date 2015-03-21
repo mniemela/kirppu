@@ -1,7 +1,7 @@
 // ================ 1: util.coffee ================
 
 (function() {
-  var errorSound, stillBlinking;
+  var errorSound, safeDisplay, stillBlinking;
 
   this.displayPrice = function(price, rounded) {
     var price_str, rounded_str;
@@ -53,21 +53,35 @@
   errorSound = new Audio("/static/kirppu/audio/error-buzzer.mp3");
 
   this.safeAlert = function(message, blink) {
-    var blinksToGo, body, cls, text, timeCb, timeout;
     if (blink == null) {
       blink = true;
     }
     errorSound.play();
+    return safeDisplay(CheckoutConfig.uiRef.errorText, message, blink ? CheckoutConfig.settings.alertBlinkCount : 0);
+  };
+
+  this.safeWarning = function(message, blink) {
+    if (blink == null) {
+      blink = false;
+    }
+    return safeDisplay(CheckoutConfig.uiRef.warningText, message, blink ? 1 : 0);
+  };
+
+  safeDisplay = function(textRef, message, blinkCount) {
+    var blinksToGo, body, cls, text, timeCb, timeout;
+    if (blinkCount == null) {
+      blinkCount = 0;
+    }
     body = CheckoutConfig.uiRef.container;
-    text = CheckoutConfig.uiRef.errorText;
+    text = textRef;
     cls = "alert-blink";
     text.text(message);
     text.removeClass("alert-off");
-    if (!blink) {
+    if (!(blinkCount > 0)) {
       return;
     }
     body.addClass(cls);
-    blinksToGo = CheckoutConfig.settings.alertBlinkCount * 2;
+    blinksToGo = blinkCount * 2;
     timeout = 150;
     stillBlinking = true;
     timeCb = function() {
@@ -86,7 +100,8 @@
     if (stillBlinking) {
       return;
     }
-    return CheckoutConfig.uiRef.errorText.addClass("alert-off");
+    CheckoutConfig.uiRef.errorText.addClass("alert-off");
+    CheckoutConfig.uiRef.warningText.addClass("alert-off");
   };
 
 }).call(this);
@@ -103,6 +118,7 @@
       container: null,
       body: null,
       errorText: null,
+      warningText: null,
       glyph: null,
       stateText: null,
       subtitleText: null,
@@ -1301,6 +1317,9 @@
     };
 
     VendorCheckoutMode.prototype.onCheckedOut = function(item) {
+      if (item._message != null) {
+        safeWarning(item._message);
+      }
       this.receipt.body.prepend($('tr', this.lastItem.body));
       return this.lastItem.body.prepend($('#' + item.code, this.remainingItems.body));
     };
@@ -1497,6 +1516,9 @@
         code: code
       }).then((function(_this) {
         return function(data) {
+          if (data._message != null) {
+            safeWarning(data._message);
+          }
           _this._receipt.total += data.price;
           return _this.addRow(data.code, data.name, data.price);
         };

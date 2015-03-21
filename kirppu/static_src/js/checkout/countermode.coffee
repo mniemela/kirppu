@@ -111,6 +111,8 @@ class @CounterMode extends ItemCheckoutMode
   reserveItem: (code) ->
       Api.item_reserve(code: code).then(
         (data) =>
+          if data._message?
+            safeWarning(data._message)
           @_receipt.total += data.price
           @addRow(data.code, data.name, data.price)
         (jqXHR) =>

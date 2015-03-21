@@ -44,23 +44,39 @@ stillBlinking = false
 # Instance of the sound used for barcode errors.
 errorSound = new Audio("/static/kirppu/audio/error-buzzer.mp3")
 
-# Display safe alert message.
+# Display safe alert error message.
 #
 # @param message [String] Message to display.
 # @param blink [Boolean, optional] If true (default), container is blinked.
 @safeAlert = (message, blink=true) ->
   errorSound.play()
+  safeDisplay(CheckoutConfig.uiRef.errorText, message, if blink then CheckoutConfig.settings.alertBlinkCount else 0)
 
+
+# Display safe alert warning message.
+#
+# @param message [String] Message to display.
+# @param blink [Boolean, optional] If true (default), container is blinked.
+@safeWarning = (message, blink=false) ->
+  safeDisplay(CheckoutConfig.uiRef.warningText, message, if blink then 1 else 0)
+
+
+# Display the alert message.
+#
+# @param textRef [jQuery] Div reference for the message.
+# @param message [String] The message.
+# @param blinkCount [Integer, optional] Number of blinks, if any.
+safeDisplay = (textRef, message, blinkCount=0) ->
   body = CheckoutConfig.uiRef.container
-  text = CheckoutConfig.uiRef.errorText
+  text = textRef
   cls = "alert-blink"
 
   text.text(message)
   text.removeClass("alert-off")
-  return unless blink
+  return unless blinkCount > 0
 
   body.addClass(cls)
-  blinksToGo = CheckoutConfig.settings.alertBlinkCount * 2  # *2 because every other step is a blink removal step.
+  blinksToGo = blinkCount * 2  # *2 because every other step is a blink removal step.
   timeout = 150
   stillBlinking = true
 
@@ -78,4 +94,5 @@ errorSound = new Audio("/static/kirppu/audio/error-buzzer.mp3")
   return if stillBlinking
 
   CheckoutConfig.uiRef.errorText.addClass("alert-off")
-
+  CheckoutConfig.uiRef.warningText.addClass("alert-off")
+  return

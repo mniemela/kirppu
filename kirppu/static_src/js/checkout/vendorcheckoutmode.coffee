@@ -76,6 +76,8 @@ class @VendorCheckoutMode extends ItemCheckoutMode
     )
 
   onCheckedOut: (item) =>
+    if item._message?
+      safeWarning(item._message)
     @receipt.body.prepend($('tr', @lastItem.body))
 
     @lastItem.body.prepend($('#' + item.code, @remainingItems.body))
