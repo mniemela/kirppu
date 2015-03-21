@@ -9,6 +9,7 @@ from cStringIO import StringIO
 from django.utils.functional import memoize
 from collections import OrderedDict
 from ..models import UIText
+import re
 
 
 class FifoDict(OrderedDict):
@@ -51,14 +52,18 @@ class KirppuBarcode(barcode.Code128):
         """
         Get expected image width for given text when using given writer.
 
-        :param text: Text to be encoded.
-        :type text: str | unicode
+        :param text: Text to be encoded or length of the text.
+        :type text: str | unicode | int
         :param writer: Writer used to write. Expected to be able tell its total quiet zone size.
         :return: Width of the resulting image.
         :rtype: int
         """
         # Text is actually going to be text+LF. CH=11, (START=11, END=13)=24
-        return (len(text) + 1) * 11 + 24 + writer.quiet_zone()
+        if not isinstance(text, int):
+            length = len(text)
+        else:
+            length = text
+        return (length + 1) * 11 + 24 + writer.quiet_zone()
 
 
 @register.simple_tag
@@ -104,3 +109,31 @@ get_dataurl = memoize(generate_dataurl, barcode_dataurl_cache, 2)
 def barcode_dataurl(code, ext, expect_width=143):
     return get_dataurl(code, ext, expect_width)
 
+
+@register.simple_tag
+def barcode_css(low=4, high=6, target=None, container=None, compress=False):
+    target = target or ".barcode_img.barcode_img{0}"
+    container = container or ".barcode_container.barcode_container{0}"
+
+    css = """
+        {target}, {container} {{
+            width: {px}px;
+            background-color: white;
+        }}
+    """
+
+    output = []
+    for code_length in range(low, high + 1):
+        px = KirppuBarcode.length(code_length, PixelWriter)
+        for multiplier in range(1, 3):
+            suffix = "_" + str(code_length) + "_" + str(multiplier)
+            mpx = px * multiplier
+            rule = css.format(
+                target=target.format(suffix),
+                container=container.format(suffix),
+                px=mpx,
+            )
+            if compress:
+                rule = re.sub(r'[\s]+', "", rule)
+            output.append(rule)
+    return "".join(output)

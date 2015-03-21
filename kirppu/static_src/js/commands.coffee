@@ -53,6 +53,7 @@ class Generator
   barcode: (name, code, i) ->
     item = @template.clone()
     item.find('[data-id="name"]').text(name)
-    item.find('[data-id="barcode"]').addClass("cmd_bc_#{i}")
+    item.find('[data-id="barcode"]').addClass("cmd_bc_#{i} barcode_img_#{code.length}_2")
+    item.find('[data-id="barcode_container"]').addClass("barcode_container_#{code.length}_2")
     item.find('[data-id="barcode_text"]').text(code)
     return item

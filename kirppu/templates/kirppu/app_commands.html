@@ -1,5 +1,4 @@
 {% load kirppu_tags i18n static %}
-{% with display_width=display_width|default:barcode_width %}
 <!doctype html>
 <html>
 <head>
@@ -14,7 +13,8 @@
             height: 2.7cm;
         }
         .item_extra_code {
-            width: 12em;
+            width: 70%;
+            min-width: 4em;
         }
         .item_name {
             height: 1.5em;
@@ -22,12 +22,12 @@
             font-size: larger;
             font-weight: bold;
         }
+
+        {# "Notfiy" of missing css rules. #}
         .item_container .barcode_container {
-            width: {{ display_width }}px;
+            background-color: red;
         }
-        .item_container .barcode_img {
-            width: {{ display_width }}px;
-        }
+        {% barcode_css target=".item_container .barcode_img{0}" container=".item_container .barcode_container{0}" %}
     </style>
 </head>
 <body style="padding-left: 0.5cm;">
@@ -39,7 +39,7 @@
     <div class="item_container item_short">
         <div class="item_body">
             <div class="item_name" data-id="name"></div>
-            <div class="barcode_container">
+            <div class="barcode_container" data-id="barcode_container">
                 <img class="barcode_img" data-id="barcode" src="" />
                 <div class="item_extra_code" data-id="barcode_text"></div>
             </div>
@@ -57,4 +57,3 @@
 //--></script>
 </body>
 </html>
-{% endwith %}
