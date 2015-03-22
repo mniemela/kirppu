@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db import IntegrityError
 from django.utils.translation import ugettext
 from django.contrib import messages
-from .forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm
+from .forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm, UITextForm
 from .models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem, UIText
 
 __author__ = 'jyrkila'
@@ -125,6 +125,8 @@ admin.site.register(Counter)
 class UITextAdmin(admin.ModelAdmin):
     model = UIText
     ordering = ["identifier"]
+    form = UITextForm
+    list_display = ["identifier", "text_excerpt"]
 
 admin.site.register(UIText, UITextAdmin)
 

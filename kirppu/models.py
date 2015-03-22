@@ -16,6 +16,7 @@ from .util import (
     b32_decode,
     pack,
     unpack,
+    shorten_text,
 )
 
 User = settings.AUTH_USER_MODEL
@@ -415,6 +416,10 @@ class UIText(models.Model):
         max_length=16384,
         help_text=_(u"Textitem in UI")
     )
+
+    @property
+    def text_excerpt(self):
+        return shorten_text(self.text)
 
 
 class Counter(models.Model):

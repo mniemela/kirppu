@@ -1,6 +1,12 @@
 from django import forms
 
-from .models import Clerk, ReceiptItem, Receipt, Item
+from .models import (
+    Clerk,
+    ReceiptItem,
+    Receipt,
+    Item,
+    UIText,
+)
 from .utils import StaticText
 
 
@@ -62,6 +68,19 @@ class ClerkGenerationForm(forms.ModelForm):
     class Meta:
         model = Clerk
         fields = ("count",)
+
+
+class UITextForm(forms.ModelForm):
+    # noinspection PyProtectedMember
+    text = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"cols": 100}),
+        help_text=UIText._meta.get_field("text", False).help_text
+    )
+
+    class Meta:
+        model = UIText
+        fields = ("identifier", "text")
 
 
 class ReceiptItemAdminForm(forms.ModelForm):

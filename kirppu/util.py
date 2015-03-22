@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base64
 import math
 
@@ -275,3 +276,34 @@ def get_form(form, request, *args, **kwargs):
         return form(request.POST, *args, **kwargs)
     else:
         return form(*args, **kwargs)
+
+
+def shorten_text(text, length=80):
+    """
+    Get excerpt of 'text' from beginning.
+    The text may contain one extra character after given length.
+
+    :param text: Text to shorten.
+    :type text: unicode
+    :param length: Length to cut the string.
+    :type length: int
+    :return: Shortened text.
+    :rtype: unicode
+    """
+    # Find out where to cut the text.
+    dot = text.find(".")
+    if dot == -1:
+        # No dot. Give result for whole string.
+        dot = len(text)
+    else:
+        # Cut 2 chars after first dot, which should be at least 10 chars, but less or equal than the length of text.
+        dot = min(max(dot + 2, 10), len(text))
+
+    # Result cut may be at most 80 chars.
+    dot = min(dot, length)
+    result = text[0:dot]
+
+    # If the text was cut, add ellipsis.
+    if dot < len(text):
+        result += u"…"
+    return result
