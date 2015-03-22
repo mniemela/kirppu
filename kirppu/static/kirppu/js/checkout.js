@@ -1371,6 +1371,7 @@
       var args, i, modeArgs;
       args = 2 <= arguments.length ? slice.call(arguments, 0, i = arguments.length - 1) : (i = 0, []), modeArgs = arguments[i++];
       this.onLogout = bind(this.onLogout, this);
+      this.onPrintReceipt = bind(this.onPrintReceipt, this);
       this.onAbortReceipt = bind(this.onAbortReceipt, this);
       this.onPayReceipt = bind(this.onPayReceipt, this);
       this.onRemoveItem = bind(this.onRemoveItem, this);
@@ -1395,12 +1396,13 @@
 
     CounterMode.prototype.commands = function() {
       return {
-        abort: [":abort", "Abort receipt"]
+        abort: [":abort", "Abort receipt"],
+        print: [":print", "Print receipt / return"]
       };
     };
 
     CounterMode.prototype.actions = function() {
-      return [[this.commands.abort, this.onAbortReceipt], [this.commands.logout, this.onLogout], [this.cfg.settings.payPrefix, this.onPayReceipt], [this.cfg.settings.removeItemPrefix, this.onRemoveItem], ["", this.onAddItem]];
+      return [[this.commands.abort, this.onAbortReceipt], [this.commands.print, this.onPrintReceipt], [this.commands.logout, this.onLogout], [this.cfg.settings.payPrefix, this.onPayReceipt], [this.cfg.settings.removeItemPrefix, this.onRemoveItem], ["", this.onAddItem]];
     };
 
     CounterMode.prototype.enter = function() {
@@ -1637,6 +1639,31 @@
       })(this));
     };
 
+    CounterMode.prototype.onPrintReceipt = function() {
+      if (this._receipt.data == null) {
+        safeAlert("No receipt to print!");
+        return;
+      } else if (this._receipt.isActive()) {
+        safeAlert("Cannot print while receipt is active!");
+        return;
+      } else if (!this._receipt.isFinished()) {
+        safeAlert("Cannot print. The receipt is not in finished state!");
+        return;
+      }
+      return Api.receipt_get({
+        id: this._receipt.data.id
+      }).then((function(_this) {
+        return function(receipt) {
+          return _this.switcher.switchTo(ReceiptPrintMode, receipt);
+        };
+      })(this), (function(_this) {
+        return function() {
+          safeAlert("Error printing receipt!");
+          return true;
+        };
+      })(this));
+    };
+
     CounterMode.prototype.onLogout = function() {
       if (this._receipt.isActive()) {
         safeAlert("Cannot logout while receipt is active!");
@@ -1657,6 +1684,14 @@
 
     ReceiptData.prototype.isActive = function() {
       return this.active;
+    };
+
+    ReceiptData.prototype.isFinished = function() {
+      if (this.data != null) {
+        return this.data.status === "FINI";
+      } else {
+        return false;
+      }
     };
 
     ReceiptData.prototype.start = function(data) {
@@ -1701,15 +1736,20 @@
 
     ReceiptPrintMode.strSell = "%d, served by %c";
 
-    function ReceiptPrintMode() {
+    function ReceiptPrintMode(cfg, switcher, receiptData) {
+      this.onReturnToCounter = bind(this.onReturnToCounter, this);
       this.findReceipt = bind(this.findReceipt, this);
       ReceiptPrintMode.__super__.constructor.apply(this, arguments);
       this.receipt = new PrintReceiptTable();
+      this.initialReceipt = receiptData;
     }
 
     ReceiptPrintMode.prototype.enter = function() {
       ReceiptPrintMode.__super__.enter.apply(this, arguments);
-      return this.cfg.uiRef.body.append(this.receipt.render());
+      this.cfg.uiRef.body.append(this.receipt.render());
+      if (this.initialReceipt != null) {
+        return this.renderReceipt(this.initialReceipt);
+      }
     };
 
     ReceiptPrintMode.prototype.glyph = function() {
@@ -1724,8 +1764,14 @@
       return "";
     };
 
+    ReceiptPrintMode.prototype.commands = function() {
+      return {
+        print: [":print", "Print receipt / return"]
+      };
+    };
+
     ReceiptPrintMode.prototype.actions = function() {
-      return [["", this.findReceipt], [this.commands.logout, this.onLogout]];
+      return [["", this.findReceipt], [this.commands.logout, this.onLogout], [this.commands.print, this.onReturnToCounter]];
     };
 
     ReceiptPrintMode.prototype.findReceipt = function(code) {
@@ -1773,6 +1819,10 @@
         results.push(this.receipt.body.append(row));
       }
       return results;
+    };
+
+    ReceiptPrintMode.prototype.onReturnToCounter = function() {
+      return this.switcher.switchTo(CounterMode);
     };
 
     ReceiptPrintMode.middleLine = PrintReceiptTable.joinedLine();

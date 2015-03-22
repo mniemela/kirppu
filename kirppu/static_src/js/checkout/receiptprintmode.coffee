@@ -5,21 +5,27 @@ class @ReceiptPrintMode extends CheckoutMode
   @strTitle: "Find receipt"
   @strSell: "%d, served by %c"
 
-  constructor: () ->
+  constructor: (cfg, switcher, receiptData) ->
     super
     @receipt = new PrintReceiptTable()
+    @initialReceipt = receiptData
 
   enter: ->
     super
     @cfg.uiRef.body.append(@receipt.render())
+    if @initialReceipt?
+        @renderReceipt(@initialReceipt)
 
   glyph: -> "list-alt"
   title: -> @constructor.strTitle
   subtitle: -> ""
+  commands: ->
+    print: [":print", "Print receipt / return"]
 
   actions: -> [
     ["", @findReceipt]
     [@commands.logout, @onLogout]
+    [@commands.print, @onReturnToCounter]
   ]
 
   findReceipt: (code) =>
@@ -52,6 +58,10 @@ class @ReceiptPrintMode extends CheckoutMode
       PrintReceiptTable.createRow("", "", @constructor.strTotal, receiptData.total, true)
       PrintReceiptTable.joinedLine(sellStr)
     ].concat(@constructor.tailLines)
+
+
+  onReturnToCounter: =>
+    @switcher.switchTo(CounterMode)
 
   @middleLine: PrintReceiptTable.joinedLine()
   @tailLines: [

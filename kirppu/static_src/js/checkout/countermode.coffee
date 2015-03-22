@@ -13,9 +13,11 @@ class @CounterMode extends ItemCheckoutMode
   title: -> "Checkout"
   commands: ->
     abort: [":abort", "Abort receipt"]
+    print: [":print", "Print receipt / return"]
 
   actions: -> [
     [@commands.abort,                 @onAbortReceipt]
+    [@commands.print,                 @onPrintReceipt]
     [@commands.logout,                @onLogout]
     [@cfg.settings.payPrefix,         @onPayReceipt]
     [@cfg.settings.removeItemPrefix,  @onRemoveItem]
@@ -201,6 +203,26 @@ class @CounterMode extends ItemCheckoutMode
         return true
     )
 
+  onPrintReceipt: =>
+    unless @_receipt.data?
+      safeAlert("No receipt to print!")
+      return
+    else if @_receipt.isActive()
+      safeAlert("Cannot print while receipt is active!")
+      return
+    else unless @_receipt.isFinished()
+      safeAlert("Cannot print. The receipt is not in finished state!")
+      return
+
+    Api.receipt_get(id: @_receipt.data.id).then(
+      (receipt) =>
+        @switcher.switchTo( ReceiptPrintMode, receipt )
+
+      () =>
+        safeAlert("Error printing receipt!")
+        return true
+    )
+
   onLogout: =>
     if @_receipt.isActive()
       safeAlert("Cannot logout while receipt is active!")
@@ -217,6 +239,7 @@ class ReceiptData
     @active = false
 
   isActive: -> @active
+  isFinished: -> if @data? then @data.status == "FINI" else false
   start: (data=null) ->
     @active = true
     @rowCount = 0
