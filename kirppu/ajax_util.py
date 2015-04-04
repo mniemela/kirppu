@@ -21,6 +21,7 @@ Utility functions for writing AJAX views.
 RET_UNAUTHORIZED = 401  # Unauthorized, though, not expecting Basic Auth...
 RET_FORBIDDEN = 403     # Forbidden
 
+
 class AjaxError(Exception):
     def __init__(self, status, message='AJAX request failed'):
         self.status = status
@@ -43,7 +44,7 @@ class AjaxFunc(object):
         self.method = method                    # http method for templates
 
 
-def ajax_func(url, register_func, method='POST', params=[]):
+def ajax_func(url, register_func, method='POST', params=None):
     """
     Decorate the view function properly and register it.
 
@@ -65,6 +66,8 @@ def ajax_func(url, register_func, method='POST', params=[]):
     :return: A decorator for a view function
     :rtype: function
     """
+    params = params or []
+
     def decorator(func):
         # Register the function.
         register_func(AjaxFunc(func, url, method))
