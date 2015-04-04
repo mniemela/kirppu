@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.db import IntegrityError
 from django.utils.translation import ugettext
 from django.contrib import messages
-from .forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm, UITextForm
+
+from .forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm, UITextForm, ClerkEditForm
 from .models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem, UIText
 
 __author__ = 'jyrkila'
@@ -44,9 +45,10 @@ admin.site.register(Vendor, VendorAdmin)
 # noinspection PyMethodMayBeStatic
 class ClerkAdmin(admin.ModelAdmin):
     actions = ["_gen_clerk_code", "_del_clerk_code", "_move_clerk_code"]
-    list_display = ('id', 'user', 'access_code', 'access_key')
+    list_display = ('id', 'user', 'access_code', 'access_key', 'is_enabled')
     ordering = ('user__first_name', 'user__last_name')
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    exclude = ['access_key']
 
     def _gen_clerk_code(self, request, queryset):
         for clerk in queryset:
@@ -100,13 +102,31 @@ class ClerkAdmin(admin.ModelAdmin):
         if "unbound" in request.GET:
             # Custom form for creating multiple Clerks at same time.
             return ClerkGenerationForm
+
+        # Custom form for editing already created Clerks.
+        if obj is not None:
+            return ClerkEditForm
+
         return super(ClerkAdmin, self).get_form(request, obj, **kwargs)
 
+    def has_change_permission(self, request, obj=None):
+        # Don't allow changing unbound Clerks. That might create unusable codes (because they are not printed).
+        if obj is not None and obj.user is None:
+            return False
+        return True
+
     def save_related(self, request, form, formsets, change):
-        if isinstance(form, ClerkGenerationForm):
+        if isinstance(form, (ClerkGenerationForm, ClerkEditForm)):
             # No related fields...
             return
         return super(ClerkAdmin, self).save_related(request, form, formsets, change)
+
+    def save_model(self, request, obj, form, change):
+        if change and isinstance(form, ClerkEditForm):
+            # Need to save the form instead of obj.
+            form.save()
+        else:
+            super(ClerkAdmin, self).save_model(request, obj, form, change)
 
     def log_addition(self, request, object):
         if isinstance(object, ClerkGenerationForm):

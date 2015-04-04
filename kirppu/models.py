@@ -142,6 +142,10 @@ class Clerk(models.Model):
             return None
         return clerk
 
+    @property
+    def is_enabled(self):
+        return self.access_key is not None and int(self.access_key, 16) >= 100000 and self.user is not None
+
     def generate_access_key(self, disabled=False):
         """
         Generate new access token for this Clerk. This will automatically overwrite old value.
@@ -159,6 +163,12 @@ class Clerk(models.Model):
             key = random.randint(i_min, i_max)
         self.access_key = number_to_hex(key, 56)
         return key
+
+    def save(self, *args, **kwargs):
+        # Ensure a value on access_key.
+        if self.access_key is None:
+            self.generate_access_key(disabled=True)
+        super(Clerk, self).save(*args, **kwargs)
 
     @classmethod
     def generate_empty_clerks(cls, count=1, commit=True):

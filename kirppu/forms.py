@@ -70,6 +70,81 @@ class ClerkGenerationForm(forms.ModelForm):
         fields = ("count",)
 
 
+class ClerkEditForm(forms.ModelForm):
+    """
+        Edit form for Clerks in Admin-site.
+        Does not allow editing user or access_key, but access_key is updated based on
+        selection of disabled and regen_code fields.
+    """
+    user = forms.CharField(
+        widget=forms.TextInput(attrs=dict(readonly="readonly", size=60)),
+        help_text=u"Read only",
+    )
+    access_key = forms.CharField(
+        widget=forms.TextInput(attrs=dict(readonly="readonly", size=60)),
+        help_text=u"Read only",
+    )
+    disabled = forms.BooleanField(
+        required=False,
+        help_text=u"Clerk will be disabled or enabled on save.",
+    )
+    regen_code = forms.BooleanField(
+        required=False,
+        help_text=u"Enabled Clerk access code will be regenerated on save."
+    )
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs["instance"]
+        """:type: Clerk"""
+
+        self._access_key = instance.access_key
+        self._disabled = not instance.is_enabled
+        if instance.user is not None:
+            user = u"{0} (id={1})".format(unicode(instance.user.username), instance.user.id)
+        else:
+            user = u"<Unbound>"
+
+        kwargs["initial"] = dict(
+            user=user,
+            access_key=u"{0} (raw={1})".format(instance.access_code, instance.access_key).strip(),
+            disabled=self._disabled,
+        )
+        super(ClerkEditForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        # Save only if disabled has changed.
+
+        disabled = self.cleaned_data["disabled"]
+        if disabled and self._disabled == disabled and self.instance.access_key is not None:
+            return self.instance
+        elif self._disabled == disabled and not self.cleaned_data["regen_code"]:
+            return self.instance
+
+        self.instance.generate_access_key(disabled=disabled)
+        if commit:
+            self.instance.save()
+        return self.instance
+
+    @property
+    def changed_data(self):
+        """Overridden function to create a little more descriptive log info into admin log."""
+
+        disabled = self.cleaned_data["disabled"]
+        if disabled == self._disabled:
+            if self.instance.access_key == self._access_key:
+                return []
+            else:
+                return ["access_key"]
+        if disabled:
+            return ["setDisabled"]
+        return ["setEnabled"]
+
+    class Meta:
+        model = Clerk
+        # Exclude model functionality for these fields.
+        exclude = ("user", "access_key")
+
+
 class UITextForm(forms.ModelForm):
     # noinspection PyProtectedMember
     text = forms.CharField(

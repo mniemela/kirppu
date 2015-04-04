@@ -101,7 +101,8 @@
     },
     {
         "fields": {
-            "user": 1
+            "user": 1,
+            "access_key": "0000000000AAAA"
         },
         "model": "kirppu.clerk",
         "pk": 1
