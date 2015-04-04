@@ -1,4 +1,7 @@
 from django import forms
+from django.core import validators
+from django.contrib.auth import get_user_model
+import re
 
 from .models import (
     Clerk,
@@ -68,6 +71,65 @@ class ClerkGenerationForm(forms.ModelForm):
     class Meta:
         model = Clerk
         fields = ("count",)
+
+
+class ClerkSSOForm(forms.ModelForm):
+    user = forms.CharField(
+        max_length=30,
+        validators=[
+            validators.RegexValidator(
+                re.compile('^[\w.@+-]+$'),
+                'Enter a valid username.',
+                'invalid'
+            )
+        ]
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ClerkSSOForm, self).__init__(*args, **kwargs)
+        self._sso_user = None
+
+    def clean_user(self):
+        username = self.cleaned_data["user"]
+        user = get_user_model().objects.filter(username=username)
+        if len(user) > 0:
+            clerk = Clerk.objects.filter(user=user[0])
+            if len(clerk) > 0:
+                raise forms.ValidationError(u"Clerk already exists.")
+
+        from kompassi_crowd.kompassi_client import KompassiError, kompassi_get
+        try:
+            self._sso_user = kompassi_get('people', username)
+        except KompassiError as e:
+            raise forms.ValidationError(u'Failed to get Kompassi user {username}: {e}'.format(
+                username=username, e=e)
+            )
+
+        return username
+
+    def save(self, commit=True):
+        username = self.cleaned_data["user"]
+        user = get_user_model().objects.filter(username=username)
+        if len(user) > 0 and user[0].password != "":
+            clerk = Clerk(user=user[0])
+            if commit:
+                clerk.save()
+            return clerk
+
+        from kompassi_crowd.kompassi_client import user_defaults_from_kompassi as user_defaults
+        user, created = get_user_model().objects.get_or_create(
+            username=username,
+            defaults=user_defaults(self._sso_user)
+        )
+
+        clerk = Clerk(user=user)
+        if commit:
+            clerk.save()
+        return clerk
+
+    class Meta:
+        model = Clerk
+        exclude = ("user", "access_key")
 
 
 class ClerkEditForm(forms.ModelForm):

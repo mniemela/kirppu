@@ -1,9 +1,19 @@
+from django.conf import settings
+
 from django.contrib import admin
 from django.db import IntegrityError
 from django.utils.translation import ugettext
 from django.contrib import messages
 
-from .forms import ClerkGenerationForm, ReceiptItemAdminForm, ReceiptAdminForm, UITextForm, ClerkEditForm
+from .forms import (
+    ClerkGenerationForm,
+    ReceiptItemAdminForm,
+    ReceiptAdminForm,
+    UITextForm,
+    ClerkEditForm,
+    ClerkSSOForm,
+)
+
 from .models import Clerk, Item, Vendor, Counter, Receipt, ReceiptItem, UIText
 
 __author__ = 'jyrkila'
@@ -103,6 +113,10 @@ class ClerkAdmin(admin.ModelAdmin):
             # Custom form for creating multiple Clerks at same time.
             return ClerkGenerationForm
 
+        # Custom creation form if SSO is enabled.
+        if obj is None and settings.KIRPPU_USE_SSO:
+            return ClerkSSOForm
+
         # Custom form for editing already created Clerks.
         if obj is not None:
             return ClerkEditForm
@@ -116,7 +130,7 @@ class ClerkAdmin(admin.ModelAdmin):
         return True
 
     def save_related(self, request, form, formsets, change):
-        if isinstance(form, (ClerkGenerationForm, ClerkEditForm)):
+        if isinstance(form, (ClerkGenerationForm, ClerkEditForm, ClerkSSOForm)):
             # No related fields...
             return
         return super(ClerkAdmin, self).save_related(request, form, formsets, change)
