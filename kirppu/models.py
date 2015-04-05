@@ -438,13 +438,13 @@ class Counter(models.Model):
         blank=True,
         null=False,
         unique=True,
-        help_text=_(u"Identifier of the counter")
+        help_text=_(u"Registration identifier of the counter")
     )
     name = models.CharField(
         max_length=64,
         blank=True,
         null=False,
-        help_text=_(u"Name of the counter")
+        help_text=_(u"Common name of the counter")
     )
 
     def __unicode__(self):
