@@ -1,7 +1,9 @@
 from django.conf import settings
 
 from django.contrib import admin
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
+from django.utils.html import escape
 from django.utils.translation import ugettext
 from django.contrib import messages
 
@@ -46,10 +48,29 @@ class ItemAdmin(admin.ModelAdmin):
 admin.site.register(Item, ItemAdmin)
 
 
+def _user_link(obj):
+    """
+    Admin UI list column that displays user name with link to the user model itself.
+
+    :param obj: Object being listed, such as Clerk or Vendor.
+    :type obj: Clerk | Vendor | T
+    :return: Contents for the field.
+    :rtype: unicode
+    """
+    if obj.user is None:
+        return u"(None)"
+    return u'<a href="{0}">{1}</a>'.format(
+        reverse("admin:kirppuauth_user_change", args=(obj.user.id,)),
+        escape(obj.user)
+    )
+_user_link.allow_tags = True
+_user_link.short_description = ugettext(u"User")
+
+
 class VendorAdmin(admin.ModelAdmin):
     ordering = ('user__first_name', 'user__last_name')
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-    list_display = ['id', 'user']
+    list_display = ['id', _user_link]
     readonly_fields = ['user']
 admin.site.register(Vendor, VendorAdmin)
 
@@ -57,7 +78,7 @@ admin.site.register(Vendor, VendorAdmin)
 # noinspection PyMethodMayBeStatic
 class ClerkAdmin(admin.ModelAdmin):
     actions = ["_gen_clerk_code", "_del_clerk_code", "_move_clerk_code"]
-    list_display = ('id', 'user', 'access_code', 'access_key', 'is_enabled')
+    list_display = ('id', _user_link, 'access_code', 'access_key', 'is_enabled')
     ordering = ('user__first_name', 'user__last_name')
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     exclude = ['access_key']
