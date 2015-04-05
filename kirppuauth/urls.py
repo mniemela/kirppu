@@ -1,5 +1,3 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns
 
-urlpatterns = patterns('kirppuauth.views',
-    url(r'^addclerk$', 'register_clerk', name='kirppu_register_clerk'),
-)
+urlpatterns = patterns('kirppuauth.views')
