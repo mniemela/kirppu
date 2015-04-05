@@ -49,6 +49,8 @@ admin.site.register(Item, ItemAdmin)
 class VendorAdmin(admin.ModelAdmin):
     ordering = ('user__first_name', 'user__last_name')
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    list_display = ['id', 'user']
+    readonly_fields = ['user']
 admin.site.register(Vendor, VendorAdmin)
 
 
