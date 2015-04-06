@@ -57,11 +57,14 @@ def _user_link(obj):
     :return: Contents for the field.
     :rtype: unicode
     """
-    if obj.user is None:
+    user = obj.user
+    if user is None:
         return u"(None)"
+    # noinspection PyProtectedMember
+    info = user._meta.app_label, user._meta.model_name
     return u'<a href="{0}">{1}</a>'.format(
-        reverse("admin:kirppuauth_user_change", args=(obj.user.id,)),
-        escape(obj.user)
+        reverse("admin:%s_%s_change" % info, args=(user.id,)),
+        escape(user)
     )
 _user_link.allow_tags = True
 _user_link.short_description = ugettext(u"User")
