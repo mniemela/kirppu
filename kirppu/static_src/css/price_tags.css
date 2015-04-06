@@ -17,7 +17,8 @@
  *          .item_adult_tag
  *          .item_vendor_id
  *
- *      .item_button_delete
+ *      .item_button_hide
+ *      .item_button_printed
  *      .item_button_toggle
  */
 #items, #printed_items {
@@ -225,7 +226,7 @@
 }
 
 
-.item_button_delete, .item_button_toggle, .item_button_hide {
+.item_button_printed, .item_button_toggle, .item_button_hide {
     position: absolute;
     right: 0px;
     width: 1.5em;
@@ -237,15 +238,15 @@
 .item_button_hide {
     top: 0em;
 }
-.item_list .item_button_delete {
+.item_list .item_button_printed {
     top: 0em;
     right: 0em;
 }
-.item_button_delete {
+.item_button_printed {
     top: 1.5em;
     font-family: Arial, Helvetica, sans-serif;
 }
-.item_list .item_button_delete {
+.item_list .item_button_printed {
     top: 0em;
     right: 1.5em;
 }
@@ -255,7 +256,7 @@
 .item_list .item_button_toggle {
     display: none;
 }
-a.item_button_delete {
+a.item_button_printed {
     position: absolute; width:20px;
     background-color: #FFF; color: black;
     border-radius: 20px;
@@ -263,7 +264,7 @@ a.item_button_delete {
     cursor:pointer; z-index: -1;
     font-size:16px; font-weight:bold;
 }
-.item_button_delete:disabled {
+.item_button_printed:disabled {
     border: 1px dashed darkgrey;
 }
 
@@ -275,7 +276,7 @@ a.item_button_delete {
     .item_price, .item_name {
         border: none;
     }
-    .item_button_delete, .item_button_toggle {
+    .item_button_printed, .item_button_toggle {
         display: none;
     }
     #item-add-form {

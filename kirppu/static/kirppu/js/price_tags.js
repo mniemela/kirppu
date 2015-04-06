@@ -272,7 +272,7 @@
 
   moveTagToPrinted = function(tag, code) {
     unbindTagEvents($(tag));
-    $('.item_button_delete', tag).click(function() {
+    $('.item_button_printed', tag).click(function() {
       return $(tag).hide('slow', function() {
         return moveItemToNotPrinted(tag, code);
       });
@@ -296,7 +296,7 @@
   };
 
   bindItemToPrintedEvents = function(tag, code) {
-    $('.item_button_delete', tag).click(function() {
+    $('.item_button_printed', tag).click(function() {
       return $(tag).hide('slow', function() {
         return moveItemToPrinted(tag, code);
       });
@@ -304,7 +304,7 @@
   };
 
   bindItemToNotPrintedEvents = function(tag, code) {
-    $('.item_button_delete', tag).click(function() {
+    $('.item_button_printed', tag).click(function() {
       return $(tag).hide('slow', function() {
         return moveItemToNotPrinted(tag, code);
       });
@@ -397,7 +397,7 @@
       $('.item_name', tag).unbind('click');
       $('.item_price', tag).unbind('click');
       $('.item_button_toggle', tag).unbind('click');
-      $('.item_button_delete', tag).unbind('click');
+      $('.item_button_printed', tag).unbind('click');
     });
   };
 

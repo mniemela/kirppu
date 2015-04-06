@@ -247,7 +247,7 @@ moveItemToNotPrinted = (tag, code) ->
 moveTagToPrinted = (tag, code) ->
   unbindTagEvents($(tag))
 
-  $('.item_button_delete', tag).click(-> $(tag).hide('slow', -> moveItemToNotPrinted(tag, code)))
+  $('.item_button_printed', tag).click(-> $(tag).hide('slow', -> moveItemToNotPrinted(tag, code)))
   $(tag).prependTo("#printed_items")
   $(tag).addClass("item_list")
   $(tag).show('slow')
@@ -272,7 +272,7 @@ moveItemToPrinted = (tag, code) ->
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
 bindItemToPrintedEvents = (tag, code) ->
-  $('.item_button_delete', tag).click( ->
+  $('.item_button_printed', tag).click( ->
     $(tag).hide('slow', -> moveItemToPrinted(tag, code))
   )
   return
@@ -282,7 +282,7 @@ bindItemToPrintedEvents = (tag, code) ->
 # @param tag [jQuery element] An '.item_container' element.
 # @param code [String] Barcode string of the item.
 bindItemToNotPrintedEvents = (tag, code) ->
-  $('.item_button_delete', tag).click( ->
+  $('.item_button_printed', tag).click( ->
     $(tag).hide('slow', -> moveItemToNotPrinted(tag, code))
   )
   return
@@ -377,7 +377,7 @@ unbindTagEvents = (tags) ->
     $('.item_name', tag).unbind('click')
     $('.item_price', tag).unbind('click')
     $('.item_button_toggle', tag).unbind('click')
-    $('.item_button_delete', tag).unbind('click')
+    $('.item_button_printed', tag).unbind('click')
 
     return
   )
