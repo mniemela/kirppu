@@ -12,6 +12,7 @@ class PriceTagsConfig
     item_to_list: ''
     size_update: ''
     item_add: ''
+    item_hide: ''
     barcode_img: ''
     item_to_print: ''
     all_to_print: ''
@@ -42,6 +43,10 @@ class PriceTagsConfig
 
   item_to_print_url: (code) ->
     url = @urls.item_to_print
+    return url.replace(@url_args.code, code)
+
+  item_hide_url: (code) ->
+    url = @urls.item_hide
     return url.replace(@url_args.code, code)
 
 C = new PriceTagsConfig
@@ -202,6 +207,23 @@ bindNameEditEvents = (tag, code) ->
   return
 
 
+hideItem = (tag, code) ->
+  $.ajax(
+    url: C.item_hide_url(code)
+    type: 'POST'
+    success: ->
+      $(tag).remove()
+    error: ->
+      $(tag).show('slow')
+  )
+
+
+bindItemHideEvents = (tag, code) ->
+  $('.item_button_hide', tag).click( ->
+    $(tag).hide('slow', -> hideItem(tag, code))
+  )
+
+
 moveItemToNotPrinted = (tag, code) ->
   $.ajax(
     url: C.item_to_print_url(code)
@@ -328,6 +350,7 @@ bindTagEvents = (tags) ->
       bindNameEditEvents(tag, code)
     else
       tag.removeClass("item_editable")
+    bindItemHideEvents(tag, code)
     bindItemToPrintedEvents(tag, code)
     bindItemToggleEvents(tag, code)
 

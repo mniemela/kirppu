@@ -113,6 +113,11 @@ def item_mode_change(code, from_, to, message_if_not_first=None):
     if not isinstance(from_, tuple):
         from_ = (from_,)
     if item.state in from_:
+        if item.hidden:
+            # If an item is brought to the event, even though the user deleted it, it should begin showing again in
+            # users list. The same probably applies to any interaction with the item.
+            item.hidden = False
+
         old_state = item.state
         item.state = to
         item.save()

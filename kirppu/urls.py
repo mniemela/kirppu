@@ -11,6 +11,7 @@ from .views import (
     get_items,
     all_to_print,
     item_add,
+    item_hide,
     item_to_printed,
     item_to_not_printed,
     item_update_name,
@@ -41,6 +42,7 @@ _urls = [
     url(r'^vendor/item/(?P<code>\w+?)/name$', item_update_name, name='item_update_name'),
     url(r'^vendor/item/(?P<code>\w+?)/type$', item_update_type, name='item_update_type'),
     url(r'^vendor/item/(?P<code>\w+?)/to_not_printed$', item_to_not_printed, name='item_to_not_printed'),
+    url(r'^vendor/item/(?P<code>\w+?)/hide$', item_hide, name='item_hide'),
     url(r'^remove_item', remove_item_from_receipt, name='remove_item_from_receipt'),
 ]
 

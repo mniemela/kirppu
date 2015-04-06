@@ -136,6 +136,18 @@ def item_add(request):
 
 
 @login_required
+@require_http_methods(["POST"])
+def item_hide(request, code):
+    vendor = Vendor.get_vendor(request.user)
+    item = get_object_or_404(Item.objects, code=code, vendor=vendor)
+
+    item.hidden = True
+    item.save()
+
+    return HttpResponse()
+
+
+@login_required
 @require_http_methods(['POST'])
 def item_to_not_printed(request, code):
     vendor = Vendor.get_vendor(request.user)
@@ -298,9 +310,9 @@ def get_items(request, bar_type):
         return HttpResponseBadRequest(u"Tag type not supported")
 
     vendor = Vendor.get_vendor(user)
-    items = Item.objects.filter(vendor=vendor).filter(printed=False)
-    printed_items = Item.objects.filter(vendor=vendor).filter(printed=True)
-    printed_items = printed_items.filter(hidden=False)
+    vendor_items = Item.objects.filter(vendor=vendor, hidden=False)
+    items = vendor_items.filter(printed=False)
+    printed_items = vendor_items.filter(printed=True)
 
     # Order from newest to oldest, because that way new items are added
     # to the top and the user immediately sees them without scrolling
@@ -443,7 +455,7 @@ def vendor_view(request):
 
     if user.is_authenticated():
         vendor = Vendor.get_vendor(user)
-        items = Item.objects.filter(vendor=vendor)
+        items = Item.objects.filter(vendor=vendor, hidden=False)
     else:
         items = []
 

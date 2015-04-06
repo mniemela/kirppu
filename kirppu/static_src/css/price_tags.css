@@ -225,7 +225,7 @@
 }
 
 
-.item_button_delete, .item_button_toggle {
+.item_button_delete, .item_button_toggle, .item_button_hide {
     position: absolute;
     right: 0px;
     width: 1.5em;
@@ -234,15 +234,26 @@
     font-size:14px;
     font-weight:bold;
 }
-.item_list .item_button_toggle {
-    display: none;
+.item_button_hide {
+    top: 0em;
+}
+.item_list .item_button_delete {
+    top: 0em;
+    right: 0em;
 }
 .item_button_delete {
-    top: 0em;
+    top: 1.5em;
     font-family: Arial, Helvetica, sans-serif;
 }
+.item_list .item_button_delete {
+    top: 0em;
+    right: 1.5em;
+}
 .item_button_toggle {
-    top: 1.5em;
+    top: 3em;
+}
+.item_list .item_button_toggle {
+    display: none;
 }
 a.item_button_delete {
     position: absolute; width:20px;

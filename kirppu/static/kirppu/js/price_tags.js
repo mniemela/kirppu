@@ -14,7 +14,7 @@
 // ================ 2: price_tags.coffee ================
 
 (function() {
-  var C, PriceTagsConfig, addItem, bindFormEvents, bindItemToNotPrintedEvents, bindItemToPrintedEvents, bindItemToggleEvents, bindListTagEvents, bindNameEditEvents, bindPriceEditEvents, bindTagEvents, createTag, deleteAll, listViewIsOn, moveItemToNotPrinted, moveItemToPrinted, moveTagToPrinted, onPriceChange, toggleListView, unbindTagEvents;
+  var C, PriceTagsConfig, addItem, bindFormEvents, bindItemHideEvents, bindItemToNotPrintedEvents, bindItemToPrintedEvents, bindItemToggleEvents, bindListTagEvents, bindNameEditEvents, bindPriceEditEvents, bindTagEvents, createTag, deleteAll, hideItem, listViewIsOn, moveItemToNotPrinted, moveItemToPrinted, moveTagToPrinted, onPriceChange, toggleListView, unbindTagEvents;
 
   PriceTagsConfig = (function() {
     PriceTagsConfig.prototype.url_args = {
@@ -28,6 +28,7 @@
       item_to_list: '',
       size_update: '',
       item_add: '',
+      item_hide: '',
       barcode_img: '',
       item_to_print: '',
       all_to_print: ''
@@ -70,6 +71,12 @@
     PriceTagsConfig.prototype.item_to_print_url = function(code) {
       var url;
       url = this.urls.item_to_print;
+      return url.replace(this.url_args.code, code);
+    };
+
+    PriceTagsConfig.prototype.item_hide_url = function(code) {
+      var url;
+      url = this.urls.item_hide;
       return url.replace(this.url_args.code, code);
     };
 
@@ -223,6 +230,27 @@
     });
   };
 
+  hideItem = function(tag, code) {
+    return $.ajax({
+      url: C.item_hide_url(code),
+      type: 'POST',
+      success: function() {
+        return $(tag).remove();
+      },
+      error: function() {
+        return $(tag).show('slow');
+      }
+    });
+  };
+
+  bindItemHideEvents = function(tag, code) {
+    return $('.item_button_hide', tag).click(function() {
+      return $(tag).hide('slow', function() {
+        return hideItem(tag, code);
+      });
+    });
+  };
+
   moveItemToNotPrinted = function(tag, code) {
     $.ajax({
       url: C.item_to_print_url(code),
@@ -350,6 +378,7 @@
       } else {
         tag.removeClass("item_editable");
       }
+      bindItemHideEvents(tag, code);
       bindItemToPrintedEvents(tag, code);
       bindItemToggleEvents(tag, code);
     });
