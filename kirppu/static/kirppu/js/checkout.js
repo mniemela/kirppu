@@ -432,6 +432,16 @@
             return displayState(i.state);
           },
           "class": 'receipt_status'
+        }, {
+          title: gettext('abandoned'),
+          render: function(i) {
+            if (i.abandoned) {
+              return "Yes";
+            } else {
+              return "No";
+            }
+          },
+          "class": 'receipt_abandoned'
         }
       ];
       this.head.append((function() {
@@ -465,7 +475,7 @@
         }).call(this));
         this.body.append(row);
       }
-      return this.body.append($('<tr>').append($('<th colspan="3">').text(gettext('Total:')), $('<th class="receipt_price numeric">').text(displayPrice(sum)), $('<th>')));
+      return this.body.append($('<tr>').append($('<th colspan="3">').text(gettext('Total:')), $('<th class="receipt_price numeric">').text(displayPrice(sum)), $('<th>'), $('<th>')));
     };
 
     return ItemReportTable;
@@ -2172,12 +2182,13 @@
     };
 
     VendorReport.prototype.enter = function() {
-      var checkoutButton, compensateButton;
+      var abandonButton, checkoutButton, compensateButton;
       VendorReport.__super__.enter.apply(this, arguments);
       this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
       compensateButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Compensate')).click(this.onCompensate);
       checkoutButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Return Items')).click(this.onReturn);
-      this.cfg.uiRef.body.append($('<form class="hidden-print">').append(compensateButton, checkoutButton));
+      abandonButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Abandon All Non-Compensated Items')).click(this.onAbandon);
+      this.cfg.uiRef.body.append($('<form class="hidden-print">').append(compensateButton, checkoutButton, abandonButton));
       return Api.item_list({
         vendor: this.vendor.id
       }).done(this.onGotItems);
@@ -2216,6 +2227,13 @@
 
     VendorReport.prototype.onReturn = function() {
       return this.switcher.switchTo(VendorCheckoutMode, this.vendor);
+    };
+
+    VendorReport.prototype.onAbandon = function() {
+        var r = confirm("Have you asked for the vendor's signature and are you sure you want to mark all non-compensated items to abandoned?");
+        if (r == true) {
+            alert("To-do api call with vendor id. Also rewrite this in coffee!");
+        }
     };
 
     return VendorReport;

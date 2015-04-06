@@ -29,6 +29,10 @@ td.receipt_code {
     max-width: 4em;
 }
 .receipt_status {
+    width:5em;
+    white-space: nowrap;
+}
+.receipt_abandoned {
     width: 0;
     white-space: nowrap;
 }

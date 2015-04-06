@@ -22,6 +22,14 @@ class @ItemReportTable extends ResultTable
       title: gettext('status')
       render: (i) -> displayState(i.state)
       class: 'receipt_status'
+    ,
+      title: gettext('abandoned')
+      render: (i) ->
+        if i.abandoned
+          "Yes"
+        else
+          "No"
+      class: 'receipt_abandoned'
     ]
 
 
@@ -44,5 +52,6 @@ class @ItemReportTable extends ResultTable
     @body.append($('<tr>').append(
       $('<th colspan="3">').text(gettext('Total:'))
       $('<th class="receipt_price numeric">').text(displayPrice(sum))
+      $('<th>')
       $('<th>')
     ))

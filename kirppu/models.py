@@ -320,6 +320,7 @@ class Item(models.Model):
         max_length=8,
         default=ADULT_NO
     )
+    abandoned = models.BooleanField(default=False)
     # Has the user marked this item as printed?
     # Affects whether the item is shown in print view or not.
     printed = models.BooleanField(default=False)
@@ -334,6 +335,7 @@ class Item(models.Model):
         "name",
         "state",
         "itemtype",
+        "abandoned",
         price="price_cents",
         vendor="vendor_id",
     )

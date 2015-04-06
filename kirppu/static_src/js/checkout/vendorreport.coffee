@@ -30,10 +30,15 @@ class @VendorReport extends CheckoutMode
       .addClass('btn btn-primary')
       .attr('value', gettext('Return Items'))
       .click(@onReturn)
+    abandonButton = $('<input type="button">')
+      .addClass('btn btn-primary')
+      .attr('value', gettext('Abandon All Non-Compensated Items'))
+      .click(@onAbandon)
     @cfg.uiRef.body.append(
       $('<form class="hidden-print">').append(
         compensateButton,
         checkoutButton,
+        abandonButton,
       )
     )
 
@@ -52,3 +57,10 @@ class @VendorReport extends CheckoutMode
 
   onCompensate: => @switcher.switchTo(VendorCompensation, @vendor)
   onReturn: =>     @switcher.switchTo(VendorCheckoutMode, @vendor)
+
+  `VendorReport.prototype.onAbandon = function() {
+        var r = confirm("Have you asked for the vendor's signature and are you sure you want to mark all non-compensated items to abandoned?");
+        if (r == true) {
+            alert("To-do api call with vendor id. Also rewrite this in coffee!");
+        }
+    }`
