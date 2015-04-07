@@ -329,7 +329,14 @@ class Item(models.Model):
     def __unicode__(self):
         return u"{name} ({code})".format(name=self.name, code=self.code)
 
-    as_dict = model_dict_fn("code", "name", "state", price="price_cents", vendor="vendor_id")
+    as_dict = model_dict_fn(
+        "code",
+        "name",
+        "state",
+        "itemtype",
+        price="price_cents",
+        vendor="vendor_id",
+    )
 
     @property
     def price_cents(self):
