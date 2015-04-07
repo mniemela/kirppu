@@ -483,3 +483,17 @@ def get_barcodes(request, codes=None):
         for code in codes
     ]
     return outs
+
+
+@ajax_func('^item/abandon$')
+def items_abandon(request, vendor):
+    """
+    Set all of the vendor's 'brought to event' and 'missing' items to abandoned
+    The view is expected to refresh itself
+    """
+    items = Item.objects.filter(vendor__id=vendor)
+    for item in items:
+        if item.state in (Item.BROUGHT, Item.MISSING):
+            item.abandoned = True
+            item.save()
+    return

@@ -32,7 +32,7 @@ class @VendorReport extends CheckoutMode
       .click(@onReturn)
     abandonButton = $('<input type="button">')
       .addClass('btn btn-primary')
-      .attr('value', gettext('Abandon All Non-Compensated Items'))
+      .attr('value', gettext('Abandon All Items Currently On Display'))
       .click(@onAbandon)
     @cfg.uiRef.body.append(
       $('<form class="hidden-print">').append(
@@ -57,10 +57,11 @@ class @VendorReport extends CheckoutMode
 
   onCompensate: => @switcher.switchTo(VendorCompensation, @vendor)
   onReturn: =>     @switcher.switchTo(VendorCheckoutMode, @vendor)
+  onAbandon: =>
+    r = confirm(gettext("1) Have you asked for the vendor's signature AND 2) Are you sure you want to mark all items on display or missing abandoned?"))
+    if r
+      Api.items_abandon(
+        vendor: @vendor.id
+      ).done(@switcher.switchTo(VendorCompensation, @vendor))
+    return
 
-  `VendorReport.prototype.onAbandon = function() {
-        var r = confirm("Have you asked for the vendor's signature and are you sure you want to mark all non-compensated items to abandoned?");
-        if (r == true) {
-            alert("To-do api call with vendor id. Also rewrite this in coffee!");
-        }
-    }`

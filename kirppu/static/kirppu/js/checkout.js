@@ -2154,6 +2154,7 @@
     extend(VendorReport, superClass);
 
     function VendorReport(cfg, switcher, vendor) {
+      this.onAbandon = bind(this.onAbandon, this);
       this.onReturn = bind(this.onReturn, this);
       this.onCompensate = bind(this.onCompensate, this);
       this.onGotItems = bind(this.onGotItems, this);
@@ -2187,7 +2188,7 @@
       this.cfg.uiRef.body.append(new VendorInfo(this.vendor).render());
       compensateButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Compensate')).click(this.onCompensate);
       checkoutButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Return Items')).click(this.onReturn);
-      abandonButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Abandon All Non-Compensated Items')).click(this.onAbandon);
+      abandonButton = $('<input type="button">').addClass('btn btn-primary').attr('value', gettext('Abandon All Items Currently On Display')).click(this.onAbandon);
       this.cfg.uiRef.body.append($('<form class="hidden-print">').append(compensateButton, checkoutButton, abandonButton));
       return Api.item_list({
         vendor: this.vendor.id
@@ -2230,10 +2231,13 @@
     };
 
     VendorReport.prototype.onAbandon = function() {
-        var r = confirm("Have you asked for the vendor's signature and are you sure you want to mark all non-compensated items to abandoned?");
-        if (r == true) {
-            alert("To-do api call with vendor id. Also rewrite this in coffee!");
-        }
+      var r;
+      r = confirm(gettext("1) Have you asked for the vendor's signature AND 2) Are you sure you want to mark all items on display or missing abandoned?"));
+      if (r) {
+        Api.items_abandon({
+          vendor: this.vendor.id
+        }).done(this.switcher.switchTo(VendorCompensation, this.vendor));
+      }
     };
 
     return VendorReport;
