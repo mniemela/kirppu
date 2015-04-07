@@ -1,11 +1,16 @@
 class @ItemSearchForm
 
+  @itemtypes = []
+
   constructor: (action) ->
     @action = action
 
     @searchInput = $('<input type="text" id="item_search_input" class="form-control">')
     @minPriceInput = $('<input type="number" step="any" min="0" id="item_search_min_price" class="form-control">')
     @maxPriceInput = $('<input type="number" step="any" min="0" id="item_search_max_price" class="form-control">')
+    @typeInput = $('<select multiple class="form-control">').append(
+      $('<option>').attr('value', t.name).text(t.description) for t in ItemSearchForm.itemtypes
+    )
 
     @form = $('<form role="form" class="form-horizontal">').append([
       $('<div class="form-group">').append([
@@ -26,6 +31,10 @@ class @ItemSearchForm
           $('<span class="input-group-addon">').text('€')
         ])
       ])
+      $('<div class="form-group">').append([
+        $('<label for="item_search_type" class="control-label col-sm-2">Type</label>')
+        $('<div class="input-group col-sm-10">').append(@typeInput)
+      ])
       $('<div class="col-sm-offset-2">').append(
         $('<button type="submit" class="btn btn-default" class="col-sm-1">')
           .text('Search')
@@ -42,4 +51,5 @@ class @ItemSearchForm
       @searchInput.val()
       @minPriceInput.val()
       @maxPriceInput.val()
+      @typeInput.val()
     )

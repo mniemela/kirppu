@@ -63,6 +63,14 @@
     DateTimeFormatter.timeZone = "{{ TIME_ZONE }}";
     DateTimeFormatter.init();
 
+    ItemSearchForm.itemtypes = [
+        {% for name, description in itemtypes %}
+            { "name": "{{ name | escapejs}}",
+              "description": "{{ description | escapejs }}" }
+            {% if not forloop.last %} , {% endif %}
+        {% endfor %}
+    ];
+
     $(document).ready(function() {
         setupAjax();
         CheckoutConfig.check();
