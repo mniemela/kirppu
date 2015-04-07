@@ -7,6 +7,7 @@ class @ItemFindList extends ResultTable
       '<th class="receipt_item">' + gettext('item') + '</th>'
       '<th class="receipt_price">' + gettext('price') + '</th>'
       '<th class="receipt_name">' + gettext('vendor') + '</th>'
+      '<th class="receipt_status">' + gettext('status') + '</th>'
     ].map($))
 
   append: (item, index) ->
@@ -17,5 +18,6 @@ class @ItemFindList extends ResultTable
       $("<td>").text(item.name)
       $("<td>").text(displayPrice(item.price))
       $("<td>").text(item.vendor.name)
+      $("<td>").text(item.state)
     ])
     @body.append(row)

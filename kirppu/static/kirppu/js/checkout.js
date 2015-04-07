@@ -485,13 +485,13 @@
 
     function ItemFindList() {
       ItemFindList.__super__.constructor.apply(this, arguments);
-      this.head.append(['<th class="receipt_index">#</th>', '<th class="receipt_code">' + gettext('code') + '</th>', '<th class="receipt_item">' + gettext('item') + '</th>', '<th class="receipt_price">' + gettext('price') + '</th>', '<th class="receipt_name">' + gettext('vendor') + '</th>'].map($));
+      this.head.append(['<th class="receipt_index">#</th>', '<th class="receipt_code">' + gettext('code') + '</th>', '<th class="receipt_item">' + gettext('item') + '</th>', '<th class="receipt_price">' + gettext('price') + '</th>', '<th class="receipt_name">' + gettext('vendor') + '</th>', '<th class="receipt_status">' + gettext('status') + '</th>'].map($));
     }
 
     ItemFindList.prototype.append = function(item, index) {
       var row;
       row = $("<tr>");
-      row.append([$("<td>").text(index), $("<td>").text(item.code), $("<td>").text(item.name), $("<td>").text(displayPrice(item.price)), $("<td>").text(item.vendor.name)]);
+      row.append([$("<td>").text(index), $("<td>").text(item.code), $("<td>").text(item.name), $("<td>").text(displayPrice(item.price)), $("<td>").text(item.vendor.name), $("<td>").text(item.state)]);
       return this.body.append(row);
     };
 
