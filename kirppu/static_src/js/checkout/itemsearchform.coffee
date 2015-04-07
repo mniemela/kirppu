@@ -1,6 +1,7 @@
 class @ItemSearchForm
 
   @itemtypes = []
+  @itemstates = []
 
   constructor: (action) ->
     @action = action
@@ -8,8 +9,11 @@ class @ItemSearchForm
     @searchInput = $('<input type="text" id="item_search_input" class="form-control">')
     @minPriceInput = $('<input type="number" step="any" min="0" id="item_search_min_price" class="form-control">')
     @maxPriceInput = $('<input type="number" step="any" min="0" id="item_search_max_price" class="form-control">')
-    @typeInput = $('<select multiple class="form-control">').append(
+    @typeInput = $('<select multiple class="form-control" id="item_search_type">').append(
       $('<option>').attr('value', t.name).text(t.description) for t in ItemSearchForm.itemtypes
+    )
+    @stateInput = $('<select multiple class="form-control" id="item_search_state">').append(
+      $('<option>').attr('value', s.name).text(s.description) for s in ItemSearchForm.itemstates
     )
 
     @form = $('<form role="form" class="form-horizontal">').append([
@@ -35,6 +39,10 @@ class @ItemSearchForm
         $('<label for="item_search_type" class="control-label col-sm-2">Type</label>')
         $('<div class="input-group col-sm-10">').append(@typeInput)
       ])
+      $('<div class="form-group">').append([
+        $('<label for="item_search_state" class="control-label col-sm-2">State</label>')
+        $('<div class="input-group col-sm-10">').append(@stateInput)
+      ])
       $('<div class="col-sm-offset-2">').append(
         $('<button type="submit" class="btn btn-default" class="col-sm-1">')
           .text('Search')
@@ -52,4 +60,5 @@ class @ItemSearchForm
       @minPriceInput.val()
       @maxPriceInput.val()
       @typeInput.val()
+      @stateInput.val()
     )

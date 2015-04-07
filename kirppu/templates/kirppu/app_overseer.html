@@ -65,7 +65,14 @@
 
     ItemSearchForm.itemtypes = [
         {% for name, description in itemtypes %}
-            { "name": "{{ name | escapejs}}",
+            { "name": "{{ name | escapejs }}",
+              "description": "{{ description | escapejs }}" }
+            {% if not forloop.last %} , {% endif %}
+        {% endfor %}
+    ];
+    ItemSearchForm.itemstates = [
+        {% for name, description in itemstates %}
+            { "name": "{{ name | escapejs }}",
               "description": "{{ description | escapejs }}" }
             {% if not forloop.last %} , {% endif %}
         {% endfor %}

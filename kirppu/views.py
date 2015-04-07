@@ -429,7 +429,10 @@ def overseer_view(request):
     except ajax_util.AjaxError:
         return redirect('kirppu:checkout_view')
     else:
-        context = { 'itemtypes': Item.ITEMTYPE }
+        context = {
+            'itemtypes': Item.ITEMTYPE,
+            'itemstates': Item.STATE,
+        }
         return render(request, 'kirppu/app_overseer.html', context)
 
 
