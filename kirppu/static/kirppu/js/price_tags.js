@@ -202,6 +202,9 @@
       addItem();
       return false;
     });
+    $('#print_items').click(function() {
+      return window.print();
+    });
     $('#delete_all').click(deleteAll);
     $('#list_view').click(toggleListView);
     $('#item-add-price').change(onPriceChange);

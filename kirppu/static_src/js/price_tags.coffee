@@ -166,11 +166,12 @@ bindFormEvents = ->
     return false;
   )
 
+  $('#print_items').click(-> window.print())
 
-  $('#delete_all').click(deleteAll);
+  $('#delete_all').click(deleteAll)
   $('#list_view').click(toggleListView)
 
-  $('#item-add-price').change(onPriceChange);
+  $('#item-add-price').change(onPriceChange)
 
   return
 
